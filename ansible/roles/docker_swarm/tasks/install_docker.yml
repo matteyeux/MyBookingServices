@@ -1,4 +1,5 @@
 ---
+# Based on https://docs.docker.com/engine/install/debian/
 - name: Make sure older versions are not installed
   package:
     name:
@@ -41,5 +42,11 @@
 - name: Add the user mathieu to the docker group
   ansible.builtin.user:
     name: mathieu
+    groups: docker
+    append: yes
+
+- name: Add the user ansible to the docker group
+  ansible.builtin.user:
+    name: ansible
     groups: docker
     append: yes
