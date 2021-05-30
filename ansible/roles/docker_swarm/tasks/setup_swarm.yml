@@ -1,0 +1,28 @@
+---
+# There is probably a better way :
+# https://docs.ansible.com/ansible/latest/collections/community/docker/docker_swarm_module.html
+- name: Make sure Docker is running before setting up docker swarm
+  service:
+    name: "docker"
+    state: "started"
+
+- name: Check if Docker Swarm is already initialized
+  shell: docker info
+  register: swarm_info
+  when: "'managers' in group_names"
+
+- name: Setup Docker Swarm manager 
+  shell: >
+        docker swarm init
+        --advertise-addr={{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2377
+  run_once: true
+  when: "'managers' in group_names and 'Swarm: inactive' in swarm_info.stdout"
+
+- name: Get the Manager join-token
+  shell: docker swarm join-token --quiet manager
+  register: manager_token
+  when: "'manager' in inventory_hostname"
+
+- name: Make nodes join the cluster
+  shell: "docker swarm join --token {{ hostvars['manager']['manager_token']['stdout'] }} {{ hostvars['manager']['ansible_default_ipv4']['address'] }}:2377"
+  when: "'workers' in group_names"
