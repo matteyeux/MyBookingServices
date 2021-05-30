@@ -1,0 +1,7 @@
+[manager]
+manager     instance_ip=127.0.0.1
+
+[worlker]
+worker1     instance_ip=127.0.0.1
+worker2     instance_ip=127.0.0.1
+
