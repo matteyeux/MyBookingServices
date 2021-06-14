@@ -1,0 +1,36 @@
+---
+- name: Install pyOpenSSL dependancies
+  apt:
+    name:
+      - python3-pip
+      - gcc
+      - rustc
+      - libssl-dev
+    update_cache: yes
+
+- name: Install python-pyOpenSSL
+  pip:
+    name:
+      - pyOpenSSL
+    state: present
+  when: "'managers' in group_names"
+
+- name : create private key
+  openssl_privatekey:
+    path: /etc/ssl/private/ansible.com.pem
+  when: "'managers' in group_names"
+
+- name: Generate an OpenSSL Certificate Signing Request
+  openssl_csr:
+    path: /etc/ssl/csr/ansible.com.csr
+    privatekey_path: /etc/ssl/private/ansible.com.pem
+    common_name: registry.my
+  when: "'managers' in group_names"
+
+- name: Generate a Self Signed OpenSSL certificate
+  openssl_certificate:
+    path: /etc/ssl/crt/ansible.com.crt
+    privatekey_path: /etc/ssl/private/ansible.com.pem
+    csr_path: /etc/ssl/csr/ansible.com.csr
+    provider: selfsigned
+  when: "'managers' in group_names"
