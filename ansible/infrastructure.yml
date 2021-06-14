@@ -1,6 +1,5 @@
 ---
 - hosts: "all"
-
   roles:
     - { role: docker_swarm,     tags: ['docker_swarm'] }
     - { role: docker_registry,  tags: ['docker_registry'] }
