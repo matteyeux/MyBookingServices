@@ -18,20 +18,20 @@ jobs:
       with:
         python-version: 3.8
 
-    - name: Install pip dependencies
-      working-directory : ./APIs/booking
-      run: |
-        python3 -m pip install --upgrade pip
-        python3 -m pip install poetry virtualenv
-        virtualenv -p python3 env
-        . env/bin/activate
-        poetry install
+    #- name: Install pip dependencies
+    #  working-directory : ./APIs/booking
+    #  run: |
+    #    python3 -m pip install --upgrade pip
+    #    python3 -m pip install poetry virtualenv
+    #    virtualenv -p python3 env
+    #    . env/bin/activate
+    #    poetry install
 
     - name: Build documentation
+      working-directory : ./docs
       run: |
-        . APIs/booking/env/bin/activate
-        pip3 install -r docs/requirements.txt
-        make -C docs html
+        pip3 install -r requirements.txt
+        make -C html
         rm -rf docs/build/doctrees
 
     - name: Archive docs
