@@ -1,0 +1,42 @@
+name: docs
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        python-version: [3.8]
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+
+    - name: Install pip dependencies
+      working-directory : ./APIs/booking
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install poetry virtualenv
+        virtualenv -p python3 env
+        . env/bin/activate
+        poetry install
+
+    - name: Build documentation
+      run: |
+        . APIs/booking/env/bin/activate
+        pip3 install -r docs/requirements.txt
+        make -C docs html
+        rm -rf docs/build/doctrees
+
+    - name: Archive docs
+      uses: actions/upload-artifact@v2
+      with:
+        name: docs
+        path: |
+          docs/build
