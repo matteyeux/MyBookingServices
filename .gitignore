@@ -1,0 +1,9 @@
+# APIs
+APIs/booking/env
+__pycache__
+*.pyc
+.coverage
+dist
+
+# doc generated files
+docs/build/
