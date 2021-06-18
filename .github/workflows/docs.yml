@@ -31,7 +31,7 @@ jobs:
       working-directory : ./docs
       run: |
         pip3 install -r requirements.txt
-        make -C html
+        make html
         rm -rf docs/build/doctrees
 
     - name: Archive docs
