@@ -1,6 +1,11 @@
 MyBookingServices documentation
 ===============================
 
+
+.. image:: imgs/logo_transparent.png
+   :scale: 20
+   :align: center
+
 MyBookingServices is a microservices infrastructure built for a school project.
 
 The following APIs are included:
