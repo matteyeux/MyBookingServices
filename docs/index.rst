@@ -18,6 +18,12 @@ The following APIs are included:
 
 .. toctree::
    :maxdepth: 2
+   :caption: General documentation
+
+   introduction
+
+.. toctree::
+   :maxdepth: 2
    :caption: Usage:
    :glob:
 
