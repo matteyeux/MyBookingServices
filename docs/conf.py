@@ -1,7 +1,8 @@
 # Config file for Sphinx Doc
-import sys
 import os
 import subprocess
+import sys
+
 from recommonmark.parser import CommonMarkParser
 
 project = "MyBookingServices"
@@ -9,15 +10,16 @@ copyright = "2021, Bombarman Gang"
 author = "Bombarman Gang"
 
 
-# add 
+# add APIs to path
 sys.path.append("../APIs/booking")
 current_path = os.getcwd()
 
 # module to add to path for autodoc
+# TODO: add modules "users" and "management" later
 modules = [
     "booking",
-    #"users",
-    #"management",
+    # "users",
+    # "management",
 ]
 
 for module in modules:
