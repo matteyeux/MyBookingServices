@@ -2,7 +2,8 @@
 
 
 Booking
--------
+=======
+
 .. automodule:: booking.main
     :members:
     :undoc-members:
@@ -10,8 +11,16 @@ Booking
     :show-inheritance:
 
 
+
+.. automodule:: booking.app
+    :members:
+    :undoc-members:
+    :inherited-members:
+    :show-inheritance:
+
+
 User
-----
+====
 .. automodule:: user.main
     :members:
     :undoc-members:
@@ -20,10 +29,9 @@ User
 
 
 Management
-----------
+==========
 .. automodule:: management.main
     :members:
     :undoc-members:
     :inherited-members:
     :show-inheritance:
-
