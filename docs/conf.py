@@ -40,9 +40,10 @@ version = "1.0"
 needs_sphinx = "3.0"
 extensions = [
     "sphinx.ext.autodoc",
-    "sphinx_click.ext",
     "sphinxcontrib.contentui",
-    "sphinx_copybutton",
+    'sphinx.ext.autosummary',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.viewcode',
 ]
 
 
