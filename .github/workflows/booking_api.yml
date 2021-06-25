@@ -21,7 +21,7 @@ jobs:
     - name: Install pip and tools
       run: |
         python3 -m pip install --upgrade pip
-        python3 -m pip install poetry virtualenv flake8 mypy pytest pytest-cov
+        python3 -m pip install poetry virtualenv flake8 mypy pytest pytest-cov requests
     - name: install booking API
       working-directory : ./APIs/booking
       run: |
