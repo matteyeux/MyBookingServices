@@ -1,3 +1,3 @@
-# Services
+# Booking API
 
-All microservices are here.
+This is the directory containing the code for the Booking API.
