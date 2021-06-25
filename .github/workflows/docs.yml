@@ -1,6 +1,11 @@
 name: docs
 
-on: [push]
+on:
+  # Trigger the docs build only on main
+  push:
+    branches:
+      - main
+      - develop
 
 jobs:
   build:
@@ -21,7 +26,7 @@ jobs:
     - name: Install pip dependencies
       run: |
         python3 -m pip install --upgrade pip
-        python3 -m pip install poetry 
+        python3 -m pip install poetry
 
     - name: Build documentation
       working-directory : ./docs
