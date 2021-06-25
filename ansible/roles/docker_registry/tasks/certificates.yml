@@ -15,22 +15,34 @@
     state: present
   when: "'managers' in group_names"
 
-- name : create private key
+- name : Create private key
   openssl_privatekey:
-    path: /etc/ssl/private/ansible.com.pem
+    path: /etc/ssl/private/registry.mybooking.services.pem
   when: "'managers' in group_names"
 
 - name: Generate an OpenSSL Certificate Signing Request
   openssl_csr:
-    path: /etc/ssl/csr/ansible.com.csr
-    privatekey_path: /etc/ssl/private/ansible.com.pem
+    path: /etc/ssl/csr/registry.mybooking.services.csr
+    privatekey_path: /etc/ssl/private/registry.mybooking.services.pem
     common_name: registry.my
   when: "'managers' in group_names"
 
 - name: Generate a Self Signed OpenSSL certificate
   openssl_certificate:
-    path: /etc/ssl/crt/ansible.com.crt
-    privatekey_path: /etc/ssl/private/ansible.com.pem
-    csr_path: /etc/ssl/csr/ansible.com.csr
+    path: /etc/ssl/crt/registry.mybooking.services.crt
+    privatekey_path: /etc/ssl/private/registry.mybooking.services.pem
+    csr_path: /etc/ssl/csr/registry.mybooking.services.csr
     provider: selfsigned
   when: "'managers' in group_names"
+
+- name: Grab generated cert to localhost
+  fetch:
+    src: /etc/ssl/crt/registry.mybooking.services.crt
+    dest: /tmp/registry.mybooking.services.crt
+    flat: true
+  when: "'managers' in group_names"
+
+- name: Export cert to other nodes
+  copy:
+    src: /tmp/registry.mybooking.services.crt
+    dest: /etc/ssl/private/
