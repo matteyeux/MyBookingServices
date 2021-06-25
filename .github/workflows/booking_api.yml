@@ -1,4 +1,4 @@
-name: docs
+name: Booking API
 
 on: [push]
 
