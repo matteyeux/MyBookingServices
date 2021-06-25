@@ -1,0 +1,7 @@
+sphinx
+sphinx-rtd-theme
+sphinx_click
+sphinxcontrib-contentui
+sphinx-copybutton
+recommonmark
+pydata-sphinx-theme

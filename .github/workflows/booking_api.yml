@@ -1,0 +1,50 @@
+name: Booking API
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        python-version: [3.8]
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+
+    - name: Install pip and tools
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install poetry virtualenv flake8 mypy pytest pytest-cov
+
+    - name: Install booking API
+      working-directory : ./APIs/booking
+      run: |
+        virtualenv -p python3 env
+        . env/bin/activate
+        poetry install
+
+    - name: Run linter tests
+      working-directory : ./APIs/booking
+      run: |
+        flake8
+
+    - name: Run unit tests
+      working-directory : ./APIs/booking
+      run: |
+        . env/bin/activate
+        python3 -m pip install requests
+        pytest -sv  --cov-report term-missing --cov=booking
+
+    - name: Build the booking API
+      working-directory : ./APIs/booking
+      if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+      run: |
+        . env/bin/activate
+        poetry build
