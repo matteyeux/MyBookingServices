@@ -1,2 +1,4 @@
 ---
 - include_tasks: certificates.yml
+
+- include_tasks: registry.yml
