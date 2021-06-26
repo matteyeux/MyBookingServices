@@ -7,6 +7,7 @@
       - rustc
       - libssl-dev
     update_cache: yes
+  when: "'managers' in group_names"
 
 - name: Install python-pyOpenSSL
   pip:
@@ -15,34 +16,41 @@
     state: present
   when: "'managers' in group_names"
 
+
+- name: "Creating multiple folders without disturbing previous permissions"
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: true
+  loop:
+  - /opt/registry/
+  - /opt/registry/certs/
+  - /opt/registry/data/
+  when: "'managers' in group_names"
+
 - name : Create private key
   openssl_privatekey:
-    path: /etc/ssl/private/registry.mybooking.services.pem
+    path: /opt/registry/certs/registry.mybooking.services.pem
   when: "'managers' in group_names"
 
 - name: Generate an OpenSSL Certificate Signing Request
   openssl_csr:
-    path: /etc/ssl/csr/registry.mybooking.services.csr
-    privatekey_path: /etc/ssl/private/registry.mybooking.services.pem
-    common_name: registry.my
+    path: /opt/registry/certs/registry.mybooking.services.csr
+    privatekey_path: /opt/registry/certs/registry.mybooking.services.pem
+    common_name: registry.gang
   when: "'managers' in group_names"
 
 - name: Generate a Self Signed OpenSSL certificate
   openssl_certificate:
-    path: /etc/ssl/crt/registry.mybooking.services.crt
-    privatekey_path: /etc/ssl/private/registry.mybooking.services.pem
-    csr_path: /etc/ssl/csr/registry.mybooking.services.csr
+    path: /opt/registry/certs/registry.mybooking.services.crt
+    privatekey_path: /opt/registry/certs/registry.mybooking.services.pem
+    csr_path: /opt/registry/certs/registry.mybooking.services.csr
     provider: selfsigned
   when: "'managers' in group_names"
 
 - name: Grab generated cert to localhost
   fetch:
-    src: /etc/ssl/crt/registry.mybooking.services.crt
+    src: /opt/registry/certs/registry.mybooking.services.crt
     dest: /tmp/registry.mybooking.services.crt
     flat: true
   when: "'managers' in group_names"
-
-- name: Export cert to other nodes
-  copy:
-    src: /tmp/registry.mybooking.services.crt
-    dest: /etc/ssl/private/
