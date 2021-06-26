@@ -39,6 +39,11 @@ t4ixoau0awjykj5x2kk4d466c     worker1    Ready     Active         Reachable     
 It should return the list of nodes. If not, it will return a error about Swarm.
 
 ### Docker Registry in Swarm
+
+Registry currently runs on VM1 (manager).
+
+#### Swarm service troubleshoot
+
 If `docker ps` does not return anything, make sure the service is running.
 
 In this case running `docker service ls` says there 0/1 replicas.
@@ -48,7 +53,8 @@ ID             NAME       MODE         REPLICAS   IMAGE        PORTS
 gogcitlcztug   registry   replicated   0/1        registry:2   *:5000->5000/tcp
 ```
 
-To troubleshoot you can run `docker service ps --no-trunc gogcitlcztug` it will print the error about this service. In this case, it's a typo.
+To troubleshoot you can run `docker service ps --no-trunc gogcitlcztug`. It will print the error about this service. As you can see, the error says it's a typo (s/certa/certs/).
+
 ```
 $ docker service ps --no-trunc gogcitlcztug
 ID                          NAME             IMAGE        NODE      DESIRED STATE   CURRENT STATE                      ERROR                                                                                          PORTS
