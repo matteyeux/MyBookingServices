@@ -37,7 +37,7 @@
   openssl_csr:
     path: /opt/registry/certs/registry.mybooking.services.csr
     privatekey_path: /opt/registry/certs/registry.mybooking.services.pem
-    common_name: registry.gang
+    common_name: registry.mybooking.services
   when: "'managers' in group_names"
 
 - name: Generate a Self Signed OpenSSL certificate
@@ -54,3 +54,14 @@
     dest: /tmp/registry.mybooking.services.crt
     flat: true
   when: "'managers' in group_names"
+
+- name: Create certs dir for registry for all members of the cluster
+  file:
+    path: "/etc/docker/certs.d/registry.mybooking.services:5000/"
+    state: directory
+    recurse: true
+
+- name: Export cert to all members of the cluster
+  copy:
+    src: /tmp/registry.mybooking.services.crt
+    dest: /etc/docker/certs.d/registry.mybooking.services:5000/registry.mybooking.services.crt
