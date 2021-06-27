@@ -36,3 +36,9 @@ The following APIs are included:
 
    APIs/apis
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Ansible
+   :glob:
+
+   ansible/ansible.md

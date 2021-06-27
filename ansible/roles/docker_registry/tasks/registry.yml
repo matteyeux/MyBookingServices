@@ -1,0 +1,29 @@
+---
+- name: Install python-pyOpenSSL
+  pip:
+    name:
+      - docker
+    state: present
+  when: "'managers' in group_names"
+
+- name: Create registry
+  docker_swarm_service:
+    name: registry
+    image: "registry:2"
+    state: present
+    mounts:
+      - source: /opt/registry/data
+        target: /var/lib/registry
+        type: bind
+      - source: /opt/registry/certs
+        target: /certs
+        type: bind
+    publish:
+      - published_port: 5000
+        target_port: 5000
+    env:
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/registry.mybooking.services.crt
+      REGISTRY_HTTP_TLS_KEY: /certs/registry.mybooking.services.pem
+      REGISTRY_HTTP_ADDR: 0.0.0.0:5000
+      # REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+  when: "'managers' in group_names"

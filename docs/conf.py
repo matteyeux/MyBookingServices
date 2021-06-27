@@ -33,6 +33,12 @@ for module in modules:
     # cd back to current dir
     os.chdir(current_path)
 
+print("copying ../ansible/README.md to ansible/main.md")
+with open("ansible/ansible.md", "w") as f:
+    readme = open("../ansible/README.md").readlines()[1:]
+    for line in readme:
+        f.write(line)
+
 
 version = "1.0"
 
