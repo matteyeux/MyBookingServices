@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - develop
+      - matteyeux/docs
 
 jobs:
   build:
@@ -26,14 +27,26 @@ jobs:
     - name: Install pip dependencies
       run: |
         python3 -m pip install --upgrade pip
-        python3 -m pip install poetry
+        python3 -m pip install poetry virtualenv
+
+    - name: Create shared virtualenv
+      working-directory : ./APIs
+      run: |
+        virtualenv -p python3 env
+
+    - name: Install booking API
+      working-directory : APIs/booking
+      run: |
+        . ../env/bin/activate
+        poetry install
 
     - name: Build documentation
       working-directory : ./docs
       run: |
+        . ../APIs/env/bin/activate
         pip3 install -r requirements.txt
         make html
-        rm -rf docs/build/doctrees
+        rm -rf build/doctrees
 
     - name: Archive docs
       uses: actions/upload-artifact@v2
