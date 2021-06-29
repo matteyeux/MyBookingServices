@@ -5,3 +5,4 @@ sphinxcontrib-contentui
 sphinx-copybutton
 recommonmark
 pydata-sphinx-theme
+diagrams

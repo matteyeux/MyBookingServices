@@ -3,18 +3,16 @@ import os
 import subprocess
 import sys
 
-from generate_architecture import generate_diagram
 from recommonmark.parser import CommonMarkParser
 
-sys.path.append(".")
 
 project = "MyBookingServices"
 copyright = "2021, Bombarman Gang"
 author = "Bombarman Gang"
 
-
-print("generating diagram...")
-generate_diagram()
+# for some reason I can't call it as python module
+print("Generating diagram...")
+subprocess.Popen(['python3', 'generate_architecture.py']).wait()
 
 # add APIs to path
 sys.path.append("../APIs/booking")

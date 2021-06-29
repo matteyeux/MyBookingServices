@@ -48,4 +48,7 @@ def generate_diagram() -> None:
                     app = Fastapi("API")
                     db = Mysql("Database")
                     ingress >> app >> db
-# generate_diagram()
+
+
+if __name__ == '__main__':
+    generate_diagram()
