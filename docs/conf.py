@@ -76,6 +76,7 @@ exclude_patterns = [
     "Makefile",
     "requirements.txt",
     "README.md",
+    "__pycache__",
 ]
 pygments_style = "colorful"
 
