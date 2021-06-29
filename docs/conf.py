@@ -5,6 +5,7 @@ import sys
 
 from generate_architecture import generate_diagram
 from recommonmark.parser import CommonMarkParser
+
 sys.path.append(".")
 
 project = "MyBookingServices"
