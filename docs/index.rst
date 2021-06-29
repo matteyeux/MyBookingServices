@@ -16,6 +16,10 @@ The following APIs are included:
 
 * ``Management API``: CRUD Hotel - Room - politique pricing
 
+
+.. image:: mybookingservices.png
+
+
 .. toctree::
    :maxdepth: 2
    :caption: General documentation
