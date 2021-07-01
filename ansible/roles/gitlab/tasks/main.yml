@@ -1,2 +1,4 @@
 ---
 - include_tasks: install_gitlab.yml
+
+- include_tasks: create_gitlab_user.yml

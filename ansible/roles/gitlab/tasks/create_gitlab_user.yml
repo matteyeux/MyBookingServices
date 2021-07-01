@@ -1,0 +1,24 @@
+---
+- name: "Install Gitlab python3 package"
+  pip:
+    name: python-gitlab
+    state: present
+
+
+- name: "Create GitLab User"
+  community.general.gitlab_user:
+    api_url: http://192.168.47.132
+    validate_certs: True
+    confirm: no
+    api_token: "n6uMuG3c7-nycnx9MgsW"
+    name: "{{ item.name }}"
+    username: "{{ item.name }}"
+    password: P@SSW0RD
+    email: "{{ item.name }}@etna-alternance.net" 
+    state: present 
+    access_level: owner
+  loop:
+    - { name: 'rinaz_a' }
+    - { name: 'maudui_t' }
+    - { name: 'rafina_d' }
+    - { name: 'beauco_j' }
