@@ -16,9 +16,11 @@
       - tzdata
     state: present
 
-- name: Install GitLab dependencies (Debian).
+- name: Install GitLab dependencies (Debian) and pip.
   apt:
-    name: gnupg2
+    name: 
+      - gnupg2
+      - python3-pip
     state: present
 
 - name: Download GitLab repository installation script.
