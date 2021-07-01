@@ -11,16 +11,6 @@
 - name: Install GitLab dependencies.
   package:
     name: 
-      - hello openssh-server
-      - hello openssh-server
-      - hello openssh-server
-      - hello openssh-server
-      - hello openssh-server
-      - hello openssh-server
-      - hello openssh-server
-      - hello openssh-server
-      - hello openssh-server
-      - hello openssh-server
       - postfix
       - curl
       - openssl
