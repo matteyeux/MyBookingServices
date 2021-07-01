@@ -26,7 +26,7 @@
 
 - name: Download GitLab repository installation script.
   get_url:
-    url: "https://packages.gitlab.com/install/repositories/gitlab/{{ gitlab_edition }}/script.deb.sh"
+    url: "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh"
     dest: /tmp/gitlab_install_repository.sh
     validate_certs: true
   when: not gitlab_file.stat.exists
@@ -43,7 +43,7 @@
 
 - name: Install GitLab
   package:
-    name: "{{ gitlab_package_name | default(gitlab_edition) }}"
+    name: "{{ gitlab_package_name | default(gitlab-ce) }}"
     state: present
   async: 300
   poll: 5
