@@ -36,15 +36,22 @@
   register: output
   when: not gitlab_file.stat.exists
 
-- name: Define the Gitlab package name.
-  set_fact:
-    gitlab_package_name: "gitlab-ce="
-  when: gitlab_version | default(false)
+  #- name: Define the Gitlab package name.
+  #set_fact:
+  #  gitlab_package_name: "gitlab-ce="
+  #when: gitlab_version | default(false)
 
 - name: Install GitLab
-  package:
-    name: "{{ gitlab_package_name | default(gitlab-ce) }}"
-    state: present
-  async: 300
-  poll: 5
-  when: not gitlab_file.stat.exists
+  apt:
+    update_cache: true
+    name:
+      - gitlab-ce
+  environment:
+    EXTERNAL_URL: 192.168.47.131
+  #package:
+    #name: "{{ gitlab_package_name | default(gitlab-ce) }}"
+    #  name: gitlab-ce
+    #state: present
+    #async: 300
+    #poll: 5
+    #when: not gitlab_file.stat.exists
