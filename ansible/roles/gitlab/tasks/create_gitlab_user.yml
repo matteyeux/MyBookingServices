@@ -4,18 +4,17 @@
     name: python-gitlab
     state: present
 
-
 - name: "Create GitLab User"
   community.general.gitlab_user:
-    api_url: http://192.168.47.132
+    api_url: http://192.168.92.139
     validate_certs: True
     confirm: no
-    api_token: "n6uMuG3c7-nycnx9MgsW"
+    api_token: "XSbysz-ktnoHE1qyi85W"
     name: "{{ item.name }}"
     username: "{{ item.name }}"
     password: P@SSW0RD
-    email: "{{ item.name }}@etna-alternance.net" 
-    state: present 
+    email: "{{ item.name }}@etna-alternance.net"
+    state: present
     access_level: owner
   loop:
     - { name: 'rinaz_a' }

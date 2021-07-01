@@ -7,10 +7,9 @@
   stat: path=/usr/bin/gitlab-ctl
   register: gitlab_file
 
-# Install GitLab and its dependencies.
 - name: Install GitLab dependencies.
   package:
-    name: 
+    name:
       - postfix
       - curl
       - openssl
@@ -21,7 +20,6 @@
   apt:
     name: gnupg2
     state: present
-  when: ansible_os_family == 'Debian'
 
 - name: Download GitLab repository installation script.
   get_url:
@@ -35,25 +33,13 @@
   register: output
   when: not gitlab_file.stat.exists
 
-  #- name: Define the Gitlab package name.
-  #set_fact:
-  #  gitlab_package_name: "gitlab-ce="
-  #when: gitlab_version | default(false)
-
 - name: Install GitLab
   apt:
     update_cache: true
     name:
       - gitlab-ce
   environment:
-    EXTERNAL_URL: 192.168.47.131
-  #package:
-    #name: "{{ gitlab_package_name | default(gitlab-ce) }}"
-    #  name: gitlab-ce
-    #state: present
-    #async: 300
-    #poll: 5
-    #when: not gitlab_file.stat.exists
+    EXTERNAL_URL: "http://gitlab.mybooking.services"
 
 - name: Restart Gitlab
   command: gitlab-ctl restart
