@@ -1,0 +1,6 @@
+---
+- include_tasks: install_gitlab.yml
+  when: "'worker2' in inventory_hostname"
+
+- include_tasks: create_gitlab_user.yml
+  when: "'worker2' in inventory_hostname"

@@ -7,5 +7,5 @@ ansible_become=true
 manager     instance_ip=172.16.233.21
 
 [workers]
-worker1     instance_ip=172.16.233.53
-worker2     instance_ip=172.16.233.100
+worker1     instance_ip=172.16.233.100
+worker2     instance_ip=172.16.233.53
