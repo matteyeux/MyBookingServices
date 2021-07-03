@@ -18,7 +18,7 @@
 
 - name: Install GitLab dependencies (Debian) and pip.
   apt:
-    name: 
+    name:
       - gnupg2
       - python3-pip
     state: present
@@ -42,6 +42,18 @@
       - gitlab-ce
   environment:
     EXTERNAL_URL: "http://gitlab.mybooking.services"
+    GITLAB_ROOT_PASSWORD: "EtnaGang"
 
 - name: Restart Gitlab
   command: gitlab-ctl restart
+  when: not gitlab_file.stat.exists
+
+- name: Show default root password
+  debug:
+    msg: "root password is : {{ gitlab_root_password }}"
+  when: not gitlab_file.stat.exists
+
+- name: Pause for 1 minute to wait for Gitlab server to cool down
+  pause:
+    minutes: 1
+  when: not gitlab_file.stat.exists
