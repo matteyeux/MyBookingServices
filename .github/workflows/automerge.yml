@@ -1,4 +1,4 @@
-name: Sync multiple branches
+name: Sync master with main
 on:
   push:
     branches:
