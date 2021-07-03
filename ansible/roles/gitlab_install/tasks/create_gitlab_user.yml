@@ -4,12 +4,12 @@
     name: python-gitlab
     state: present
 
-- name: "Create GitLab User"
+- name: "Create GitLab Users"
   community.general.gitlab_user:
     api_url: "http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
     validate_certs: True
     confirm: no
-    api_token: "XSbysz-ktnoHE1qyi85W"
+    api_token: "kT5brsmxjwYKLo54CPC1"
     name: "{{ item.name }}"
     username: "{{ item.name }}"
     password: P@SSW0RD
