@@ -1,4 +1,4 @@
 ---
 - hosts: "all"
   roles:
-    - { role: gitlab_install,   tags: ['gitlab'] }
+    - { role: gitlab_install,  tags: ['gitlab'], when: "'worker2' in inventory_hostname" }
