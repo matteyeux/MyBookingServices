@@ -9,9 +9,9 @@
 - name: Check if Docker Swarm is already initialized
   shell: docker info
   register: swarm_info
-  when: "'managers' in group_names"
+  when: "inventory_hostname == groups['managers'][0]"
 
-- name: Setup Docker Swarm manager 
+- name: Setup Docker Swarm manager
   shell: >
         docker swarm init
         --advertise-addr={{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2377
@@ -21,8 +21,8 @@
 - name: Get the Manager join-token
   shell: docker swarm join-token --quiet manager
   register: manager_token
-  when: "'manager' in inventory_hostname"
+  when: "'managers' in group_names"
 
 - name: Make nodes join the cluster
-  shell: "docker swarm join --token {{ hostvars['manager']['manager_token']['stdout'] }} {{ hostvars['manager']['ansible_default_ipv4']['address'] }}:2377"
+  shell: "docker swarm join --token {{ hostvars[groups['managers'][0]]['manager_token']['stdout'] }} {{ hostvars[groups['managers'][0]]['ansible_default_ipv4']['address'] }}:2377"
   when: "'workers' in group_names"
