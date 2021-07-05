@@ -14,10 +14,11 @@
     username: "{{ item.name }}"
     password: P@SSW0RD
     email: "{{ item.name }}@etna-alternance.net"
-    state: present
+    state: blocked
     access_level: owner
   loop:
     - { name: 'rinaz_a' }
     - { name: 'maudui_t' }
     - { name: 'rafina_d' }
     - { name: 'beauco_j' }
+  tags: users

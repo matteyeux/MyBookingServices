@@ -1,4 +1,10 @@
 ---
 - include_tasks: install_gitlab.yml
+  tags:
+  - never
+  - install
 
 - include_tasks: create_gitlab_user.yml
+  tags:
+  - never
+  - users
