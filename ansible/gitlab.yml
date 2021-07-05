@@ -3,4 +3,8 @@
   vars_files:
     - vars/gitlab.yml
   roles:
-    - { role: gitlab_install,  tags: ['gitlab_install'], when: "'worker2' in inventory_hostname" }
+    - role: gitlab_install
+      tags:
+      - install
+      - users
+      when: "'worker2' in inventory_hostname"
