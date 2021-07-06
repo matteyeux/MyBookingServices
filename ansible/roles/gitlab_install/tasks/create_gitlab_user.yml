@@ -9,7 +9,7 @@
     api_url: "http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
     validate_certs: True
     confirm: no
-    api_token: "kT5brsmxjwYKLo54CPC1"
+    api_token: "{{ gitlab_api_token_etna }}"
     name: "{{ item.name }}"
     username: "{{ item.name }}"
     password: "{{ gitlab_teacher_password }}"
