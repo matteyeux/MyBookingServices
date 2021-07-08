@@ -41,7 +41,7 @@
 
 - name: Add the user mathieu to the docker group
   ansible.builtin.user:
-    name: mathieu
+    name: alex
     groups: docker
     append: yes
 
