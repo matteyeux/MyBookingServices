@@ -9,7 +9,6 @@
     name: "{{ item.name }}"
     tag: latest
     source: pull
-  when: "inventory_hostname == groups['workers'][0]"
   loop:
     - { name: 'telegraf' }
     - { name: 'influxdb' }
@@ -28,4 +27,3 @@
     - { name: 'influxdb' }
     - { name: 'chronograf' }
     - { name: 'kapacitor' }
-  when: "inventory_hostname == groups['workers'][0]"
