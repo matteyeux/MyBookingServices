@@ -30,4 +30,4 @@
 
 - name: Make nodes join the cluster
   shell: "docker swarm join --token {{ hostvars['manager']['manager_token']['stdout'] }} {{ hostvars['manager']['ansible_default_ipv4']['address'] }}:2377"
-  when: "'workers' in group_names" and 'Swarm: inactive' in swarm_info.stdout"
+  when: "'workers' in group_names and 'Swarm: inactive' in swarm_info.stdout"
