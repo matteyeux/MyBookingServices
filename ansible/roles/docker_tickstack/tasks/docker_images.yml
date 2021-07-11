@@ -27,3 +27,13 @@
     - { name: 'influxdb' }
     - { name: 'chronograf' }
     - { name: 'kapacitor' }
+
+- name: Remove Docker Hub images
+  community.docker.docker_image:
+    state: absent
+    name: "{{ item.name }}"
+  loop:
+    - { name: 'telegraf' }
+    - { name: 'influxdb' }
+    - { name: 'chronograf' }
+    - { name: 'kapacitor' }
