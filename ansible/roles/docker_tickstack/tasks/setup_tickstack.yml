@@ -9,14 +9,20 @@
     src: data/telegraf.conf
     dest: /tmp/telegraf.conf
 
-- name: Install telegraf
+- name: Create telegraf config
+  docker_config:
+    name: telegraf_conf
+    data: "{{ lookup('file', 'data/telegraf.conf') }}"
+    state: present
+
+- name: Setup telegraf service
   docker_swarm_service:
     name: telegraf
     image: "registry.mybooking.services:5000/telegraf:v1"
     state: present
     configs:
-      - config_name: telegraf.conf
-        filename: "/tmp/telegraf.conf"
+      - config_name: telegraf_conf
+        filename: "/etc/telegraf/telegraf.conf"
 
     publish:
       - published_port: 8186
