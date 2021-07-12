@@ -1,67 +1,79 @@
-version: '3'
-services:
-  influxdb:
-    # Full tag list: https://hub.docker.com/r/library/influxdb/tags/
-    image: "influxdb"
-    volumes:
-      # Mount for influxdb data directory
-      - /var/lib/influxdb/:/var/lib/influxdb
-      # Mount for influxdb configuration
-      - /etc/influxdb/:/etc/influxdb/
-    ports:
-      # The API for InfluxDB is served on port 8086
-      - "8086:8086"
-      - "8082:8082"
-      # UDP Port
-      - "8089:8089/udp"
+version: "3.3"
 
+services:
   telegraf:
-    # Full tag list: https://hub.docker.com/r/library/telegraf/tags/
-    image: "telegraf"
-    environment:
-      HOSTNAME: "telegraf-box"
-    # Telegraf requires network access to InfluxDB
-    links:
-      - influxdb
+    image: telegraf:latest
+    networks:
+      - tick-net
     volumes:
-      # Mount for telegraf configuration
-      - /etc/telegraf/:/etc/telegraf/
-      # Mount for Docker API access
       - /var/run/docker.sock:/var/run/docker.sock
+    configs:
+      - source: telegraf-config
+        target: /etc/telegraf/telegraf.conf
+    deploy:
+      restart_policy:
+        condition: on-failure
+      mode: global
     depends_on:
+      - influxdb
+
+  influxdb:
+    image: influxdb:1.7.11
+    networks:
+      - tick-net
+    ports:
+      - "8086:8086"
+    configs:
+      - source: kapacitor-config
+        target: /etc/kapacitor/kapacitor.conf
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.role == manager
+
+  chronograf:
+    image: chronograf:latest
+    networks:
+      - tick-net
+    ports:
+      - "8888:8888"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.role == manager
+    depends_on:
+      - kapacitor
       - influxdb
 
   kapacitor:
-  # Full tag list: https://hub.docker.com/r/library/kapacitor/tags/
-    image: "kapacitor"
-    volumes:
-      # Mount for kapacitor data directory
-      - /var/lib/kapacitor/:/var/lib/kapacitor
-      # Mount for kapacitor configuration
-      - /etc/kapacitor/:/etc/kapacitor/
-    # Kapacitor requires network access to Influxdb
-    links:
-      - influxdb
+    image: kapacitor:1.5.3
+    networks:
+      - tick-net
+    configs:
+      - source: kapacitor-config
+        target: /etc/kapacitor/kapacitor.conf
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.role == manager
     ports:
-      # The API for Kapacitor is served on port 9092
       - "9092:9092"
-
-  chronograf:
-    # Full tag list: https://hub.docker.com/r/library/chronograf/tags/
-    image: "chronograf"
-    environment:
-      RESOURCES_PATH: "/usr/share/chronograf/resources"
-    volumes:
-      # Mount for chronograf database
-      - /var/lib/chronograf/:/var/lib/chronograf/
-    links:
-      # Chronograf requires network access to InfluxDB and Kapacitor
-      - influxdb
-      - kapacitor
-    ports:
-      # The WebUI for Chronograf is served on port 8888
-      - "8888:8888"
     depends_on:
-      - kapacitor
       - influxdb
-      - telegraf
+
+configs:
+  telegraf-config:
+    file: /etc/telegraf/telegraf.conf
+  kapacitor-config:
+    file: /etc/kapacitor/kapacitor.conf
+  influx-config:
+    file: /etc/influxdb/influxdb.conf
+
+networks:
+  tick-net:
