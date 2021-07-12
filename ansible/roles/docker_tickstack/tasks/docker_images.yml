@@ -4,36 +4,36 @@
     name: python3-docker
     state: present
 
-- name: Pull docker images from Docker Hub
-  docker_image:
-    name: "{{ item.name }}"
-    tag: latest
-    source: pull
-  loop:
-    - { name: 'telegraf' }
-    - { name: 'influxdb' }
-    - { name: 'chronograf' }
-    - { name: 'kapacitor' }
-
-- name: Push docker images to registry.mybooking.services
-  docker_image:
-    name: "{{ item.name }}"
-    repository: "registry.mybooking.services:5000/{{ item.name }}:v1"
-    tag: latest
-    push: yes
-    source: local
-  loop:
-    - { name: 'telegraf' }
-    - { name: 'influxdb' }
-    - { name: 'chronograf' }
-    - { name: 'kapacitor' }
-
-- name: Remove Docker Hub images
-  community.docker.docker_image:
-    state: absent
-    name: "{{ item.name }}"
-  loop:
-    - { name: 'telegraf' }
-    - { name: 'influxdb' }
-    - { name: 'chronograf' }
-    - { name: 'kapacitor' }
+#- name: Pull docker images from Docker Hub
+#  docker_image:
+#    name: "{{ item.name }}"
+#    tag: latest
+#    source: pull
+#  loop:
+#    - { name: 'telegraf' }
+#    - { name: 'influxdb' }
+#    - { name: 'chronograf' }
+#    - { name: 'kapacitor' }
+#
+#- name: Push docker images to registry.mybooking.services
+#  docker_image:
+#    name: "{{ item.name }}"
+#    repository: "registry.mybooking.services:5000/{{ item.name }}:v1"
+#    tag: latest
+#    push: yes
+#    source: local
+#  loop:
+#    - { name: 'telegraf' }
+#    - { name: 'influxdb' }
+#    - { name: 'chronograf' }
+#    - { name: 'kapacitor' }
+#
+#- name: Remove Docker Hub images
+#  community.docker.docker_image:
+#    state: absent
+#    name: "{{ item.name }}"
+#  loop:
+#    - { name: 'telegraf' }
+#    - { name: 'influxdb' }
+#    - { name: 'chronograf' }
+#    - { name: 'kapacitor' }

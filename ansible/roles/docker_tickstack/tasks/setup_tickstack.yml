@@ -4,26 +4,65 @@
     name: python3-docker
     state: present
 
-- name: Copy telegraf.conf to /tmp on {{ inventory_hostname }}
+- name: Install pip dependancies
+  pip:
+    name:
+      - jsondiff
+      - pyyaml
+      - docker-compose
+
+
+- name: Create {{ item.name }} data directory {{ inventory_hostname }}
+  file:
+    path: "/var/lib/{{ item.name }}"
+    state: directory
+  loop:
+    - { name: 'chronograf' }
+    - { name: 'influxdb' }
+    - { name: 'kapacitor' }
+
+
+- name: Create {{ item.name }} conf directory {{ inventory_hostname }}
+  file:
+    path: "/etc/{{ item.name }}"
+    state: directory
+  loop:
+    - { name: 'telegraf' }
+    - { name: 'influxdb' }
+    - { name: 'kapacitor' }
+
+- name: "Copy {{ item.name }} to /tmp on {{ inventory_hostname }}"
   copy:
-    src: data/telegraf.conf
-    dest: /tmp/telegraf.conf
+    src: "data/tick/{{ item.name }}.conf"
+    dest: "/etc/{{ item.name }}/{{ item.name }}.conf"
+  loop:
+    - { name: 'telegraf' }
+    - { name: 'influxdb' }
+    - { name: 'kapacitor' }
 
-- name: Create telegraf config
-  docker_config:
-    name: telegraf_conf
-    data: "{{ lookup('file', 'data/telegraf.conf') }}"
-    state: present
+- name: Copy docker-compose to /tmp on {{ inventory_hostname }}
+  copy:
+    src: data/tick/docker-compose.yml
+    dest: /tmp/docker-compose.yml
 
-- name: Setup telegraf service
-  docker_swarm_service:
-    name: telegraf
-    image: "registry.mybooking.services:5000/telegraf:v1"
-    state: present
-    configs:
-      - config_name: telegraf_conf
-        filename: "/etc/telegraf/telegraf.conf"
+- name: Deploy stack from a compose file
+  community.docker.docker_stack:
+    state: absent
+    name: tickstack
+    compose:
+      - /tmp/docker-compose.yml
 
-    publish:
-      - published_port: 8186
-        target_port: 8186
+#- name: Deploy stack from a compose file
+#  community.docker.docker_stack:
+#    state: present
+#    name: tickstack
+#    compose:
+#      - /tmp/docker-compose.yml
+
+- name: Clone a repo with separate git directory
+  ansible.builtin.git:
+    repo: https://github.com/influxdata/sandbox
+    dest: /tmp/sandbox
+
+- name: do something
+  shell: /bin/bash /tmp/sandox/sandbox up
