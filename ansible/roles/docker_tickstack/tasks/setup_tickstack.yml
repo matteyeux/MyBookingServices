@@ -11,8 +11,7 @@
       - pyyaml
       - docker-compose
 
-
-- name: Create {{ item.name }} data directory {{ inventory_hostname }}
+- name: Create data directories for the TICK stack
   file:
     path: "/var/lib/{{ item.name }}"
     state: directory
@@ -21,8 +20,7 @@
     - { name: 'influxdb' }
     - { name: 'kapacitor' }
 
-
-- name: Create {{ item.name }} conf directory {{ inventory_hostname }}
+- name: Create config directories for the TICK stack
   file:
     path: "/etc/{{ item.name }}"
     state: directory
@@ -31,7 +29,7 @@
     - { name: 'influxdb' }
     - { name: 'kapacitor' }
 
-- name: "Copy {{ item.name }} to /tmp on {{ inventory_hostname }}"
+- name: Copy config files to /tmp for the TICK stack
   copy:
     src: "data/tick/{{ item.name }}.conf"
     dest: "/etc/{{ item.name }}/{{ item.name }}.conf"
@@ -40,29 +38,14 @@
     - { name: 'influxdb' }
     - { name: 'kapacitor' }
 
-- name: Copy docker-compose to /tmp on {{ inventory_hostname }}
+- name: Copy docker-compose to /tmp
   copy:
     src: data/tick/docker-compose.yml
     dest: /tmp/docker-compose.yml
 
 - name: Deploy stack from a compose file
   community.docker.docker_stack:
-    state: absent
+    state: present
     name: tickstack
     compose:
       - /tmp/docker-compose.yml
-
-#- name: Deploy stack from a compose file
-#  community.docker.docker_stack:
-#    state: present
-#    name: tickstack
-#    compose:
-#      - /tmp/docker-compose.yml
-
-- name: Clone a repo with separate git directory
-  ansible.builtin.git:
-    repo: https://github.com/influxdata/sandbox
-    dest: /tmp/sandbox
-
-- name: do something
-  shell: /bin/bash /tmp/sandox/sandbox up
