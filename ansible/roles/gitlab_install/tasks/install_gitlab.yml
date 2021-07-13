@@ -43,6 +43,7 @@
   environment:
     EXTERNAL_URL: "http://gitlab.mybooking.services"
     GITLAB_ROOT_PASSWORD: " {{ gitlab_root_password }} "
+  when: not gitlab_file.stat.exists
 
 - name: Restart Gitlab
   command: gitlab-ctl restart
