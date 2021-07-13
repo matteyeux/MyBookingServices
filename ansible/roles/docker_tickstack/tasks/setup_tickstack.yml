@@ -43,9 +43,24 @@
     src: data/tick/docker-compose.yml
     dest: /tmp/docker-compose.yml
 
-- name: Deploy stack from a compose file
-  community.docker.docker_stack:
-    state: present
-    name: tickstack
-    compose:
-      - /tmp/docker-compose.yml
+# - name: Deploy stack from a compose file
+#   community.docker.docker_stack:
+#     state: present
+#     name: tickstack
+#     compose:
+#       - /tmp/docker-compose.yml
+
+# - name: Create config files
+#   docker_config:
+#     name: "{{ item.name }}_config"
+#     #data: "{{ lookup('file', '/etc/{{ item.name }}/{{ item.name }}.conf') }}"
+#     data: "{{ lookup('file', 'data/tick/{{ item.name }}.conf') }}"
+#     state: present
+#   loop:
+#     - { name: 'telegraf' }
+#     - { name: 'influxdb' }
+#     - { name: 'kapacitor' }
+
+# - name: Create a network
+#   docker_network:
+#     name: "tick_network"

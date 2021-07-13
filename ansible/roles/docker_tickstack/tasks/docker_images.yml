@@ -6,34 +6,36 @@
 
 - name: Pull docker images from Docker Hub
   docker_image:
-    name: "{{ item.name }}"
-    tag: latest
+    name: "{{ item }}"
+    #tag: latest
     source: pull
-  loop:
-    - { name: 'telegraf' }
-    - { name: 'influxdb' }
-    - { name: 'chronograf' }
-    - { name: 'kapacitor' }
+  with_items:
+    - "{{ telegraf_source_image }}"
+    - "{{ influxdb_source_image }}"
+    - "{{ chronograf_source_image }}"
+    - "{{ kapacitor_source_image }}"
+
 
 - name: Push docker images to registry.mybooking.services
   docker_image:
     name: "{{ item.name }}"
-    repository: "registry.mybooking.services:5000/{{ item.name }}:v1"
-    tag: latest
+    repository: "{{ registry }}/{{ item.target_name }}"
+    tag: "{{ item.source_tag }}"
     push: yes
     source: local
   loop:
-    - { name: 'telegraf' }
-    - { name: 'influxdb' }
-    - { name: 'chronograf' }
-    - { name: 'kapacitor' }
+    - { name: 'telegraf', source_tag: 'latest', target_name: "{{ telegraf_booking_image }}" }
+    - { name: 'influxdb', source_tag: '1.8.6', target_name: "{{ influxdb_booking_image }}" }
+    - { name: 'chronograf', source_tag: 'latest', target_name: "{{ chronograf_booking_image }}" }
+    - { name: 'kapacitor', source_tag: 'latest', target_name: "{{ kapacitor_booking_image }}" }
 
-- name: Remove Docker Hub images
-  community.docker.docker_image:
+
+- name: Remove Docker Hub images from host
+  docker_image:
     state: absent
-    name: "{{ item.name }}"
-  loop:
-    - { name: 'telegraf' }
-    - { name: 'influxdb' }
-    - { name: 'chronograf' }
-    - { name: 'kapacitor' }
+    name: "{{ item }}"
+  with_items:
+    - "{{ telegraf_source_image }}"
+    - "{{ influxdb_source_image }}"
+    - "{{ chronograf_source_image }}"
+    - "{{ kapacitor_source_image }}"
