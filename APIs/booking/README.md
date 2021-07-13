@@ -17,7 +17,7 @@ Use `poetry` to instal dependencies (`poetry install`). You should be ready to w
 
 Setup MySQL container : `docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -d mysql`.
 
-Test connexion :
+Test connection :
 ```
 λ ~ » mysql --host=127.0.0.1 -P 3306 -u root -p
 Enter password:
