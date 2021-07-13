@@ -35,3 +35,23 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 mysql>
 ```
+
+### Tests
+
+Tests are run by Github Actions but you can run them localy :
+```
+λ pytest -sv  --cov-report term-missing --cov=booking
+
+tests/test_app.py::test_read_root PASSED
+
+----------- coverage: platform linux, python 3.9.5-final-0 -----------
+Name                       Stmts   Miss  Cover   Missing
+--------------------------------------------------------
+booking/__init__.py            0      0   100%
+booking/app.py                 8      0   100%
+booking/book.py                4      4     0%   1-7
+booking/main.py               17     17     0%   2-60
+booking/routers/users.py      11      3    73%   9, 14, 19
+--------------------------------------------------------
+TOTAL                         40     24    40%
+```
