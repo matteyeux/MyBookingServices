@@ -1,0 +1,66 @@
+---
+- name: Install python3-docker
+  apt:
+    name: python3-docker
+    state: present
+
+- name: Install pip dependancies
+  pip:
+    name:
+      - jsondiff
+      - pyyaml
+      - docker-compose
+
+- name: Create data directories for the TICK stack
+  file:
+    path: "/var/lib/{{ item.name }}"
+    state: directory
+  loop:
+    - { name: 'chronograf' }
+    - { name: 'influxdb' }
+    - { name: 'kapacitor' }
+
+- name: Create config directories for the TICK stack
+  file:
+    path: "/etc/{{ item.name }}"
+    state: directory
+  loop:
+    - { name: 'telegraf' }
+    - { name: 'influxdb' }
+    - { name: 'kapacitor' }
+
+- name: Copy config files to /tmp for the TICK stack
+  copy:
+    src: "data/tick/{{ item.name }}.conf"
+    dest: "/etc/{{ item.name }}/{{ item.name }}.conf"
+  loop:
+    - { name: 'telegraf' }
+    - { name: 'influxdb' }
+    - { name: 'kapacitor' }
+
+- name: Copy docker-compose to /tmp
+  copy:
+    src: data/tick/docker-compose.yml
+    dest: /tmp/docker-compose.yml
+
+# - name: Deploy stack from a compose file
+#   community.docker.docker_stack:
+#     state: present
+#     name: tickstack
+#     compose:
+#       - /tmp/docker-compose.yml
+
+# - name: Create config files
+#   docker_config:
+#     name: "{{ item.name }}_config"
+#     #data: "{{ lookup('file', '/etc/{{ item.name }}/{{ item.name }}.conf') }}"
+#     data: "{{ lookup('file', 'data/tick/{{ item.name }}.conf') }}"
+#     state: present
+#   loop:
+#     - { name: 'telegraf' }
+#     - { name: 'influxdb' }
+#     - { name: 'kapacitor' }
+
+# - name: Create a network
+#   docker_network:
+#     name: "tick_network"

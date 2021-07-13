@@ -1,0 +1,9 @@
+---
+- include_tasks: docker_images.yml
+  when: "inventory_hostname == groups['workers'][0]"
+
+- include_tasks: setup_tickstack.yml
+  when: "inventory_hostname == groups['workers'][0]"
+
+- include_tasks: deploy_tickstack.yml
+  when: "inventory_hostname == groups['workers'][0]"

@@ -1,0 +1,83 @@
+- name: Deploy tick stack from compose file
+  docker_stack:
+    state: present
+    name: tickstack
+    compose:
+      - version: '3.3'
+        services:
+          telegraf:
+            image: "{{ registry }}/{{ telegraf_booking_image }}"
+            networks:
+              - tick_network
+            volumes:
+              - /var/run/docker.sock:/var/run/docker.sock
+            configs:
+              - source: telegraf_config
+                target: /etc/telegraf/telegraf.conf
+            deploy:
+              restart_policy:
+                condition: on-failure
+              mode: global
+            depends_on:
+              - influxdb
+
+          influxdb:
+            image: "{{ registry }}/{{ influxdb_booking_image }}"
+            networks:
+              - tick_network
+            ports:
+              - "8086:8086"
+            configs:
+              - source: kapacitor_config
+                target: /etc/kapacitor/kapacitor.conf
+            deploy:
+              restart_policy:
+                condition: on-failure
+              placement:
+                constraints:
+                  - node.role == manager
+
+          chronograf:
+            image: "{{ registry }}/{{ chronograf_booking_image }}"
+            networks:
+              - tick_network
+            ports:
+              - "8888:8888"
+            deploy:
+              restart_policy:
+                condition: on-failure
+              placement:
+                constraints:
+                  - node.role == manager
+            depends_on:
+              - kapacitor
+              - influxdb
+
+          kapacitor:
+            image: "{{ registry }}/{{ kapacitor_booking_image }}" #1.5.3
+            networks:
+              - tick_network
+            configs:
+              - source: kapacitor_config
+                target: /etc/kapacitor/kapacitor.conf
+            deploy:
+              restart_policy:
+                condition: on-failure
+              placement:
+                constraints:
+                  - node.role == manager
+            ports:
+              - "9092:9092"
+            depends_on:
+              - influxdb
+
+        configs:
+          telegraf_config:
+            file: /etc/telegraf/telegraf.conf
+          kapacitor_config:
+            file: /etc/kapacitor/kapacitor.conf
+          influx_config:
+            file: /etc/influxdb/influxdb.conf
+
+        networks:
+          tick_network:

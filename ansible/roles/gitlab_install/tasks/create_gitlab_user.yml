@@ -9,10 +9,10 @@
     api_url: "http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
     validate_certs: True
     confirm: no
-    api_token: "kT5brsmxjwYKLo54CPC1"
+    api_token: "{{ gitlab_api_token_etna }}"
     name: "{{ item.name }}"
     username: "{{ item.name }}"
-    password: P@SSW0RD
+    password: "{{ gitlab_teacher_password }}"
     email: "{{ item.name }}@etna-alternance.net"
     state: blocked
     access_level: owner

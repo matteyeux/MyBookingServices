@@ -1,0 +1,79 @@
+version: "3.3"
+
+services:
+  telegraf:
+    image: registry.mybooking.services:5000/telegraf:v1
+    networks:
+      - tick-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    configs:
+      - source: telegraf-config
+        target: /etc/telegraf/telegraf.conf
+    deploy:
+      restart_policy:
+        condition: on-failure
+      mode: global
+    depends_on:
+      - influxdb
+
+  influxdb:
+    image: registry.mybooking.services:5000/influxdb:v1
+    networks:
+      - tick-net
+    ports:
+      - "8086:8086"
+    configs:
+      - source: kapacitor-config
+        target: /etc/kapacitor/kapacitor.conf
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.role == manager
+
+  chronograf:
+    image: registry.mybooking.services:5000/chronograf:v1
+    networks:
+      - tick-net
+    ports:
+      - "8888:8888"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.role == manager
+    depends_on:
+      - kapacitor
+      - influxdb
+
+  kapacitor:
+    image: registry.mybooking.services:5000/kapacitor:v1 #1.5.3
+    networks:
+      - tick-net
+    configs:
+      - source: kapacitor-config
+        target: /etc/kapacitor/kapacitor.conf
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+      - "9092:9092"
+    depends_on:
+      - influxdb
+
+configs:
+  telegraf-config:
+    file: /etc/telegraf/telegraf.conf
+  kapacitor-config:
+    file: /etc/kapacitor/kapacitor.conf
+  influx-config:
+    file: /etc/influxdb/influxdb.conf
+
+networks:
+  tick-net:

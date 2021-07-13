@@ -1,0 +1,12 @@
+registry: "registry.mybooking.services:5000"
+
+telegraf_source_image: "telegraf:latest"
+influxdb_source_image: "influxdb:1.7.11"
+chronograf_source_image: "chronograf:latest"
+kapacitor_source_image: "kapacitor:latest"
+
+
+telegraf_booking_image: "telegraf:v1"
+influxdb_booking_image: "influxdb:v1"
+chronograf_booking_image: "chronograf:v1"
+kapacitor_booking_image: "kapacitor:v1"

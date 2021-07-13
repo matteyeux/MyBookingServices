@@ -23,6 +23,11 @@
   register: manager_token
   when: "'managers' in group_names"
 
+- name: Check if Docker Swarm is already initialized
+  shell: docker info
+  register: swarm_info
+  when: "'workers' in group_names"
+
 - name: Make nodes join the cluster
   shell: "docker swarm join --token {{ hostvars[groups['managers'][0]]['manager_token']['stdout'] }} {{ hostvars[groups['managers'][0]]['ansible_default_ipv4']['address'] }}:2377"
   when: "'workers' in group_names"
