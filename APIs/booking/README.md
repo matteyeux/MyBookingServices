@@ -3,17 +3,17 @@
 This is the directory containing the code for the Booking API.
 
 
-### Setup dev environment
+## Setup dev environment
 
 This is a
 
-##### booking API
+### booking API
 
 Install `poetry` and `virtualenv`.
 
 Use `poetry` to instal dependencies (`poetry install`). You should be ready to work.
 
-##### MySQL
+### MySQL
 
 Setup MySQL container : `docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -d mysql`.
 
