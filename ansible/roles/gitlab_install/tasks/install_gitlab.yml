@@ -42,7 +42,7 @@
       - gitlab-ce
   environment:
     EXTERNAL_URL: "http://gitlab.mybooking.services"
-    GITLAB_ROOT_PASSWORD: "EtnaGang"
+    GITLAB_ROOT_PASSWORD: " {{ gitlab_root_password }} "
 
 - name: Restart Gitlab
   command: gitlab-ctl restart
