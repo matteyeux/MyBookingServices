@@ -18,15 +18,24 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_DATABASE: mybookingservices
-          MYSQL_USER:
-          MYSQL_PASSWORD: password
-          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_USER: etna
+          MYSQL_PASSWORD: etna
+          MYSQL_ROOT_PASSWORD: root
         ports:
           - 33306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
     - uses: actions/checkout@v1
+
+    - name: Install MySQL client
+      run: sudo apt-get install mysql-client
+
+    - name: Insert one line in database
+      run: |
+        mysql --host=127.0.0.1 -p mybookingservices -P 3306 -u etna -p"etna" \
+        -e"insert into rooms (roomType, capacity, price, booked, created_on, updated_on) \
+        VALUES (1, 3, 5.4, 1, NOW(), NOW());"
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
