@@ -11,8 +11,10 @@ async def get_room_info_by_id(room_id: int = 0):
     if room_id <= 0:
         return None
     db = Database(
-        user="root", password="root",
-        host="localhost", database="mydb",
+        user="etna",
+        password="etna",
+        host="localhost",
+        database="mybookingservices",
     )
     return {"room_id": db.get_room_by_id(room_id)}
 
@@ -23,7 +25,9 @@ async def get_all_rooms():
     for the moment we just grab all rooms.
     """
     db = Database(
-        user="root", password="root",
-        host="localhost", database="mydb",
+        user="etna",
+        password="etna",
+        host="localhost",
+        database="mybookingservices",
     )
     return {"rooms": db.get_rooms()}

@@ -57,14 +57,15 @@ class Database:
                 "created_on",
                 DateTime,
                 nullable=False,
-                default=datetime.now,
+                default=datetime.now(),
+                onupdate=datetime.now(),
             ),
             Column(
                 "updated_on",
                 DateTime,
                 nullable=False,
-                default=datetime.now,
-                onupdate=datetime.now,
+                default=datetime.now(),
+                onupdate=datetime.now(),
             ),
         )
         meta.create_all(self.engine)
