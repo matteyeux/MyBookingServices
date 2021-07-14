@@ -22,12 +22,12 @@ class RoomsEnum(enum.Enum):
 class Database:
     """Database class is used to handle requests to our database.
     You can call it and specify some parameters ::
-            >>> from database import Database
-            >>> db = Database(user="matteyeux", password="pass",
-                              host="localhost", database="mydb")
-            >>> db.db_string
-            'mysql+pymysql://matteyeux:pass@localhost/mydb'
-            >>>
+        >>> from database import Database
+        >>> db = Database(user="matteyeux", password="pass",
+            host="localhost", database="mydb")
+        >>> db.db_string
+        'mysql+pymysql://matteyeux:pass@localhost/mydb'
+        >>>
     """
 
     def __init__(
