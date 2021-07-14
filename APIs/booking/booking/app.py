@@ -1,11 +1,10 @@
 """Main app module to initialize the FastAPI framework."""
-# from typing import Optional
 from booking.routers import book
-from booking.routers import users
+from booking.routers import rooms
 from fastapi import FastAPI
 
 app = FastAPI()
-app.include_router(users.router, tags=["users"])
+app.include_router(rooms.router, tags=["rooms"])
 app.include_router(book.router, tags=["book"])
 
 
