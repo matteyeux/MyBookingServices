@@ -11,4 +11,4 @@ app.include_router(book.router, tags=["book"])
 @app.get("/")
 def read_root():
     """Default root."""
-    return {"message": "MyBookingServices"}
+    return {"message": "Welcome to MyBookingServices"}
