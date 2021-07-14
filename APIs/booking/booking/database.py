@@ -75,9 +75,7 @@ class Database:
         table = self.setup_rooms_table()
         query = table.select()
 
-        x = self.engine.connect().execute(query).all()
-        print(f"lol : {type(x)}")
-        return x
+        return self.engine.connect().execute(query).all()
 
     def get_room_by_id(
         self,
