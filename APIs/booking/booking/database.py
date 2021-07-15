@@ -86,3 +86,12 @@ class Database:
         table = self.setup_rooms_table()
         query = table.select().where(table.c.id == room_id)
         return self.engine.connect().execute(query).all()
+
+    def get_available_rooms(
+        self,
+        room_id: int = 1,
+    ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
+        """Create user."""
+        table = self.setup_rooms_table()
+        query = table.select().where(table.c.booked is False)
+        return self.engine.connect().execute(query).all()
