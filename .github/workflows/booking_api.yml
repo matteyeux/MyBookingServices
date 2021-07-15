@@ -63,6 +63,7 @@ jobs:
       run: |
         . env/bin/activate
         python3 -m pip install requests
+        python3 -c "from booking.config import config_init; config_init()"
         pytest -sv  --cov-report term-missing --cov=booking
 
     - name: Build the booking API
