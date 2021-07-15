@@ -47,7 +47,6 @@ def main() -> int:
     """Main function which will run the uvicorn
     web server and call the main API code."""
     parser = parse_arguments()
-    print(type(parser))
     uvicorn.run(
         "booking.app:app", host=parser.host,
         port=parser.port, reload=parser.reload,
