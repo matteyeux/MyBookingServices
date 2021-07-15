@@ -54,6 +54,26 @@ booking.routers.rooms
     :show-inheritance:
 
 
+booking.models.rooms
+---------------------
+
+.. automodule:: booking.models.rooms
+    :members:
+    :undoc-members:
+    :inherited-members:
+    :show-inheritance:
+
+
+booking.models.book
+---------------------
+
+.. automodule:: booking.models.book
+    :members:
+    :undoc-members:
+    :inherited-members:
+    :show-inheritance:
+
+
 User
 ====
 .. automodule:: user.main
