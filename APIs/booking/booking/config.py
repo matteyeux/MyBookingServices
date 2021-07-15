@@ -56,7 +56,7 @@ def check_config() -> Optional[str]:
 
 
 def config_api_setup() -> Union[
-    Tuple[None, None],
+    None,
     Tuple[configparser.ConfigParser, str],
 ]:
     """Open and read config file.
@@ -66,6 +66,6 @@ def config_api_setup() -> Union[
     config_file = check_config()
     if config_file is None:
         print("[e] could not setup api config file")
-        return None, None
+        return None
     config = configparser.ConfigParser()
     return config, config_file
