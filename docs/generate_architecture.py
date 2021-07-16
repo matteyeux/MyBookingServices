@@ -24,6 +24,14 @@ def generate_diagram() -> None:
                 client >> vpn >> ingress
 
         with Cluster("Worker 1", direction="TB"):
+            Gitlab("Gitlab")
+            with Cluster("Docker Services"):
+                with Cluster("app"):
+                    app = Fastapi("API")
+                    db = Mysql("Database")
+                    ingress >> app >> db
+
+        with Cluster("Worker2", direction="TB"):
             with Cluster("Docker Services"):
                 with Cluster("app"):
                     app = Fastapi("API")
@@ -39,15 +47,6 @@ def generate_diagram() -> None:
                     ingress >> elk[0]
                     elk[0] >> elk[1]
                     elk[0] >> elk[2]
-
-        with Cluster("Worker2", direction="TB"):
-            Gitlab("Gitlab")
-
-            with Cluster("Docker Services"):
-                with Cluster("app"):
-                    app = Fastapi("API")
-                    db = Mysql("Database")
-                    ingress >> app >> db
 
 
 if __name__ == '__main__':
