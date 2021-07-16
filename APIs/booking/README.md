@@ -2,10 +2,36 @@
 
 This is the directory containing the code for the Booking API.
 
+### API folder structure
+```
+.
+├── booking
+│   ├── app.py
+│   ├── config.py
+│   ├── database.py
+│   ├── __init__.py
+│   ├── main.py
+│   ├── models
+│   │   ├── book.py
+│   │   ├── __init__.py
+│   │   └── rooms.py
+│   └── routers
+│       ├── book.py
+│       ├── __init__.py
+│       └── rooms.py
+├── poetry.lock
+├── pyproject.toml
+├── README.md
+└── tests
+    ├── test_app.py
+    ├── test_book.py
+    ├── test_config.py
+    └── test_rooms.py
+```
 
 ## Setup dev environment
 
-This is a
+How to setup a basic env for the booking API
 
 ### booking API
 
