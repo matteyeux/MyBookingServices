@@ -9,7 +9,7 @@
     api_url: "http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
     validate_certs: True
     confirm: no
-    api_token: "kT5brsmxjwYKLo54CPC1"
+    api_token: "F5u8KxRwkT8rpJqQgoZU"
     name: "{{ item.name }}"
     username: "{{ item.name }}"
     password: P@SSW0RD
