@@ -7,5 +7,4 @@ dist
 
 # doc generated files
 docs/build/
-docs/mybookingservices.png
 docs/ansible/ansible.md
