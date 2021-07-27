@@ -11,3 +11,6 @@ docs/ansible/ansible.md
 
 # specific files
 ansible/alex_hosts
+
+# misc env
+misc/env
