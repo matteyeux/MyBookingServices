@@ -18,4 +18,5 @@ class Book:
 
     def get_available_rooms(self):
         """Get available rooms to book."""
-        return self.db.get_available_rooms()
+        engine = self.db.engine
+        return None if not engine else self.db.get_available_rooms()

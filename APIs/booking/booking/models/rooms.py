@@ -18,9 +18,11 @@ class Rooms:
 
     def get_all_rooms(self):
         """Return all rooms."""
-        return self.db.get_rooms()
+        engine = self.db.engine
+        return None if not engine else self.db.get_rooms()
 
     def get_room_by_id(self, room_id: int = 1):
         """Get room info by ID."""
         # if room_id == 0 get latest added room ?
-        return self.db.get_room_by_id(room_id)
+        engine = self.db.engine
+        return None if not engine else self.db.get_room_by_id(room_id)
