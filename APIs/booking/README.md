@@ -43,6 +43,7 @@ Use `poetry` to instal dependencies (`poetry install`). You should be ready to w
 
 Setup MySQL container : `docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -d mysql`.
 
+
 Test connection :
 ```
 λ ~ » mysql --host=127.0.0.1 -P 3306 -u root -p
@@ -61,6 +62,27 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 mysql>
 ```
+Next, create the database `mybookingservices` and a dedicated user named `etna` :
+
+```
+mysql> create database mybookingservices;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> CREATE USER 'etna'@'172.17.0.1' IDENTIFIED BY 'etna';
+Query OK, 0 rows affected (0.03 sec)
+
+mysql>GRANT ALL PRIVILEGES ON `mybookingservices`.* TO 'etna'@'172.17.0.1';
+Query OK, 0 rows affected bro (0.02 sec)
+```
+
+Then insert restore database :
+```
+(env) λ ~/dev/mybookingservices/db(matteyeux/booking_api*) » mysql --host=127.0.0.1 -P 3306 -u etna -p mybookingservices  < mybookingservices.mysql
+Enter password:
+```
+
+You should be done, you can run `pytest` to make sure connection is okay.
+
 
 ### Tests
 
