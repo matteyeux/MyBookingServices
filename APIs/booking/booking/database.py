@@ -1,4 +1,3 @@
-import enum
 from datetime import datetime
 
 import sqlalchemy
@@ -11,12 +10,6 @@ from sqlalchemy import Integer
 from sqlalchemy import MetaData
 from sqlalchemy import SmallInteger
 from sqlalchemy import Table
-
-
-class RoomsEnum(enum.Enum):
-    room_one = 1
-    room_two = 2
-    room_three = 3
 
 
 class Database:
