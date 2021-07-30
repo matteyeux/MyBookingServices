@@ -13,3 +13,4 @@ docs/ansible/ansible.md
 
 # specific files
 ansible/alex_hosts
+ansible/local_hosts
