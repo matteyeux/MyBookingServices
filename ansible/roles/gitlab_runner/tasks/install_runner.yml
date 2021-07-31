@@ -11,6 +11,12 @@
 - name: Run the Gitlab repository installer script
   command: bash /tmp/script.deb.sh
 
+- name: Copy APT pinning file
+  copy:
+    src: data/gitlab_runner/pin-gitlab-runner.pref
+    dest: /etc/apt/preferences.d/pin-gitlab-runner.pref
+    mode: '0644'
+
 - name: Check for /etc/apt/preferences.d/pin-gitlab-runner.pref
   stat:
     path: /etc/apt/preferences.d/pin-gitlab-runner.pref
