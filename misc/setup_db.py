@@ -164,7 +164,7 @@ class PricePolicies(Base):
     name = Column(String(100))
     rooms_majoration = Column(Float)
     day_number = Column(Enum(DayEnum))
-    capacity_limit = Colum(Integer)
+    capacity_limit = Column(Integer)
     majoration_start_date = Column(DateTime)
     majoration_end_date = Column(DateTime)
     is_default = Column(Boolean, nullable=False)
@@ -222,7 +222,7 @@ for _ in range(2):
     hostel_data.append(row)
 
 try:
-    print("[+] creating inserting data into hostels table")
+    print("[+] inserting data into hostels table")
     query = "INSERT INTO `hostels` (`telephone`, `website`, `description`, \
             `owner`) VALUES( % s, % s, % s, % s)"
     id = db_engine.execute(query, hostel_data)
@@ -242,7 +242,7 @@ for i in range(1, 2):
     address_data.append(row)
 
 try:
-    print("[+] creating inserting data into addresses table")
+    print("[+] inserting data into addresses table")
     query = "INSERT INTO `addresses` (`hostel_id`, `number`, `street`, \
             `town`, `postal_code`) VALUES(%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, address_data)
@@ -263,7 +263,7 @@ rooms_data = [
 ]
 
 try:
-    print("[+] creating inserting data into rooms table")
+    print("[+] inserting data into rooms table")
     query = "INSERT INTO `rooms` (`hostel_id`, `rooms`, `capacity`, `price`) \
             VALUES(%s,%s,%s,%s)"
     id = db_engine.execute(query, rooms_data)
@@ -285,7 +285,7 @@ for _ in range(500):
     customer_data.append(row)
 
 try:
-    print("[+] creating inserting data into customers table")
+    print("[+] inserting data into customers table")
     query = "INSERT INTO `customers` (`first_name`, `last_name`, `email`, \
             `telephone`, `username`, `password`) VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, customer_data)
@@ -295,18 +295,19 @@ except SQLAlchemyError as e:
 
 # Generate fake data for Booking
 booking_data = [
-    (3, 54, 2, 990, 2021-05-21, 2021-05-24),
-    (7, 138, 5, 2950, 2021-05-14, 2021-05-17),
-    (6, 417, 1, 5795, 2021-07-05, 2121-07-11),
-    (1, 342, 2, 828, 2121-07-16, 2021-07-17),
-    (4, 94, 2, 150, 2021-07-19, 2021-07-20),
-    (2, 224, 2, 450, 2021-07-21, 2021-07-22)
+    (3, 54, 2, 990, '2021-05-21', '2021-05-24'),
+    (7, 138, 5, 2950, '2021-05-14', '2021-05-17'),
+    (6, 417, 1, 5795, '2021-07-05', '2121-07-11'),
+    (1, 342, 2, 828, '2121-07-16', '2021-07-17'),
+    (4, 94, 2, 150, '2021-07-19', '2021-07-20'),
+    (2, 224, 2, 450, '2021-07-21', '2021-07-22'),
 ]
 
 try:
-    print("[+] creating inserting data into customers table")
+    print("[+] inserting data into customers table")
     query = "INSERT INTO `booking` (`rooms_id`, `customer_id`, `capacity_book`, \
-            `order_price`, `booking_start_date`, `booking_end_date`) VALUES(%s,%s,%s,%s,%s,%s)"
+            `order_price`, `booking_start_date`, `booking_end_date`) \
+            VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, booking_data)
 except SQLAlchemyError as e:
     error = str(e.__dict__["orig"])
@@ -349,7 +350,7 @@ price_policy_data = [
 ]
 
 
-print("[+] creating inserting data into price_policies")
+print("[+] inserting data into price_policies")
 try:
     query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
             `rooms_majoration`, `day_number`, `is_default`) \
@@ -371,12 +372,12 @@ price_policy_data_v2 = [
 ]
 
 
-print("[+] creating inserting data into price_policies")
+print("[+] inserting data into price_policies v2")
 try:
     query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
             `rooms_majoration`, `capacity_limit`, `is_default`) \
             VALUES(%s,%s,%s,%s,%s)"
-    id = db_engine.execute(query, price_policy_data)
+    id = db_engine.execute(query, price_policy_data_v2)
 except SQLAlchemyError as e:
     error = str(e.__dict__["orig"])
     print(error)
