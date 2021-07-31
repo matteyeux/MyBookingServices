@@ -20,8 +20,8 @@ from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
-username = "root"
-password = "root"
+username = "etna"
+password = "etna"
 host = "localhost"
 # port = 3306
 DB_NAME = "mybookingservices"
