@@ -361,13 +361,13 @@ except SQLAlchemyError as e:
 
 
 price_policy_data_v2 = [
-    (1, "Capacity Minoration", -10, 1, True),
-    (2, "Capacity Minoration", -10, 1, True),
-    (3, "Capacity Minoration", -10, 1, True),
-    (4, "Capacity Minoration", -10, 1, True),
-    (5, "Capacity Minoration", -10, 1, True),
-    (6, "Capacity Minoration", -10, 1, True),
-    (7, "Capacity Minoration", -10, 1, True),
+    (1, "Capacity Minoration", -5, 1, True),
+    (2, "Capacity Minoration", -5, 1, True),
+    (3, "Capacity Minoration", -5, 1, True),
+    (4, "Capacity Minoration", -5, 1, True),
+    (5, "Capacity Minoration", -5, 1, True),
+    (6, "Capacity Minoration", -5, 1, True),
+    (7, "Capacity Minoration", -5, 1, True),
 ]
 
 
