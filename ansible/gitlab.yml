@@ -12,4 +12,4 @@
     - role: gitlab_runner
       tags:
       - install_runner
-      when: "'worker1' in inventory_hostname"
+      when: "'manager' in inventory_hostname"
