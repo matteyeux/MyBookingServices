@@ -141,6 +141,7 @@ class Booking(Base):
     id = Column(BigInteger, primary_key=True)
     rooms_id = Column(Integer, ForeignKey("rooms.id"))
     customer_id = Column(BigInteger, ForeignKey("customers.id"))
+    capacity_book = Column(Integer)
     order_price = Column(Float)
     booking_start_date = Column(Date)
     booking_end_date = Column(Date)
@@ -163,6 +164,7 @@ class PricePolicies(Base):
     name = Column(String(100))
     rooms_majoration = Column(Float)
     day_number = Column(Enum(DayEnum))
+    capacity_limit = Colum(Integer)
     majoration_start_date = Column(DateTime)
     majoration_end_date = Column(DateTime)
     is_default = Column(Boolean, nullable=False)
@@ -292,40 +294,56 @@ except SQLAlchemyError as e:
     print(error)
 
 # Generate fake data for Booking
-##############
-#
+booking_data = [
+    (3, 54, 2, 990, 2021-05-21, 2021-05-24),
+    (7, 138, 5, 2950, 2021-05-14, 2021-05-17),
+    (6, 417, 1, 5795, 2021-07-05, 2121-07-11),
+    (1, 342, 2, 828, 2121-07-16, 2021-07-17),
+    (4, 94, 2, 150, 2021-07-19, 2021-07-20),
+    (2, 224, 2, 450, 2021-07-21, 2021-07-22)
+]
+
+try:
+    print("[+] creating inserting data into customers table")
+    query = "INSERT INTO `booking` (`rooms_id`, `customer_id`, `capacity_book`, \
+            `order_price`, `booking_start_date`, `booking_end_date`) VALUES(%s,%s,%s,%s,%s,%s)"
+    id = db_engine.execute(query, booking_data)
+except SQLAlchemyError as e:
+    error = str(e.__dict__["orig"])
+    print(error)
+
 
 # Pour les nuits de vendredi et samedi le prix des chambres est majoré de 15%
 # Les nuits du mercredi et jeudi sont minoré de 10%
 # Si une seule personne occupe la chambre le prix est minoré de 5%
 # Generate fake data for PricePolicy
 price_policy_data = [
-    (1, "Wednesday Majoration", -10, 2, True),
-    (1, "Thursday Majoration", -10, 3, True),
+    (1, "Wednesday Minoration", -10, 2, True),
+    (1, "Thursday Minoration", -10, 3, True),
     (1, "Friday Majoration", 15, 4, True),
     (1, "Saturday Majoration", 15, 5, True),
-    (2, "Wednesday Majoration", -10, 2, True),
-    (2, "Thursday Majoration", -10, 3, True),
+    (2, "Wednesday Minoration", -10, 2, True),
+    (2, "Thursday Minoration", -10, 3, True),
     (2, "Friday Majoration", 15, 4, True),
     (2, "Saturday Majoration", 15, 5, True),
-    (3, "Wednesday Majoration", -10, 2, True),
-    (3, "Thursday Majoration", -10, 3, True),
+    (3, "Wednesday Minoration", -10, 2, True),
+    (3, "Thursday Minoration", -10, 3, True),
     (3, "Friday Majoration", 15, 4, True),
     (3, "Saturday Majoration", 15, 5, True),
-    (4, "Wednesday Majoration", -10, 2, True),
-    (4, "Thursday Majoration", -10, 3, True),
+    (4, "Wednesday Minoration", -10, 2, True),
+    (4, "Thursday Minoration", -10, 3, True),
     (4, "Friday Majoration", 15, 4, True),
     (4, "Saturday Majoration", 15, 5, True),
-    (5, "Wednesday Majoration", -10, 2, True),
-    (5, "Thursday Majoration", -10, 3, True),
+    (5, "Wednesday Minoration", -10, 2, True),
+    (5, "Thursday Minoration", -10, 3, True),
     (5, "Friday Majoration", 15, 4, True),
     (5, "Saturday Majoration", 15, 5, True),
-    (6, "Wednesday Majoration", -10, 2, True),
-    (6, "Thursday Majoration", -10, 3, True),
+    (6, "Wednesday Minoration", -10, 2, True),
+    (6, "Thursday Minoration", -10, 3, True),
     (6, "Friday Majoration", 15, 4, True),
     (6, "Saturday Majoration", 15, 5, True),
-    (7, "Wednesday Majoration", -10, 2, True),
-    (7, "Thursday Majoration", -10, 3, True),
+    (7, "Wednesday Minoration", -10, 2, True),
+    (7, "Thursday Minoration", -10, 3, True),
     (7, "Friday Majoration", 15, 4, True),
     (7, "Saturday Majoration", 15, 5, True),
 ]
@@ -335,6 +353,28 @@ print("[+] creating inserting data into price_policies")
 try:
     query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
             `rooms_majoration`, `day_number`, `is_default`) \
+            VALUES(%s,%s,%s,%s,%s)"
+    id = db_engine.execute(query, price_policy_data)
+except SQLAlchemyError as e:
+    error = str(e.__dict__["orig"])
+    print(error)
+
+
+price_policy_data_v2 = [
+    (1, "Capacity Minoration", -10, 1, True),
+    (2, "Capacity Minoration", -10, 1, True),
+    (3, "Capacity Minoration", -10, 1, True),
+    (4, "Capacity Minoration", -10, 1, True),
+    (5, "Capacity Minoration", -10, 1, True),
+    (6, "Capacity Minoration", -10, 1, True),
+    (7, "Capacity Minoration", -10, 1, True),
+]
+
+
+print("[+] creating inserting data into price_policies")
+try:
+    query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
+            `rooms_majoration`, `capacity_limit`, `is_default`) \
             VALUES(%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, price_policy_data)
 except SQLAlchemyError as e:
