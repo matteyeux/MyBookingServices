@@ -57,8 +57,8 @@ class DayEnum(enum.Enum):
     dimanche = 6
 
 
-class Hostels(Base):
-    __tablename__ = "hostels"
+class Hotels(Base):
+    __tablename__ = "hotels"
     id = Column(Integer, primary_key=True)
     telephone = Column(String(20))
     website = Column(String(100))
@@ -79,7 +79,7 @@ class Hostels(Base):
 class Addresses(Base):
     __tablename__ = "addresses"
     id = Column(Integer, primary_key=True)
-    hostel_id = Column(Integer, ForeignKey("hostels.id"))
+    hotel_id = Column(Integer, ForeignKey("hotels.id"))
     number = Column(String(50))
     street = Column(String(50))
     town = Column(String(50))
@@ -99,7 +99,7 @@ class Addresses(Base):
 class Rooms(Base):
     __tablename__ = "rooms"
     id = Column(Integer, primary_key=True)
-    hostel_id = Column(Integer, ForeignKey("hostels.id"))
+    hotel_id = Column(Integer, ForeignKey("hotels.id"))
     rooms = Column(Enum(RoomEnum))
     capacity = Column(Integer)
     price = Column(Float)
@@ -180,16 +180,16 @@ class PricePolicies(Base):
     )
 
 
-Hostels.addresses = relationship(
+Hotels.addresses = relationship(
     "Addresses",
     order_by=Addresses.id,
-    back_populates="hostels",
+    back_populates="hotels",
     uselist=False,
 )
-Hostels.rooms = relationship(
+Hotels.rooms = relationship(
     "Rooms",
     order_by=Rooms.id,
-    back_populates="hostels",
+    back_populates="hotels",
 )
 Rooms.booking = relationship(
     "Booking",
@@ -213,21 +213,21 @@ Base.metadata.create_all(db_engine)
 fake = Faker(["fr_FR"])
 fake_us = Faker(["en_US"])
 
-# Generate fake data for Hostel
-hostel_data = []
+# Generate fake data for Hotel
+hotel_data = []
 for _ in range(2):
     phone = fake.phone_number()
     website = fake.uri()
     description = fake.catch_phrase()
     owner = fake.name()
     row = (phone, website, description, owner)
-    hostel_data.append(row)
+    hotel_data.append(row)
 
 try:
-    print("[+] inserting data into hostels table")
-    query = "INSERT INTO `hostels` (`telephone`, `website`, `description`, \
+    print("[+] inserting data into hotels table")
+    query = "INSERT INTO `hotels` (`telephone`, `website`, `description`, \
             `owner`) VALUES( % s, % s, % s, % s)"
-    id = db_engine.execute(query, hostel_data)
+    id = db_engine.execute(query, hotel_data)
 except SQLAlchemyError as e:
     error = str(e.__dict__["orig"])
     print(error)
@@ -235,17 +235,17 @@ except SQLAlchemyError as e:
 # Generate fake data for Address
 address_data = []
 for i in range(1, 2):
-    hostel_id = i
+    hotel_id = i
     number = fake.building_number()
     street = fake.street_name()
     town = fake.city()
     postal_code = fake.postcode()
-    row = (hostel_id, number, street, town, postal_code)
+    row = (hotel_id, number, street, town, postal_code)
     address_data.append(row)
 
 try:
     print("[+] inserting data into addresses table")
-    query = "INSERT INTO `addresses` (`hostel_id`, `number`, `street`, \
+    query = "INSERT INTO `addresses` (`hotel_id`, `number`, `street`, \
             `town`, `postal_code`) VALUES(%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, address_data)
 except SQLAlchemyError as e:
@@ -266,7 +266,7 @@ rooms_data = [
 
 try:
     print("[+] inserting data into rooms table")
-    query = "INSERT INTO `rooms` (`hostel_id`, `rooms`, `capacity`, `price`) \
+    query = "INSERT INTO `rooms` (`hotel_id`, `rooms`, `capacity`, `price`) \
             VALUES(%s,%s,%s,%s)"
     id = db_engine.execute(query, rooms_data)
 except SQLAlchemyError as e:
