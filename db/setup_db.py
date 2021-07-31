@@ -100,7 +100,7 @@ class Rooms(Base):
     __tablename__ = "rooms"
     id = Column(Integer, primary_key=True)
     hotel_id = Column(Integer, ForeignKey("hotels.id"))
-    rooms = Column(Enum(RoomEnum))
+    room = Column(Enum(RoomEnum))
     capacity = Column(Integer)
     price = Column(Float)
     created_time = Column(
@@ -266,7 +266,7 @@ rooms_data = [
 
 try:
     print("[+] inserting data into rooms table")
-    query = "INSERT INTO `rooms` (`hotel_id`, `rooms`, `capacity`, `price`) \
+    query = "INSERT INTO `rooms` (`hotel_id`, `room`, `capacity`, `price`) \
             VALUES(%s,%s,%s,%s)"
     id = db_engine.execute(query, rooms_data)
 except SQLAlchemyError as e:
