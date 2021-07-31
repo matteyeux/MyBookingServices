@@ -4,6 +4,7 @@ __pycache__
 *.pyc
 .coverage
 dist
+booking.egg-info/
 
 # doc generated files
 docs/build/
