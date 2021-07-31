@@ -1,22 +1,24 @@
 import enum
-from datetime import datetime
 
 import sqlalchemy
-from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import create_engine
-from sqlalchemy import DateTime
+from sqlalchemy import Enum
 from sqlalchemy import Float
+from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import MetaData
-from sqlalchemy import SmallInteger
 from sqlalchemy import Table
+from sqlalchemy import text
+from sqlalchemy import TIMESTAMP
 
 
-class RoomsEnum(enum.Enum):
-    room_one = 1
-    room_two = 2
-    room_three = 3
+class RoomEnum(enum.Enum):
+    SR = "Suite présidentielle"
+    S = "Suite"
+    JS = "Junior suite"
+    CD = "Chambre de luxe"
+    CS = "Chambre standard"
 
 
 class Database:
@@ -49,23 +51,21 @@ class Database:
             "rooms",
             meta,
             Column("id", Integer, primary_key=True),
-            Column("roomType", SmallInteger, nullable=False),
-            Column("capacity", SmallInteger, nullable=False),
-            Column("price", Float, nullable=False),
-            Column("booked", Boolean, nullable=False),
+            Column("hotel_id", Integer, ForeignKey("hotels.id")),
+            Column("room", Enum(RoomEnum)),
+            Column("capacity", Integer),
+            Column("price", Float),
             Column(
-                "created_on",
-                DateTime,
-                nullable=False,
-                default=datetime.now(),
-                onupdate=datetime.now(),
+                "created_time",
+                TIMESTAMP,
+                server_default=text("CURRENT_TIMESTAMP"),
             ),
             Column(
-                "updated_on",
-                DateTime,
-                nullable=False,
-                default=datetime.now(),
-                onupdate=datetime.now(),
+                "updated_time",
+                TIMESTAMP,
+                server_default=text(
+                    "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+                ),
             ),
         )
         meta.create_all(self.engine)
