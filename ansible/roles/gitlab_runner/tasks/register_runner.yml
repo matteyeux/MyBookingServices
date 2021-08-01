@@ -1,0 +1,17 @@
+---
+- name: "Install python-gitlab"
+  pip:
+    name: python-gitlab
+    state: present
+  when: "'manager' in inventory_hostname"
+
+- name: "Register a runner"
+  community.general.gitlab_runner:
+    api_url: "http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+    api_token: "{{ gitlab_api_token_alex }}"
+    registration_token: "qDg4E6GCbmYA35uiruVZ"
+    description: Docker machine test ansible register runner
+    state: present
+    active: true
+    tag_list: ['docker']
+    run_untagged: false
