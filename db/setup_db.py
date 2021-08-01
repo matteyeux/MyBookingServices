@@ -237,7 +237,7 @@ except SQLAlchemyError as e:
 
 # Generate fake data for Address
 address_data = []
-for i in range(1, 2):
+for i in range(1, 3):
     hotel_id = i
     number = fake.building_number()
     street = fake.street_name()
