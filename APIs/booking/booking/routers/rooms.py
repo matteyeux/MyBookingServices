@@ -30,8 +30,8 @@ async def get_all_rooms(
     """Get available rooms by hotel.
     Optionaly you set by start and end date and capacity
     """
-    rooms = Rooms()
-    all_rooms = rooms.get_all_available_rooms()
+    # rooms = Rooms()
+    all_rooms = None
     return {"rooms": all_rooms}
 
 

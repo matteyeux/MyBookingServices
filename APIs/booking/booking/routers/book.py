@@ -26,7 +26,7 @@ async def book_room(room_id: int = 1):
 
     # check if room is booked by looking at the table booking
     # for 2 dates (start and end).
-    booked_room = Book().is_room_available()
+    booked_room = None  # Book().is_room_available()
     if booked_room is True:
         raise HTTPException(
             status_code=403,
