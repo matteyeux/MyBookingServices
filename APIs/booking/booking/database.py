@@ -45,7 +45,10 @@ class Database:
     ):
         """Initialize self. See help(type(self)) for accurate signature."""
         self.db_string = f"{connector}://{user}:{password}@{host}/{database}"
-        self.engine = create_engine(self.db_string)
+        try:
+            self.engine = create_engine(self.db_string).connect()
+        except sqlalchemy.exc.OperationalError:
+            self.engine = None
 
     def setup_rooms_table(self) -> sqlalchemy.sql.schema.Table:
         """Setup rooms table."""
@@ -133,8 +136,7 @@ class Database:
         """Create user."""
         table = self.setup_rooms_table()
         query = table.select()
-
-        return self.engine.connect().execute(query).all()
+        return self.engine.execute(query).all()
 
     def get_room_by_id(
         self,

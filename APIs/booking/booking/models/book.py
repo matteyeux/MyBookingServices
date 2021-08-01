@@ -20,9 +20,3 @@ class Book:
         """Get available rooms to book."""
         return self.db.get_available_rooms()
 
-    def is_room_available(self, room_id: int = 1) -> bool:
-        """check dates and capacity."""
-        # check dates
-        # check capacity
-        print(self.db.is_room_available())
-        return True

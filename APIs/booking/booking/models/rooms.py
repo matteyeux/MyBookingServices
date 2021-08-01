@@ -16,16 +16,13 @@ class Rooms:
             database=config['database']['database'],
         )
 
-    def get_all_available_rooms(
-        self,
-        capacity: int = 1,
-        start_date: str = None,
-        end_date: str = None,
-    ):
-        """Return all available rooms for a capacity."""
-        return self.db.get_available_rooms()
+    def get_all_rooms(self):
+        """Return all rooms."""
+        engine = self.db.engine
+        return None if not engine else self.db.get_rooms()
 
     def get_room_by_id(self, room_id: int = 1):
         """Get room info by ID."""
         # if room_id == 0 get latest added room ?
-        return self.db.get_room_by_id(room_id)
+        engine = self.db.engine
+        return None if not engine else self.db.get_room_by_id(room_id)
