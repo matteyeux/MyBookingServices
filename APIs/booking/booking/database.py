@@ -14,6 +14,7 @@ from sqlalchemy import String
 from sqlalchemy import Table
 from sqlalchemy import text
 from sqlalchemy import TIMESTAMP
+from sqlalchemy.sql import select
 
 
 class RoomEnum(enum.Enum):
@@ -111,6 +112,7 @@ class Database:
             "hotels",
             meta,
             Column("id", Integer, primary_key=True),
+            Column("name", String(40)),
             Column("telephone", String(20)),
             Column("website", String(100)),
             Column("description", String(100)),
@@ -131,6 +133,34 @@ class Database:
             ),
         )
         return hotels_table
+
+    def setup_addresses_table(self) -> sqlalchemy.sql.schema.Table:
+        meta = MetaData(self.engine)
+        addresses_table = Table(
+            "addresses",
+            meta,
+            Column("id", Integer, primary_key=True),
+            Column("hotel_id", Integer, ForeignKey("hotels.id")),
+            Column("number", String(50)),
+            Column("street", String(50)),
+            Column("town", String(50)),
+            Column("postal_code", Integer),
+            Column(
+                "created_time",
+                TIMESTAMP,
+                nullable=False,
+                server_default=text("CURRENT_TIMESTAMP"),
+            ),
+            Column(
+                "updated_time",
+                TIMESTAMP,
+                nullable=False,
+                server_default=text(
+                    "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+                ),
+            ),
+        )
+        return addresses_table
 
     def get_rooms(self) -> sqlalchemy.engine.cursor.LegacyCursorResult:
         """Create user."""
@@ -167,6 +197,43 @@ class Database:
 
     def get_hotels(self) -> sqlalchemy.engine.cursor.LegacyCursorResult:
         """get all hotels."""
-        table = self.setup_hotels_table()
-        query = table.select()
+        addresses_table = self.setup_addresses_table()
+        hotels_table = self.setup_hotels_table()
+        join = hotels_table.join(
+            addresses_table,
+            hotels_table.c.id == addresses_table.c.hotel_id,
+        )
+        query = select(
+            hotels_table.c.id,
+            hotels_table.c.name,
+            addresses_table.c.number,
+            addresses_table.c.street,
+            addresses_table.c.postal_code,
+            addresses_table.c.town,
+        ).select_from(join)
+        return self.engine.connect().execute(query).all()
+
+    def get_hotel_by_id(
+        self,
+        hotel_id: int = 1,
+    ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
+        """get addresses"""
+        addresses_table = self.setup_addresses_table()
+        hotels_table = self.setup_hotels_table()
+        join = hotels_table.join(
+            addresses_table,
+            hotels_table.c.id == addresses_table.c.hotel_id,
+        )
+        query = (
+            select(
+                hotels_table.c.id,
+                hotels_table.c.name,
+                addresses_table.c.number,
+                addresses_table.c.street,
+                addresses_table.c.postal_code,
+                addresses_table.c.town,
+            )
+            .where(hotels_table.c.id == hotel_id)
+            .select_from(join)
+        )
         return self.engine.connect().execute(query).all()
