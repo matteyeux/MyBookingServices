@@ -16,3 +16,9 @@
     active: true
     tag_list: ['docker']
     run_untagged: false
+
+- name: "Copy config.toml file"
+  copy:
+    src: data/gitlab_runner/config.toml
+    dest: /etc/gitlab-runner/config.toml
+    mode: '0644'
