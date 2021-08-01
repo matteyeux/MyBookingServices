@@ -7,9 +7,10 @@
 
 - name: "Register a runner"
   community.general.gitlab_runner:
-    api_url: "http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+    #api_url: "http://192.168.47.134" #Works
+    api_url: "http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}" #DO not work
     api_token: "{{ gitlab_api_token_alex }}"
-    registration_token: "qDg4E6GCbmYA35uiruVZ"
+    registration_token: "{{ gitlab_runner_registration_token }}"
     description: Docker machine test ansible register runner
     state: present
     active: true
