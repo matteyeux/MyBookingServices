@@ -139,7 +139,7 @@ class Customers(Base):
 class Booking(Base):
     __tablename__ = "booking"
     id = Column(BigInteger, primary_key=True)
-    rooms_id = Column(Integer, ForeignKey("rooms.id"))
+    room_id = Column(Integer, ForeignKey("rooms.id"))
     customer_id = Column(BigInteger, ForeignKey("customers.id"))
     capacity_book = Column(Integer)
     order_price = Column(Float)
@@ -160,7 +160,7 @@ class Booking(Base):
 class PricePolicies(Base):
     __tablename__ = "price_policies"
     id = Column(Integer, primary_key=True)
-    rooms_id = Column(Integer, ForeignKey("rooms.id"))
+    room_id = Column(Integer, ForeignKey("rooms.id"))
     name = Column(String(100))
     rooms_majoration = Column(Float)
     day_number = Column(Enum(DayEnum))
@@ -307,7 +307,7 @@ booking_data = [
 
 try:
     print("[+] inserting data into customers table")
-    query = "INSERT INTO `booking` (`rooms_id`, `customer_id`, `capacity_book`, \
+    query = "INSERT INTO `booking` (`room_id`, `customer_id`, `capacity_book`, \
             `order_price`, `booking_start_date`, `booking_end_date`) \
             VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, booking_data)
@@ -354,7 +354,7 @@ price_policy_data = [
 
 print("[+] inserting data into price_policies")
 try:
-    query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
+    query = "INSERT INTO `price_policies` (`room_id`, `name`, \
             `rooms_majoration`, `day_number`, `is_default`) \
             VALUES(%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, price_policy_data)
@@ -376,7 +376,7 @@ price_policy_data_v2 = [
 
 print("[+] inserting data into price_policies v2")
 try:
-    query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
+    query = "INSERT INTO `price_policies` (`room_id`, `name`, \
             `rooms_majoration`, `capacity_limit`, `is_default`) \
             VALUES(%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, price_policy_data_v2)

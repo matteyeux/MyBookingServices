@@ -2,6 +2,8 @@ from booking.models.rooms import Rooms
 from fastapi import APIRouter
 from fastapi import HTTPException
 
+# from fastapi import Request
+
 router = APIRouter()
 
 
@@ -19,10 +21,23 @@ async def get_room_info_by_id(room_id: int = 0):
 
 
 @router.get("/rooms/all/", tags=["rooms"])
-async def get_all_rooms():
-    """Get all rooms available
-    for the moment we just grab all rooms.
+async def get_all_rooms(
+    hotel_id: int = 1,
+    capacity: int = 1,
+    start_date: str = None,
+    end_date: str = None,
+):
+    """Get available rooms by hotel.
+    Optionaly you set by start and end date and capacity
     """
     rooms = Rooms()
-    all_rooms = rooms.get_all_rooms()
+    all_rooms = rooms.get_all_available_rooms()
     return {"rooms": all_rooms}
+
+
+# @router.get("/rooms/test/")
+# async def do_test(param1: str, param2: str):
+# #async def do_test(request: Request):
+#     print(param2)
+#     return {"test"}
+#     #return await request.json()
