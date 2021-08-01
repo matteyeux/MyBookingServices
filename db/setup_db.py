@@ -60,6 +60,7 @@ class DayEnum(enum.Enum):
 class Hotels(Base):
     __tablename__ = "hotels"
     id = Column(Integer, primary_key=True)
+    name = Column(String(50))
     telephone = Column(String(20))
     website = Column(String(100))
     description = Column(String(100))
@@ -213,20 +214,22 @@ Base.metadata.create_all(db_engine)
 fake = Faker(["fr_FR"])
 fake_us = Faker(["en_US"])
 
+hotel_names = ['Carlton', 'Lutetia']
 # Generate fake data for Hotel
 hotel_data = []
-for _ in range(2):
+for i in range(2):
+    name = hotel_names[i]
     phone = fake.phone_number()
     website = fake.uri()
     description = fake.catch_phrase()
     owner = fake.name()
-    row = (phone, website, description, owner)
+    row = (name, phone, website, description, owner)
     hotel_data.append(row)
 
 try:
     print("[+] inserting data into hotels table")
-    query = "INSERT INTO `hotels` (`telephone`, `website`, `description`, \
-            `owner`) VALUES( % s, % s, % s, % s)"
+    query = "INSERT INTO `hotels` (`name`, `telephone`, `website`, `description`, \
+            `owner`) VALUES( % s, % s, % s, % s, % s)"
     id = db_engine.execute(query, hotel_data)
 except SQLAlchemyError as e:
     error = str(e.__dict__["orig"])
