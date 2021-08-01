@@ -19,4 +19,3 @@ class Book:
     def get_available_rooms(self):
         """Get available rooms to book."""
         return self.db.get_available_rooms()
-
