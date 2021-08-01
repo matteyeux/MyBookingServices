@@ -5,6 +5,12 @@
     state: present
   when: "'manager' in inventory_hostname"
 
+- name: "Copy config.toml file"
+  copy:
+    src: data/gitlab_runner/config.toml
+    dest: /etc/gitlab-runner/config.toml
+    mode: '0644'
+
 - name: "Register a runner"
   community.general.gitlab_runner:
     #api_url: "http://192.168.47.134" #Works
@@ -16,9 +22,3 @@
     active: true
     tag_list: ['docker']
     run_untagged: false
-
-- name: "Copy config.toml file"
-  copy:
-    src: data/gitlab_runner/config.toml
-    dest: /etc/gitlab-runner/config.toml
-    mode: '0644'
