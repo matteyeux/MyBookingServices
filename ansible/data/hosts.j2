@@ -20,7 +20,7 @@
 #########################
 #       SERVICES        #
 #########################
-{{ hostvars['worker2'].instance_ip }}        gitlab.mybooking.services gitlab
+{{ hostvars['worker1'].instance_ip }}        gitlab.mybooking.services gitlab
 {{ hostvars['worker1'].instance_ip }}        telegraf.mybooking.services telegraf
 {{ hostvars['manager'].instance_ip }}        registry.mybooking.services registry
 
