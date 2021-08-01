@@ -11,5 +11,6 @@
 
     - role: gitlab_runner
       tags:
-      - install_runner
+      - install
+      - register
       when: "'manager' in inventory_hostname"
