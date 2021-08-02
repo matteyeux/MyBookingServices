@@ -2,15 +2,17 @@
 - hosts: "all"
   vars_files:
     - vars/gitlab.yml
+    - vars/runner.yml
   roles:
     - role: gitlab_install
       tags:
       - install
       - users
+      - never
       when: "'worker1' in inventory_hostname"
 
     - role: gitlab_runner
       tags:
-      - install
       - register
+      - never
       when: "'manager' in inventory_hostname"

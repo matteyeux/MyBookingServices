@@ -6,8 +6,8 @@ check_interval = 0
 
 [[runners]]
   name = "a test desc"
-  url = "http://192.168.47.134"
-  token = "oMwWvyzht9PU-AzxYRHo"
+  url = "http://gitlab.mybooking.services"
+  token = "bLRKEWk-rdF9sM9yJkgP"
   limit = 0
   executor = "docker"
   [runners.custom_build_dir]

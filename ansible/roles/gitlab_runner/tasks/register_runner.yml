@@ -1,24 +1,16 @@
 ---
-- name: "Install python-gitlab"
-  pip:
-    name: python-gitlab
-    state: present
-  when: "'manager' in inventory_hostname"
-
-- name: "Copy config.toml file"
-  copy:
-    src: data/gitlab_runner/config.toml
-    dest: /etc/gitlab-runner/config.toml
-    mode: '0644'
-
-- name: "Register a runner"
-  community.general.gitlab_runner:
-    #api_url: "http://192.168.47.134" #Works
-    api_url: "http://{{ hostvars['worker1']['ansible_default_ipv4']['address'] }}" #DO not work
-    api_token: "{{ gitlab_api_token_alex }}"
-    registration_token: "{{ gitlab_runner_registration_token }}"
-    description: Docker machine test ansible register runner
-    state: present
-    active: true
-    tag_list: ['docker']
-    run_untagged: false
+- name: Register runner
+  ansible.builtin.command: |
+    gitlab-runner  register \
+    --non-interactive \
+    --url "http://{{ gitlab_hostname }}" \
+    --registration-token "{{ registration_token }}" \
+    --executor "docker" \
+    --docker-image alpine:latest \
+    --description "docker-runner" \
+    --tag-list "docker,aws" \
+    --run-untagged="true" \
+    --locked="false" \
+    --access-level="not_protected" \
+    --docker-network-mode my_net \
+    --clone-url="http://{{ gitlab_ip }}"
