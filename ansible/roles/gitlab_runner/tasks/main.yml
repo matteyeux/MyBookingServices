@@ -1,0 +1,10 @@
+---
+- include_tasks: install_runner.yml
+  tags:
+  - never
+  - install
+
+- include_tasks: register_runner.yml
+  tags:
+  - never
+  - register

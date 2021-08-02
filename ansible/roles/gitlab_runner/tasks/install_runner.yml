@@ -1,0 +1,44 @@
+---
+# mostly copy-pasta from the official documentation
+# https://docs.gitlab.com/runner/install/linux-repository.html
+
+- name: Download Gitlab repository installer script
+  get_url:
+    url: https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh
+    dest: /tmp/script.deb.sh
+    mode: '0755'
+
+- name: Run the Gitlab repository installer script
+  command: bash /tmp/script.deb.sh
+
+- name: Copy APT pinning file
+  copy:
+    src: data/gitlab_runner/pin-gitlab-runner.pref
+    dest: /etc/apt/preferences.d/pin-gitlab-runner.pref
+    mode: '0644'
+
+- name: Check for /etc/apt/preferences.d/pin-gitlab-runner.pref
+  stat:
+    path: /etc/apt/preferences.d/pin-gitlab-runner.pref
+  register: stat_result
+
+# cat <<EOF | sudo tee /etc/apt/preferences.d/pin-gitlab-runner.pref
+# Explanation: Prefer GitLab provided packages over the Debian native ones
+# Package: gitlab-runner
+# Pin: origin packages.gitlab.com
+# Pin-Priority: 1001
+# EOF
+- name: APT pinning
+  blockinfile:
+    path: /etc/apt/preferences.d/pin-gitlab-runner.pref
+    block: |
+      Explanation: Prefer GitLab provided packages over the Debian native ones
+      Package: gitlab-runner
+      Pin: origin packages.gitlab.com
+      Pin-Priority: 1001
+  when: not stat_result.stat.exists
+
+- name: Install gitlab-runner
+  apt:
+    name: gitlab-runner
+    update_cache: yes
