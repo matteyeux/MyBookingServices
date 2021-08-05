@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+
+  reverse-proxy:
+    image: traefik:v2.4
+    container_name: traefik
+    # command: 
+      # - "--configFile="
+    # - "--api.insecure=true"
+    # - "--api.dashboard=true"
+    # - "--providers.docker"
+    # - "--entrypoints.mybooking.address=:80"
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.toml:/etc/traefik/traefik.toml
+
+  manage:
+    image: nginx
+    container_name: manage
+    labels:
+      # Explicitly tell Traefik to expose this container
+      - "traefik.enable=true"
+      # The domain the service will respond to
+      - "traefik.http.routers.manage.rule=Host(`manage.mybooking.services`)"
+      # Allow request only from the predefined entry point named "web"
+      - "traefik.http.routers.manage.entrypoints=mybooking"
+
+  book:
+    image: nginx
+    container_name: book
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.book.rule=Host(`book.mybooking.services`)"
+      - "traefik.http.routers.book.entrypoints=mybooking"
+
+  users:
+    image: nginx
+    container_name: users
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.users.rule=Host(`users.mybooking.services`)"
+      - "traefik.http.routers.users.entrypoints=mybooking"
