@@ -1,0 +1,20 @@
+---
+# - name: Install python-pyOpenSSL
+#   pip:
+#     name:
+#       - docker
+#     state: present
+#   when: "'managers' in group_names"
+
+- name: Create traefik
+  docker_swarm_service:
+    name: traefik
+    image: "traefik:v2.4"
+    state: present
+    publish:
+      - published_port: 80
+        target_port: 80
+      - published_port: 8080
+        target_port: 8080
+
+  when: "'managers' in group_names"
