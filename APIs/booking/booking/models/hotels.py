@@ -17,10 +17,12 @@ class Hotels:
         )
 
     def get_all_hotels(self):
+        engine = self.db.engine
         """return the list of all hotels."""
-        return self.db.get_hotels()
+        return None if not engine else self.db.get_hotels()
 
     def get_hotel_by_id(self, hotel_id: int = 1):
+        engine = self.db.engine
         """return the list of all hotels."""
         # return self.db.get_hotel_by_id(hotel_id)
-        return self.db.get_hotel_by_id(hotel_id)
+        return None if not engine else self.db.get_hotel_by_id(hotel_id)
