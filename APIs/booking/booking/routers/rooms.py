@@ -36,6 +36,7 @@ async def get_available_rooms(
     capacity: int = 0,
 ):
     """Route to get available rooms."""
+    # TODO check date coherency
     rooms = Rooms()
 
     available_rooms = rooms.get_available_rooms(

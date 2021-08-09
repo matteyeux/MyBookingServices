@@ -1,6 +1,9 @@
 import enum
+from datetime import datetime
+from datetime import timedelta
 
 import sqlalchemy
+from sqlalchemy import and_
 from sqlalchemy import between
 from sqlalchemy import BigInteger
 from sqlalchemy import Column
@@ -11,11 +14,14 @@ from sqlalchemy import Float
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import MetaData
+from sqlalchemy import not_
+from sqlalchemy import or_
 from sqlalchemy import String
 from sqlalchemy import Table
 from sqlalchemy import text
 from sqlalchemy import TIMESTAMP
 from sqlalchemy.sql import select
+from sqlalchemy.sql.expression import join
 
 
 class RoomEnum(enum.Enum):
@@ -225,39 +231,49 @@ class Database:
         end_date: str = None,
         capacity: int = 0,
     ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
-        """Get available rooms for an hotel at a specific date.
-        TODO : allow to specify rooms's capacity.
-        """
+        """Get available rooms for an hotel at a specific date."""
         rooms_table = self.setup_rooms_table()
         booking_table = self.setup_booking_table()
-        # select list of all rooms in hotel_id : OK
-        # select list of all roomd_ids where no date feat in booking
-        rooms_query = select(rooms_table.c.id).where(
-            rooms_table.c.hotel_id == hotel_id,
-        )
-        rooms_result = self.engine.connect().execute(rooms_query).all()
-        # import pprint
-        # pprint.pp(dir(rooms_result))
-        print("====================")
-        for room in rooms_result:
-            booking_query = (
-                select(booking_table.c.room_id)
-                .where(booking_table.c.room_id == room[0])
-                .where(
-                    between(
-                        booking_table.c.booking_start_date,
-                        start_date,
-                        end_date,
-                    ),
-                )
-            )
-            print(booking_query)
-            # for a in dir(booking_query):
-            #     print(a)
-            # print(booking_query)
-            booking_result = self.engine.connect().execute(booking_query).all()
-            if len(booking_result) != 0:
-                print(booking_result)
-            break
 
-        return None  # self.engine.connect().execute(rooms_query).all()
+        j = join(
+            rooms_table,
+            booking_table,
+            rooms_table.c.id == booking_table.c.room_id,
+            isouter=True,
+        )
+
+        # allow booking the same room if end_date
+        # from previous booking == start_date
+        date = datetime.strptime(str(start_date), "%Y-%m-%d")
+        updated_date = date + timedelta(days=1)
+        updated_start_date = datetime.strftime(updated_date, "%Y/%m/%d")
+
+        query = (
+            select(rooms_table.c.id)
+            .where(
+                or_(
+                    booking_table.c.room_id == None,
+                    and_(
+                        not_(
+                            between(
+                                updated_start_date,
+                                booking_table.c.booking_start_date,
+                                booking_table.c.booking_end_date,
+                            ),
+                        ),
+                        not_(
+                            between(
+                                end_date,
+                                booking_table.c.booking_start_date,
+                                booking_table.c.booking_end_date,
+                            ),
+                        ),
+                        rooms_table.c.hotel_id == hotel_id,
+                    ),
+                ),
+            )
+            .where(rooms_table.c.capacity >= capacity)
+            .select_from(j)
+        )
+        booking_result = self.engine.connect().execute(query).all()
+        return booking_result

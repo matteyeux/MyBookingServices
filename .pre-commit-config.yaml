@@ -9,7 +9,7 @@ repos:
     rev: '3.8.3'
     hooks:
     -   id: flake8
-        args: ['--per-file-ignores=__init__.py:F401', '--config=.flake8']
+        args: ['--per-file-ignores=__init__.py:F401', '--per-file-ignores=database.py:E711', '--config=.flake8']
 -   repo: https://github.com/asottile/reorder_python_imports
     rev: v2.3.6
     hooks:
