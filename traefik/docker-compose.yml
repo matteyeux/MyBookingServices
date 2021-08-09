@@ -17,18 +17,19 @@ services:
 
   manage:
     image: nginx
-    container_name: manage
-    # deploy:
-    #   mode: replicated
-    #   replicas: 1
-    #   endpoint_mode: dnsrr
-    #   restart_policy:
-    #     condition: on-failure
-    #     delay: 3s
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.manage.rule=Host(`manage.mybooking.services`)"
-      - "traefik.http.routers.manage.entrypoints=mybooking"
+    #container_name: manage
+    deploy:
+      mode: replicated
+      replicas: 1
+      endpoint_mode: dnsrr
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.manage.rule=Host(`manage.mybooking.services`)"
+        - "traefik.http.routers.manage.entrypoints=mybooking"
+        - "traefik.http.services.manage-service.loadbalancer.server.port=8081"
 
   book:
     image: nginx
