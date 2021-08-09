@@ -16,6 +16,30 @@ class Rooms:
             database=config['database']['database'],
         )
 
+    def get_available_rooms(
+        self,
+        hotel_id: int = 1,
+        start_date: str = None,
+        end_date: str = None,
+        capacity: int = 0,
+    ):
+        """Get available rooms from an hotel for a specific period."""
+        if self.db.engine is None:
+            print("[e] could not setup database engine")
+
+        # check if dates are not None
+        if None in [start_date, end_date]:
+            print("dates are None")
+            return None
+
+        available_rooms = self.db.get_available_rooms(
+            hotel_id,
+            start_date,
+            end_date,
+            capacity,
+        )
+        return available_rooms
+
     def get_all_rooms(self):
         """Return all rooms."""
         engine = self.db.engine
@@ -25,4 +49,5 @@ class Rooms:
         """Get room info by ID."""
         # if room_id == 0 get latest added room ?
         engine = self.db.engine
+        # TODO : check if room is available at the said date
         return None if not engine else self.db.get_room_by_id(room_id)

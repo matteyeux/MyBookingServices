@@ -20,24 +20,29 @@ async def get_room_info_by_id(room_id: int = 0):
     return {"room_id": room}
 
 
-@router.get("/rooms/all/", tags=["rooms"])
-async def get_all_rooms(
-    hotel_id: int = 1,
-    capacity: int = 1,
-    start_date: str = None,
-    end_date: str = None,
-):
-    """Get available rooms by hotel.
-    Optionaly you set by start and end date and capacity
-    """
-    # rooms = Rooms()
-    all_rooms = None
-    return {"rooms": all_rooms}
-
-
 # @router.get("/rooms/test/")
 # async def do_test(param1: str, param2: str):
 # #async def do_test(request: Request):
 #     print(param2)
 #     return {"test"}
 #     #return await request.json()
+
+# curl "127.0.0.1:5555/rooms/all/?hotel_id=3"
+@router.get("/rooms/all/")
+async def get_available_rooms(
+    hotel_id: int = 1,
+    start_date: str = None,
+    end_date: str = None,
+    capacity: int = 0,
+):
+    """Route to get available rooms."""
+    rooms = Rooms()
+
+    available_rooms = rooms.get_available_rooms(
+        hotel_id,
+        start_date,
+        end_date,
+        capacity,
+    )
+
+    return {"rooms": available_rooms}

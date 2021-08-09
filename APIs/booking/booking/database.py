@@ -1,6 +1,7 @@
 import enum
 
 import sqlalchemy
+from sqlalchemy import between
 from sqlalchemy import BigInteger
 from sqlalchemy import Column
 from sqlalchemy import create_engine
@@ -78,6 +79,7 @@ class Database:
         return rooms_table
 
     def setup_booking_table(self) -> sqlalchemy.sql.schema.Table:
+        """Setup booking table for database."""
         meta = MetaData(self.engine)
         booking_table = Table(
             "booking",
@@ -107,6 +109,7 @@ class Database:
         return booking_table
 
     def setup_hotels_table(self) -> sqlalchemy.sql.schema.Table:
+        """Setup hotels table for database."""
         meta = MetaData(self.engine)
         hotels_table = Table(
             "hotels",
@@ -135,6 +138,7 @@ class Database:
         return hotels_table
 
     def setup_addresses_table(self) -> sqlalchemy.sql.schema.Table:
+        """Setup addresses table for database."""
         meta = MetaData(self.engine)
         addresses_table = Table(
             "addresses",
@@ -162,41 +166,17 @@ class Database:
         )
         return addresses_table
 
-    def get_rooms(self) -> sqlalchemy.engine.cursor.LegacyCursorResult:
-        """Create user."""
-        table = self.setup_rooms_table()
-        query = table.select()
-        return self.engine.execute(query).all()
-
     def get_room_by_id(
         self,
         room_id: int = 1,
     ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
-        """Create user."""
+        """Get room by ID."""
         table = self.setup_rooms_table()
         query = table.select().where(table.c.id == room_id)
         return self.engine.connect().execute(query).all()
 
-    def get_available_rooms(
-        self,
-        room_id: int = 1,
-    ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
-        """Create user."""
-        table = self.setup_rooms_table()
-        query = table.select().where(table.c.booked == 0)
-        return self.engine.connect().execute(query).all()
-
-    def is_room_available(
-        self,
-        room_id: int = 1,
-    ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
-        """"""
-        table = self.setup_booking_table()
-        query = table.select().where(table.c.room_id == room_id)
-        return self.engine.connect().execute(query).all()
-
     def get_hotels(self) -> sqlalchemy.engine.cursor.LegacyCursorResult:
-        """get all hotels."""
+        """Get all hotels."""
         addresses_table = self.setup_addresses_table()
         hotels_table = self.setup_hotels_table()
         join = hotels_table.join(
@@ -217,7 +197,7 @@ class Database:
         self,
         hotel_id: int = 1,
     ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
-        """get addresses"""
+        """Get hotel info by ID"""
         addresses_table = self.setup_addresses_table()
         hotels_table = self.setup_hotels_table()
         join = hotels_table.join(
@@ -237,3 +217,47 @@ class Database:
             .select_from(join)
         )
         return self.engine.connect().execute(query).all()
+
+    def get_available_rooms(
+        self,
+        hotel_id: int = 1,
+        start_date: str = None,
+        end_date: str = None,
+        capacity: int = 0,
+    ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
+        """Get available rooms for an hotel at a specific date.
+        TODO : allow to specify rooms's capacity.
+        """
+        rooms_table = self.setup_rooms_table()
+        booking_table = self.setup_booking_table()
+        # select list of all rooms in hotel_id : OK
+        # select list of all roomd_ids where no date feat in booking
+        rooms_query = select(rooms_table.c.id).where(
+            rooms_table.c.hotel_id == hotel_id,
+        )
+        rooms_result = self.engine.connect().execute(rooms_query).all()
+        # import pprint
+        # pprint.pp(dir(rooms_result))
+        print("====================")
+        for room in rooms_result:
+            booking_query = (
+                select(booking_table.c.room_id)
+                .where(booking_table.c.room_id == room[0])
+                .where(
+                    between(
+                        booking_table.c.booking_start_date,
+                        start_date,
+                        end_date,
+                    ),
+                )
+            )
+            print(booking_query)
+            # for a in dir(booking_query):
+            #     print(a)
+            # print(booking_query)
+            booking_result = self.engine.connect().execute(booking_query).all()
+            if len(booking_result) != 0:
+                print(booking_result)
+            break
+
+        return None  # self.engine.connect().execute(rooms_query).all()
