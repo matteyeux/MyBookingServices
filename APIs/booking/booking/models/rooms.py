@@ -40,14 +40,15 @@ class Rooms:
         )
         return available_rooms
 
-    def get_all_rooms(self):
+    def get_all_rooms(self, hotel_id: int = 0, capacity: int = 0):
         """Return all rooms."""
         engine = self.db.engine
-        return None if not engine else self.db.get_rooms()
+        return (
+            None if not engine else self.db.get_all_rooms(hotel_id, capacity)
+        )
 
     def get_room_by_id(self, room_id: int = 1):
         """Get room info by ID."""
         # if room_id == 0 get latest added room ?
         engine = self.db.engine
-        # TODO : check if room is available at the said date
         return None if not engine else self.db.get_room_by_id(room_id)

@@ -1,4 +1,5 @@
 from booking.models.rooms import Rooms
+from booking.utils import check_dates
 from fastapi import APIRouter
 from fastapi import HTTPException
 
@@ -27,8 +28,8 @@ async def get_room_info_by_id(room_id: int = 0):
 #     return {"test"}
 #     #return await request.json()
 
-# curl "127.0.0.1:5555/rooms/all/?hotel_id=3"
-@router.get("/rooms/all/")
+
+@router.get("/rooms/all/available/", tags=["rooms"])
 async def get_available_rooms(
     hotel_id: int = 1,
     start_date: str = None,
@@ -36,7 +37,12 @@ async def get_available_rooms(
     capacity: int = 0,
 ):
     """Route to get available rooms."""
-    # TODO check date coherency
+    if check_dates(start_date, end_date) is False:
+        raise HTTPException(
+            status_code=400,
+            detail="Specified dates are invalid",
+        )
+
     rooms = Rooms()
 
     available_rooms = rooms.get_available_rooms(
@@ -45,5 +51,13 @@ async def get_available_rooms(
         end_date,
         capacity,
     )
-
     return {"rooms": available_rooms}
+
+
+@router.get("/rooms/all/", tags=["rooms"])
+async def get_all_rooms(hotel_id: int = 0, capacity: int = 0):
+    """Route to list all rooms."""
+    rooms = Rooms()
+    all_rooms = rooms.get_all_rooms(hotel_id, capacity)
+
+    return {"rooms": all_rooms}

@@ -282,3 +282,23 @@ class Database:
         )
         booking_result = self.engine.connect().execute(query).all()
         return booking_result
+
+    def get_all_rooms(self, hotel_id: int = 0, capacity: int = 0):
+        """List all rooms in database."""
+        rooms_table = self.setup_rooms_table()
+        query = select(
+            rooms_table.c.id,
+            rooms_table.c.hotel_id,
+            rooms_table.c.room,
+            rooms_table.c.price,
+            rooms_table.c.capacity,
+        )
+
+        if hotel_id > 0:
+            query = query.where(rooms_table.c.hotel_id == hotel_id)
+
+        if capacity > 0:
+            query = query.where(rooms_table.c.capacity == capacity)
+        rooms_result = self.engine.connect().execute(query).all()
+
+        return rooms_result
