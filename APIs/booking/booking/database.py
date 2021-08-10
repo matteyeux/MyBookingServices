@@ -3,12 +3,15 @@ from datetime import datetime
 from datetime import timedelta
 
 import sqlalchemy
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy import and_
 from sqlalchemy import between
 from sqlalchemy import BigInteger
+from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import create_engine
 from sqlalchemy import Date
+from sqlalchemy import DateTime
 from sqlalchemy import Enum
 from sqlalchemy import Float
 from sqlalchemy import ForeignKey
@@ -30,6 +33,16 @@ class RoomEnum(enum.Enum):
     JS = "Junior suite"
     CD = "Chambre de luxe"
     CS = "Chambre standard"
+
+
+class DayEnum(enum.Enum):
+    lundi = 0
+    mardi = 1
+    mercredi = 2
+    jeudi = 3
+    vendredi = 4
+    samedi = 5
+    dimanche = 6
 
 
 class Database:
@@ -172,6 +185,38 @@ class Database:
         )
         return addresses_table
 
+    def setup_price_policies_table(self) -> sqlalchemy.sql.schema.Table:
+        """Setup price_policies table for database."""
+        meta = MetaData(self.engine)
+        price_policies = Table(
+            "price_policies",
+            meta,
+            Column("id", Integer, primary_key=True),
+            Column("room_id", Integer, ForeignKey("rooms.id")),
+            Column("name", String(100)),
+            Column("rooms_majoration", Float),
+            Column("day_number", Enum(DayEnum)),
+            Column("capacity_limit", Integer),
+            Column("majoration_start_date", DateTime),
+            Column("majoration_end_date", DateTime),
+            Column("is_default", Boolean, nullable=False),
+            Column(
+                "created_time",
+                TIMESTAMP,
+                nullable=False,
+                server_default=text("CURRENT_TIMESTAMP"),
+            ),
+            Column(
+                "updated_time",
+                TIMESTAMP,
+                nullable=False,
+                server_default=text(
+                    "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+                ),
+            ),
+        )
+        return price_policies
+
     def get_room_by_id(
         self,
         room_id: int = 1,
@@ -283,7 +328,11 @@ class Database:
         booking_result = self.engine.connect().execute(query).all()
         return booking_result
 
-    def get_all_rooms(self, hotel_id: int = 0, capacity: int = 0):
+    def get_all_rooms(
+        self,
+        hotel_id: int = 0,
+        capacity: int = 0,
+    ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
         """List all rooms in database."""
         rooms_table = self.setup_rooms_table()
         query = select(
@@ -302,3 +351,35 @@ class Database:
         rooms_result = self.engine.connect().execute(query).all()
 
         return rooms_result
+
+    def get_price_policies(
+        self,
+        rooms_result: sqlalchemy.engine.cursor.LegacyCursorResult,
+        start_date: str = None,
+        end_date: str = None,
+        capacity: int = 0,
+    ):
+        """Get all price policies."""
+
+        # add room_ids in list
+        room_ids = []
+        for data in rooms_result:
+            room_ids.append(data[0])
+
+        pp_table = self.setup_price_policies_table()
+        query = select(
+            pp_table.c.room_id,
+            pp_table.c.rooms_majoration,
+            pp_table.c.day_number,
+            pp_table.c.is_default,
+        ).where(pp_table.c.room_id.in_(room_ids))
+        pp_result = jsonable_encoder(
+            self.engine.connect().execute(query).all(),
+        )
+
+        # json_compatible_item_data = jsonable_encoder(pp_result)
+        import pprint
+
+        # print(pp_result)
+        pprint.pp(pp_result)
+        # print({"available_rooms": pp_result})
