@@ -38,6 +38,14 @@ class Rooms:
             end_date,
             capacity,
         )
+
+        self.db.get_price_policies(
+            available_rooms,
+            start_date,
+            end_date,
+            capacity,
+        )
+
         return available_rooms
 
     def get_all_rooms(self, hotel_id: int = 0, capacity: int = 0):

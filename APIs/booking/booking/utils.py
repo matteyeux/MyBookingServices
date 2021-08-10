@@ -32,3 +32,10 @@ def check_dates(start: str = None, end: str = None) -> bool:
         return False
 
     return True
+
+
+# def handle_pricing() -> str:
+#     """Handle pricing according to some options."""
+#     price: str = None
+
+#     return price
