@@ -249,7 +249,12 @@ class Database:
         updated_start_date = datetime.strftime(updated_date, "%Y/%m/%d")
 
         query = (
-            select(rooms_table.c.id)
+            select(
+                rooms_table.c.id,
+                rooms_table.c.room,
+                rooms_table.c.price,
+                rooms_table.c.capacity,
+            )
             .where(
                 or_(
                     booking_table.c.room_id == None,
