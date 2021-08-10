@@ -55,8 +55,8 @@ def test_get_available_rooms_02():
     }
 
     response = client.get(
-        "/rooms/all/?hotel_id=1&start_date=2021-07-21\
-        &end_date=2021-07-23&capacity=3",
+        "/rooms/all/?hotel_id=1&start_date=2021-07-21&end_date=2021-07-23 \
+        &capacity=3",
     )
     assert response.status_code == 200
     assert response.json() == expected
