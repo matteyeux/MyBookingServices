@@ -4,7 +4,6 @@ services:
 
   reverse-proxy:
     image: traefik:v2.4
-    # container_name: traefik
     deploy:
       placement:
         constraints:
@@ -20,15 +19,12 @@ services:
       - ./traefik.toml:/etc/traefik/traefik.toml
 
   manage:
-    # image: nginx
-    image: traefik/whoami
-    #container_name: manage
+    image: nginx
     ports:
       - 9000:80
     deploy:
       mode: replicated
       replicas: 2
-      # endpoint_mode: dnsrr
       restart_policy:
         condition: on-failure
         delay: 3s
@@ -37,7 +33,6 @@ services:
         - "traefik.http.routers.manage.rule=Host(`manage.mybooking.services`)"
         - "traefik.http.routers.manage.entrypoints=mybooking"
         - "traefik.http.services.manage.loadbalancer.server.port=9000"
-        # - "traefik.docker.lbswarm=true"
 
   book:
     image: nginx
