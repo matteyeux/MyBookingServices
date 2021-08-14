@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
 
   reverse-proxy:
@@ -21,7 +19,7 @@ services:
   manage:
     image: nginx
     ports:
-      - 9000:80
+      - 5557:80
     deploy:
       mode: replicated
       replicas: 2
@@ -32,12 +30,12 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.manage.rule=Host(`manage.mybooking.services`)"
         - "traefik.http.routers.manage.entrypoints=mybooking"
-        - "traefik.http.services.manage.loadbalancer.server.port=9000"
+        - "traefik.http.services.manage.loadbalancer.server.port=5557"
 
   book:
     image: nginx
     ports:
-      - 9001:80
+      - 5555:80
     deploy:
       mode: replicated
       replicas: 3
@@ -48,12 +46,12 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.book.rule=Host(`book.mybooking.services`)"
         - "traefik.http.routers.book.entrypoints=mybooking"
-        - "traefik.http.services.book.loadbalancer.server.port=9001"
+        - "traefik.http.services.book.loadbalancer.server.port=5555"
 
   users:
     image: nginx
     ports:
-      - 9002:80
+      - 5556:80
     deploy:
       mode: replicated
       replicas: 3
@@ -64,4 +62,4 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.users.rule=Host(`users.mybooking.services`)"
         - "traefik.http.routers.users.entrypoints=mybooking"
-        - "traefik.http.services.book.loadbalancer.server.port=9002"
+        - "traefik.http.services.book.loadbalancer.server.port=5556"
