@@ -1,29 +1,18 @@
 ---
 - name: Pull docker images from Docker Hub
   docker_image:
-    # name: traefik:v2.4
     name: traefik
     tag: v2.4
-    #tag: latest
     source: pull
-  # with_items:
-  #   - "{{ traefik_source_image }}"
-  when: "'manager' in group_names"
-
 
 - name: Push docker images to registry.mybooking.services
   docker_image:
-    name: "traefik"
+    name: "traefik:v2.4"
     repository: "registry.mybooking.services:5000/traefik:v1"
-    tag: "v2.4"
     push: yes
     source: local
-  when: "'manager' in group_names"
 
 - name: Remove Docker Hub images from host
   docker_image:
     state: absent
     name: "traefik:v2.4"
-  #when: "'manager' in group_names"
-  # with_items:
-  #   - "{{ traefik_source_image }}"
