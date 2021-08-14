@@ -15,8 +15,6 @@
     tag: "v2.4"
     push: yes
     source: local
-  loop:
-    - { name: 'traefik', source_tag: 'v2.4', target_name: "{{ traefik_booking_image }}" }
 
 
 - name: Remove Docker Hub images from host
