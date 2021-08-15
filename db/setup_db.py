@@ -388,7 +388,7 @@ price_policy_data = [
 
 print("[+] inserting data into price_policies")
 try:
-    query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
+    query = "INSERT INTO `price_policies` (`room_id`, `name`, \
             `price_policy_type`, `rooms_majoration`, `day_number`, \
             `is_default`) VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, price_policy_data)
@@ -410,7 +410,7 @@ price_policy_data_v2 = [
 
 print("[+] inserting data into price_policies v2")
 try:
-    query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
+    query = "INSERT INTO `price_policies` (`room_id`, `name`, \
             `price_policy_type`, `rooms_majoration`, `day_number`, \
             `is_default`) VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, price_policy_data_v2)
