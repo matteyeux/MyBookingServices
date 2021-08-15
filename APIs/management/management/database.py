@@ -278,6 +278,15 @@ class Database:
         )
         return self.engine.connect().execute(query).all()
 
+    def create_hotel(
+        self,
+        hotel: Hotel,
+        address: Address
+        ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
+        """Create an hotel"""
+
+        return None
+
     def get_all_rooms(
         self,
         hotel_id: int = 0,

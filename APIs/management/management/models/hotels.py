@@ -1,5 +1,5 @@
-from booking.config import config_api_setup
-from booking.database import Database
+from management.config import config_api_setup
+from management.database import Database
 
 
 class Hotels:
@@ -26,7 +26,7 @@ class Hotels:
         """return the list of all hotels."""
         return None if not engine else self.db.get_hotel_by_id(hotel_id)
 
-    def post_hotel(self):
+    def create_hotel(self, hotel: Hotel):
         engine = self.db.engine
         """Create an hotel in db and return it."""
-        return None if not engine else self.db.get_hotel_by_id()
+        return None if not engine else self.db.create_hotel(hotel: Hotel, address: Address)

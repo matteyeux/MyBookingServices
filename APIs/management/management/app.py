@@ -1,7 +1,6 @@
 """Main app module to initialize the FastAPI framework."""
-from booking.routers import book
-from booking.routers import hotels
-from booking.routers import rooms
+from management.routers import hotels
+from management.routers import rooms
 from fastapi import FastAPI
 
 app = FastAPI()
