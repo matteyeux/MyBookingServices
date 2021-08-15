@@ -194,7 +194,17 @@ class Options(Base):
     __tablename__ = "options"
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
-    price = Column(float)
+    price = Column(Float)
+    created_time = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
+    updated_time = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
+    )
 
 
 Hotels.addresses = relationship(
@@ -376,8 +386,8 @@ price_policy_data = [
 print("[+] inserting data into price_policies")
 try:
     query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
-            `rooms_majoration`, `day_number`, `is_default`) \
-            VALUES(%s,%s,%s,%s,%s)"
+            `price_policy_type`, `rooms_majoration`, `day_number`, \
+            `is_default`) VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, price_policy_data)
 except SQLAlchemyError as e:
     error = str(e.__dict__["orig"])
@@ -398,8 +408,8 @@ price_policy_data_v2 = [
 print("[+] inserting data into price_policies v2")
 try:
     query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
-            `rooms_majoration`, `capacity_limit`, `is_default`) \
-            VALUES(%s,%s,%s,%s,%s)"
+            `price_policy_type`, `rooms_majoration`, `day_number`, \
+            `is_default`) VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, price_policy_data_v2)
 except SQLAlchemyError as e:
     error = str(e.__dict__["orig"])
