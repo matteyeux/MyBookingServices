@@ -48,13 +48,18 @@ class RoomEnum(enum.Enum):
 
 
 class DayEnum(enum.Enum):
-    lundi = 0
-    mardi = 1
-    mercredi = 2
-    jeudi = 3
-    vendredi = 4
-    samedi = 5
-    dimanche = 6
+    dimanche = 0
+    lundi = 1
+    mardi = 2
+    mercredi = 3
+    jeudi = 4
+    vendredi = 5
+    samedi = 6
+
+
+class PPTypeEnum(enum.Enum):
+    price_policy_days = 1
+    price_policy_capacity = 2
 
 
 class Hotels(Base):
@@ -163,12 +168,34 @@ class PricePolicies(Base):
     id = Column(Integer, primary_key=True)
     room_id = Column(Integer, ForeignKey("rooms.id"))
     name = Column(String(100))
+    price_policy_type = Column(Enum(PPTypeEnum))
     rooms_majoration = Column(Float)
     day_number = Column(Enum(DayEnum))
     capacity_limit = Column(Integer)
     majoration_start_date = Column(DateTime)
     majoration_end_date = Column(DateTime)
     is_default = Column(Boolean, nullable=False)
+    created_time = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
+    updated_time = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
+    )
+
+
+# Place de garage (25$)
+# Ajout d'un lit bébé (sans frais additionnels)
+# Pack romance (50$), doit être réservé avec deux jours d'avance
+# Petit déjeuner (30$)
+class Options(Base):
+    __tablename__ = "options"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    price = Column(Float)
     created_time = Column(
         TIMESTAMP,
         nullable=False,
@@ -306,6 +333,10 @@ booking_data = [
     (1, 342, 2, 828, '2021-07-16', '2021-07-17'),
     (4, 94, 2, 150, '2021-07-19', '2021-07-20'),
     (2, 224, 2, 450, '2021-07-21', '2021-07-22'),
+    (1, 78, 3, 2160, '2021-09-18', '2021-09-20'),
+    (4, 19, 2, 135, '2021-09-29', '2021-09-30'),
+    (6, 318, 2, 2150, '2021-10-08', '2021-10-10'),
+    (3, 241, 3, 270, '2021-10-27', '2021-10-28'),
 ]
 
 try:
@@ -324,42 +355,42 @@ except SQLAlchemyError as e:
 # Si une seule personne occupe la chambre le prix est minoré de 5%
 # Generate fake data for PricePolicy
 price_policy_data = [
-    (1, "Wednesday Minoration", -10, 2, True),
-    (1, "Thursday Minoration", -10, 3, True),
-    (1, "Friday Majoration", 15, 4, True),
-    (1, "Saturday Majoration", 15, 5, True),
-    (2, "Wednesday Minoration", -10, 2, True),
-    (2, "Thursday Minoration", -10, 3, True),
-    (2, "Friday Majoration", 15, 4, True),
-    (2, "Saturday Majoration", 15, 5, True),
-    (3, "Wednesday Minoration", -10, 2, True),
-    (3, "Thursday Minoration", -10, 3, True),
-    (3, "Friday Majoration", 15, 4, True),
-    (3, "Saturday Majoration", 15, 5, True),
-    (4, "Wednesday Minoration", -10, 2, True),
-    (4, "Thursday Minoration", -10, 3, True),
-    (4, "Friday Majoration", 15, 4, True),
-    (4, "Saturday Majoration", 15, 5, True),
-    (5, "Wednesday Minoration", -10, 2, True),
-    (5, "Thursday Minoration", -10, 3, True),
-    (5, "Friday Majoration", 15, 4, True),
-    (5, "Saturday Majoration", 15, 5, True),
-    (6, "Wednesday Minoration", -10, 2, True),
-    (6, "Thursday Minoration", -10, 3, True),
-    (6, "Friday Majoration", 15, 4, True),
-    (6, "Saturday Majoration", 15, 5, True),
-    (7, "Wednesday Minoration", -10, 2, True),
-    (7, "Thursday Minoration", -10, 3, True),
-    (7, "Friday Majoration", 15, 4, True),
-    (7, "Saturday Majoration", 15, 5, True),
+    (1, "Wednesday Minoration", 1, -10, 3, True),
+    (1, "Thursday Minoration", 1, -10, 4, True),
+    (1, "Friday Majoration", 1, 15, 5, True),
+    (1, "Saturday Majoration", 1, 15, 6, True),
+    (2, "Wednesday Minoration", 1, -10, 3, True),
+    (2, "Thursday Minoration", 1, -10, 4, True),
+    (2, "Friday Majoration", 1, 15, 5, True),
+    (2, "Saturday Majoration", 1, 15, 6, True),
+    (3, "Wednesday Minoration", 1, -10, 3, True),
+    (3, "Thursday Minoration", 1, -10, 4, True),
+    (3, "Friday Majoration", 1, 15, 5, True),
+    (3, "Saturday Majoration", 1, 15, 6, True),
+    (4, "Wednesday Minoration", 1, -10, 3, True),
+    (4, "Thursday Minoration", 1, -10, 4, True),
+    (4, "Friday Majoration", 1, 15, 5, True),
+    (4, "Saturday Majoration", 1, 15, 6, True),
+    (5, "Wednesday Minoration", 1, -10, 3, True),
+    (5, "Thursday Minoration", 1, -10, 4, True),
+    (5, "Friday Majoration", 1, 15, 5, True),
+    (5, "Saturday Majoration", 1, 15, 6, True),
+    (6, "Wednesday Minoration", 1, -10, 3, True),
+    (6, "Thursday Minoration", 1, -10, 4, True),
+    (6, "Friday Majoration", 1, 15, 5, True),
+    (6, "Saturday Majoration", 1, 15, 6, True),
+    (7, "Wednesday Minoration", 1, -10, 3, True),
+    (7, "Thursday Minoration", 1, -10, 4, True),
+    (7, "Friday Majoration", 1, 15, 5, True),
+    (7, "Saturday Majoration", 1, 15, 6, True),
 ]
 
 
 print("[+] inserting data into price_policies")
 try:
-    query = "INSERT INTO `price_policies` (`room_id`, `name`, \
-            `rooms_majoration`, `day_number`, `is_default`) \
-            VALUES(%s,%s,%s,%s,%s)"
+    query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
+            `price_policy_type`, `rooms_majoration`, `day_number`, \
+            `is_default`) VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, price_policy_data)
 except SQLAlchemyError as e:
     error = str(e.__dict__["orig"])
@@ -367,22 +398,39 @@ except SQLAlchemyError as e:
 
 
 price_policy_data_v2 = [
-    (1, "Capacity Minoration", -5, 1, True),
-    (2, "Capacity Minoration", -5, 1, True),
-    (3, "Capacity Minoration", -5, 1, True),
-    (4, "Capacity Minoration", -5, 1, True),
-    (5, "Capacity Minoration", -5, 1, True),
-    (6, "Capacity Minoration", -5, 1, True),
-    (7, "Capacity Minoration", -5, 1, True),
+    (1, "Capacity Minoration", 2, -5, 1, True),
+    (2, "Capacity Minoration", 2, -5, 1, True),
+    (3, "Capacity Minoration", 2, -5, 1, True),
+    (4, "Capacity Minoration", 2, -5, 1, True),
+    (5, "Capacity Minoration", 2, -5, 1, True),
+    (6, "Capacity Minoration", 2, -5, 1, True),
+    (7, "Capacity Minoration", 2, -5, 1, True),
 ]
 
 
 print("[+] inserting data into price_policies v2")
 try:
-    query = "INSERT INTO `price_policies` (`room_id`, `name`, \
-            `rooms_majoration`, `capacity_limit`, `is_default`) \
-            VALUES(%s,%s,%s,%s,%s)"
+    query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
+            `price_policy_type`, `rooms_majoration`, `day_number`, \
+            `is_default`) VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, price_policy_data_v2)
+except SQLAlchemyError as e:
+    error = str(e.__dict__["orig"])
+    print(error)
+
+# Generate fake data for Options
+options_data = [
+    ("Parking", 25),
+    ("Baby cot", 0),
+    ("Romance pack", 50),
+    ("Breakfast", 30),
+]
+
+try:
+    print("[+] inserting data into options table")
+    query = "INSERT INTO `options` (`name`, `price`) \
+            VALUES(%s,%s)"
+    id = db_engine.execute(query, options_data)
 except SQLAlchemyError as e:
     error = str(e.__dict__["orig"])
     print(error)
