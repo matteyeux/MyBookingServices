@@ -8,6 +8,8 @@ authors = ["hauteb_m"]
 python = "^3.7"
 uvicorn = "^0.14.0"
 fastapi = "^0.65.2"
+SQLAlchemy = "^1.4.20"
+PyMySQL = "^1.0.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"

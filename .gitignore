@@ -4,6 +4,7 @@ __pycache__
 *.pyc
 .coverage
 dist
+booking.egg-info/
 
 # doc generated files
 docs/build/
@@ -11,3 +12,6 @@ docs/ansible/ansible.md
 
 # specific files
 ansible/alex_hosts
+
+# misc env
+misc/env

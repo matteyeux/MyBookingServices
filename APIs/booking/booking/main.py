@@ -3,6 +3,7 @@
 import argparse
 
 import uvicorn
+from booking import config
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -47,10 +48,16 @@ def main() -> int:
     """Main function which will run the uvicorn
     web server and call the main API code."""
     parser = parse_arguments()
-    print(type(parser))
+    check = config.check_config()
+    if check is None:
+        print("[i] creating config file")
+        config.config_init()
+
     uvicorn.run(
-        "booking.app:app", host=parser.host,
-        port=parser.port, reload=parser.reload,
+        "booking.app:app",
+        host=parser.host,
+        port=parser.port,
+        reload=parser.reload,
     )
 
     return 0
