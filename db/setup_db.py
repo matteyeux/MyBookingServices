@@ -48,13 +48,13 @@ class RoomEnum(enum.Enum):
 
 
 class DayEnum(enum.Enum):
-    lundi = 0
-    mardi = 1
-    mercredi = 2
-    jeudi = 3
-    vendredi = 4
-    samedi = 5
-    dimanche = 6
+    dimanche = 0
+    lundi = 1
+    mardi = 2
+    mercredi = 3
+    jeudi = 4
+    vendredi = 5
+    samedi = 6
 
 
 class PPTypeEnum(enum.Enum):
@@ -309,6 +309,10 @@ booking_data = [
     (1, 342, 2, 828, '2121-07-16', '2021-07-17'),
     (4, 94, 2, 150, '2021-07-19', '2021-07-20'),
     (2, 224, 2, 450, '2021-07-21', '2021-07-22'),
+    (1, 78, 3, 2160, '2021-09-18', '2021-09-20'),
+    (4, 19, 2, 135, '2021-09-29', '2021-09-30'),
+    (6, 318, 2, 2150, '2021-10-08', '2021-10-10'),
+    (3, 241, 3, 270, '2021-10-27', '2021-10-28'),
 ]
 
 try:
@@ -327,34 +331,34 @@ except SQLAlchemyError as e:
 # Si une seule personne occupe la chambre le prix est minoré de 5%
 # Generate fake data for PricePolicy
 price_policy_data = [
-    (1, "Wednesday Minoration", 1, -10, 2, True),
-    (1, "Thursday Minoration", 1, -10, 3, True),
-    (1, "Friday Majoration", 1, 15, 4, True),
-    (1, "Saturday Majoration", 1, 15, 5, True),
-    (2, "Wednesday Minoration", 1, -10, 2, True),
-    (2, "Thursday Minoration", 1, -10, 3, True),
-    (2, "Friday Majoration", 1, 15, 4, True),
-    (2, "Saturday Majoration", 1, 15, 5, True),
-    (3, "Wednesday Minoration", 1, -10, 2, True),
-    (3, "Thursday Minoration", 1, -10, 3, True),
-    (3, "Friday Majoration", 1, 15, 4, True),
-    (3, "Saturday Majoration", 1, 15, 5, True),
-    (4, "Wednesday Minoration", 1, -10, 2, True),
-    (4, "Thursday Minoration", 1, -10, 3, True),
-    (4, "Friday Majoration", 1, 15, 4, True),
-    (4, "Saturday Majoration", 1, 15, 5, True),
-    (5, "Wednesday Minoration", 1, -10, 2, True),
-    (5, "Thursday Minoration", 1, -10, 3, True),
-    (5, "Friday Majoration", 1, 15, 4, True),
-    (5, "Saturday Majoration", 1, 15, 5, True),
-    (6, "Wednesday Minoration", 1, -10, 2, True),
-    (6, "Thursday Minoration", 1, -10, 3, True),
-    (6, "Friday Majoration", 1, 15, 4, True),
-    (6, "Saturday Majoration", 1, 15, 5, True),
-    (7, "Wednesday Minoration", 1, -10, 2, True),
-    (7, "Thursday Minoration", 1, -10, 3, True),
-    (7, "Friday Majoration", 1, 15, 4, True),
-    (7, "Saturday Majoration", 1, 15, 5, True),
+    (1, "Wednesday Minoration", 1, -10, 3, True),
+    (1, "Thursday Minoration", 1, -10, 4, True),
+    (1, "Friday Majoration", 1, 15, 5, True),
+    (1, "Saturday Majoration", 1, 15, 6, True),
+    (2, "Wednesday Minoration", 1, -10, 3, True),
+    (2, "Thursday Minoration", 1, -10, 4, True),
+    (2, "Friday Majoration", 1, 15, 5, True),
+    (2, "Saturday Majoration", 1, 15, 6, True),
+    (3, "Wednesday Minoration", 1, -10, 3, True),
+    (3, "Thursday Minoration", 1, -10, 4, True),
+    (3, "Friday Majoration", 1, 15, 5, True),
+    (3, "Saturday Majoration", 1, 15, 6, True),
+    (4, "Wednesday Minoration", 1, -10, 3, True),
+    (4, "Thursday Minoration", 1, -10, 4, True),
+    (4, "Friday Majoration", 1, 15, 5, True),
+    (4, "Saturday Majoration", 1, 15, 6, True),
+    (5, "Wednesday Minoration", 1, -10, 3, True),
+    (5, "Thursday Minoration", 1, -10, 4, True),
+    (5, "Friday Majoration", 1, 15, 5, True),
+    (5, "Saturday Majoration", 1, 15, 6, True),
+    (6, "Wednesday Minoration", 1, -10, 3, True),
+    (6, "Thursday Minoration", 1, -10, 4, True),
+    (6, "Friday Majoration", 1, 15, 5, True),
+    (6, "Saturday Majoration", 1, 15, 6, True),
+    (7, "Wednesday Minoration", 1, -10, 3, True),
+    (7, "Thursday Minoration", 1, -10, 4, True),
+    (7, "Friday Majoration", 1, 15, 5, True),
+    (7, "Saturday Majoration", 1, 15, 6, True),
 ]
 
 
