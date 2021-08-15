@@ -186,6 +186,17 @@ class PricePolicies(Base):
     )
 
 
+# Place de garage (25$)
+# Ajout d'un lit bébé (sans frais additionnels)
+# Pack romance (50$), doit être réservé avec deux jours d'avance
+# Petit déjeuner (30$)
+class Options(Base):
+    __tablename__ = "options"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    price = Column(float)
+
+
 Hotels.addresses = relationship(
     "Addresses",
     order_by=Addresses.id,
@@ -390,6 +401,23 @@ try:
             `rooms_majoration`, `capacity_limit`, `is_default`) \
             VALUES(%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, price_policy_data_v2)
+except SQLAlchemyError as e:
+    error = str(e.__dict__["orig"])
+    print(error)
+
+# Generate fake data for Options
+options_data = [
+    ("Parking", 25),
+    ("Baby cot", 0),
+    ("Romance pack", 50),
+    ("Breakfast", 30)
+]
+
+try:
+    print("[+] inserting data into options table")
+    query = "INSERT INTO `options` (`name`, `price`) \
+            VALUES(%s,%s)"
+    id = db_engine.execute(query, options_data)
 except SQLAlchemyError as e:
     error = str(e.__dict__["orig"])
     print(error)
