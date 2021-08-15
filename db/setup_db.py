@@ -57,6 +57,11 @@ class DayEnum(enum.Enum):
     dimanche = 6
 
 
+class PPTypeEnum(enum.Enum):
+    price_policy_days = 1
+    price_policy_capacity = 2
+
+
 class Hotels(Base):
     __tablename__ = "hotels"
     id = Column(Integer, primary_key=True)
@@ -162,6 +167,7 @@ class PricePolicies(Base):
     id = Column(Integer, primary_key=True)
     rooms_id = Column(Integer, ForeignKey("rooms.id"))
     name = Column(String(100))
+    price_policy_type = Column(Enum(PPTypeEnum))
     rooms_majoration = Column(Float)
     day_number = Column(Enum(DayEnum))
     capacity_limit = Column(Integer)
@@ -321,34 +327,34 @@ except SQLAlchemyError as e:
 # Si une seule personne occupe la chambre le prix est minoré de 5%
 # Generate fake data for PricePolicy
 price_policy_data = [
-    (1, "Wednesday Minoration", -10, 2, True),
-    (1, "Thursday Minoration", -10, 3, True),
-    (1, "Friday Majoration", 15, 4, True),
-    (1, "Saturday Majoration", 15, 5, True),
-    (2, "Wednesday Minoration", -10, 2, True),
-    (2, "Thursday Minoration", -10, 3, True),
-    (2, "Friday Majoration", 15, 4, True),
-    (2, "Saturday Majoration", 15, 5, True),
-    (3, "Wednesday Minoration", -10, 2, True),
-    (3, "Thursday Minoration", -10, 3, True),
-    (3, "Friday Majoration", 15, 4, True),
-    (3, "Saturday Majoration", 15, 5, True),
-    (4, "Wednesday Minoration", -10, 2, True),
-    (4, "Thursday Minoration", -10, 3, True),
-    (4, "Friday Majoration", 15, 4, True),
-    (4, "Saturday Majoration", 15, 5, True),
-    (5, "Wednesday Minoration", -10, 2, True),
-    (5, "Thursday Minoration", -10, 3, True),
-    (5, "Friday Majoration", 15, 4, True),
-    (5, "Saturday Majoration", 15, 5, True),
-    (6, "Wednesday Minoration", -10, 2, True),
-    (6, "Thursday Minoration", -10, 3, True),
-    (6, "Friday Majoration", 15, 4, True),
-    (6, "Saturday Majoration", 15, 5, True),
-    (7, "Wednesday Minoration", -10, 2, True),
-    (7, "Thursday Minoration", -10, 3, True),
-    (7, "Friday Majoration", 15, 4, True),
-    (7, "Saturday Majoration", 15, 5, True),
+    (1, "Wednesday Minoration", 1, -10, 2, True),
+    (1, "Thursday Minoration", 1, -10, 3, True),
+    (1, "Friday Majoration", 1, 15, 4, True),
+    (1, "Saturday Majoration", 1, 15, 5, True),
+    (2, "Wednesday Minoration", 1, -10, 2, True),
+    (2, "Thursday Minoration", 1, -10, 3, True),
+    (2, "Friday Majoration", 1, 15, 4, True),
+    (2, "Saturday Majoration", 1, 15, 5, True),
+    (3, "Wednesday Minoration", 1, -10, 2, True),
+    (3, "Thursday Minoration", 1, -10, 3, True),
+    (3, "Friday Majoration", 1, 15, 4, True),
+    (3, "Saturday Majoration", 1, 15, 5, True),
+    (4, "Wednesday Minoration", 1, -10, 2, True),
+    (4, "Thursday Minoration", 1, -10, 3, True),
+    (4, "Friday Majoration", 1, 15, 4, True),
+    (4, "Saturday Majoration", 1, 15, 5, True),
+    (5, "Wednesday Minoration", 1, -10, 2, True),
+    (5, "Thursday Minoration", 1, -10, 3, True),
+    (5, "Friday Majoration", 1, 15, 4, True),
+    (5, "Saturday Majoration", 1, 15, 5, True),
+    (6, "Wednesday Minoration", 1, -10, 2, True),
+    (6, "Thursday Minoration", 1, -10, 3, True),
+    (6, "Friday Majoration", 1, 15, 4, True),
+    (6, "Saturday Majoration", 1, 15, 5, True),
+    (7, "Wednesday Minoration", 1, -10, 2, True),
+    (7, "Thursday Minoration", 1, -10, 3, True),
+    (7, "Friday Majoration", 1, 15, 4, True),
+    (7, "Saturday Majoration", 1, 15, 5, True),
 ]
 
 
@@ -364,13 +370,13 @@ except SQLAlchemyError as e:
 
 
 price_policy_data_v2 = [
-    (1, "Capacity Minoration", -5, 1, True),
-    (2, "Capacity Minoration", -5, 1, True),
-    (3, "Capacity Minoration", -5, 1, True),
-    (4, "Capacity Minoration", -5, 1, True),
-    (5, "Capacity Minoration", -5, 1, True),
-    (6, "Capacity Minoration", -5, 1, True),
-    (7, "Capacity Minoration", -5, 1, True),
+    (1, "Capacity Minoration", 2, -5, 1, True),
+    (2, "Capacity Minoration", 2, -5, 1, True),
+    (3, "Capacity Minoration", 2, -5, 1, True),
+    (4, "Capacity Minoration", 2, -5, 1, True),
+    (5, "Capacity Minoration", 2, -5, 1, True),
+    (6, "Capacity Minoration", 2, -5, 1, True),
+    (7, "Capacity Minoration", 2, -5, 1, True),
 ]
 
 
