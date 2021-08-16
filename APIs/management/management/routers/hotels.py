@@ -42,7 +42,7 @@ async def get_hotel_by_id(hotel_id: int = 1):
 async def create_hotel(hotel: Hotel, address: Address):
     """Post detail about an hotel"""
     hotels = Hotels()
-    hotel = hotels.create_hotel(hotel: Hotel, address: Address)
+    hotel = hotels.create_hotel(hotel, address)
     return {"hotel": hotel}
 
 

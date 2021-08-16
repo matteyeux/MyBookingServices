@@ -26,7 +26,7 @@ class Hotels:
         """return the list of all hotels."""
         return None if not engine else self.db.get_hotel_by_id(hotel_id)
 
-    def create_hotel(self, hotel: Hotel):
+    def create_hotel(self, hotel, address):
         engine = self.db.engine
         """Create an hotel in db and return it."""
-        return None if not engine else self.db.create_hotel(hotel: Hotel, address: Address)
+        return None if not engine else self.db.create_hotel(hotel, address)

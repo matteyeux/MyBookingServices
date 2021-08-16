@@ -1,5 +1,5 @@
-from booking.config import config_api_setup
-from booking.database import Database
+from management.config import config_api_setup
+from management.database import Database
 
 
 class Rooms:

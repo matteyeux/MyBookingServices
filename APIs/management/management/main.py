@@ -3,7 +3,7 @@
 import argparse
 
 import uvicorn
-from booking import config
+from management import config
 
 
 def parse_arguments() -> argparse.Namespace:
