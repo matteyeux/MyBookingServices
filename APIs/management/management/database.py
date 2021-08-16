@@ -280,8 +280,8 @@ class Database:
 
     def create_hotel(
         self,
-        hotel: Hotel,
-        address: Address
+        hotel,
+        address
         ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
         """Create an hotel"""
 

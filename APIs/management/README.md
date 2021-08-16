@@ -31,9 +31,9 @@ This is the directory containing the code for the Booking API.
 
 ## Setup dev environment
 
-How to setup a basic env for the booking API
+How to setup a basic env for the management API
 
-### booking API
+### management API
 
 Install `poetry` and `virtualenv`.
 

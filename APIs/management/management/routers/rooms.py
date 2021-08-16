@@ -1,5 +1,5 @@
-from booking.models.rooms import Rooms
-from booking.utils import check_dates
+from management.models.rooms import Rooms
+from management.utils import check_dates
 from fastapi import APIRouter
 from fastapi import HTTPException
 
