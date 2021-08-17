@@ -1,4 +1,7 @@
 import enum
+import datetime
+
+import pandas as pd
 
 from faker import Faker
 from sqlalchemy import BigInteger
@@ -48,13 +51,13 @@ class RoomEnum(enum.Enum):
 
 
 class DayEnum(enum.Enum):
-    dimanche = 0
-    lundi = 1
-    mardi = 2
-    mercredi = 3
-    jeudi = 4
-    vendredi = 5
-    samedi = 6
+    Sunday = 0
+    Monday = 1
+    Tuesday = 2
+    Wednesday = 3
+    Thursday = 4
+    Friday = 5
+    Saturday = 6
 
 
 class PPTypeEnum(enum.Enum):
@@ -207,6 +210,18 @@ class Options(Base):
     )
 
 
+class Calendar(Base):
+    __tablename__ = "calendar"
+    id = Column(Integer, primary_key=True)
+    date = Column(Date)
+    day = Column(Integer)
+    day_name = Column(Enum(DayEnum))
+    day_week = Column(Integer)
+    month_name = Column(String(25))
+    month = Column(Integer)
+    year = Column(Integer)
+
+
 Hotels.addresses = relationship(
     "Addresses",
     order_by=Addresses.id,
@@ -326,8 +341,8 @@ except SQLAlchemyError as e:
 booking_data = [
     (3, 54, 2, 990, '2021-05-21', '2021-05-24'),
     (7, 138, 5, 2950, '2021-05-14', '2021-05-17'),
-    (6, 417, 1, 5795, '2021-07-05', '2121-07-11'),
-    (1, 342, 2, 828, '2121-07-16', '2021-07-17'),
+    (6, 417, 1, 5795, '2021-07-05', '2021-07-11'),
+    (1, 342, 2, 828, '2021-07-16', '2021-07-17'),
     (4, 94, 2, 150, '2021-07-19', '2021-07-20'),
     (2, 224, 2, 450, '2021-07-21', '2021-07-22'),
     (1, 78, 3, 2160, '2021-09-18', '2021-09-20'),
@@ -408,7 +423,7 @@ price_policy_data_v2 = [
 print("[+] inserting data into price_policies v2")
 try:
     query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
-            `price_policy_type`, `rooms_majoration`, `day_number`, \
+            `price_policy_type`, `rooms_majoration`, `capacity_limit`, \
             `is_default`) VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, price_policy_data_v2)
 except SQLAlchemyError as e:
@@ -429,5 +444,33 @@ try:
             VALUES(%s,%s)"
     id = db_engine.execute(query, options_data)
 except SQLAlchemyError as e:
+    error = str(e.__dict__["orig"])
+    print(error)
+
+
+# Generate Calendar
+date_data = []
+sdate = datetime.date(2021, 1, 1)
+edate = datetime.date(2022, 12, 31)
+date_range = pd.date_range(sdate, edate-datetime.timedelta(days=1), freq='d')
+for e in date_range:
+    date = e.strftime("%Y-%m-%d")
+    day = e.strftime("%d")
+    day_name = e.strftime("%A")
+    day_week = e.strftime("%w")
+    month_name = e.strftime("%B")
+    month = e.strftime("%m")
+    year = e.strftime("%Y")
+    row = (date, day, day_name, day_week, month_name, month, year)
+    date_data.append(row)
+
+try:
+    print("[+] inserting data into calendar table")
+    query = "INSERT INTO `calendar` (`date`, `day`, `day_name`, \
+            `day_week`, `month_name`, `month`, `year`) \
+            VALUES(%s,%s,%s,%s,%s,%s,%s)"
+    id = db_engine.execute(query, date_data)
+except SQLAlchemyError as e:
+    print(query)
     error = str(e.__dict__["orig"])
     print(error)
