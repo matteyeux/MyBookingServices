@@ -171,7 +171,7 @@ class PricePolicies(Base):
     room_id = Column(Integer, ForeignKey("rooms.id"))
     name = Column(String(100))
     price_policy_type = Column(Enum(PPTypeEnum))
-    rooms_majoration = Column(Float)
+    room_majoration = Column(Float)
     day_number = Column(Enum(DayEnum))
     capacity_limit = Column(Integer)
     majoration_start_date = Column(DateTime)
@@ -403,7 +403,7 @@ price_policy_data = [
 print("[+] inserting data into price_policies")
 try:
     query = "INSERT INTO `price_policies` (`room_id`, `name`, \
-            `price_policy_type`, `rooms_majoration`, `day_number`, \
+            `price_policy_type`, `room_majoration`, `day_number`, \
             `is_default`) VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, price_policy_data)
 except SQLAlchemyError as e:
@@ -424,8 +424,8 @@ price_policy_data_v2 = [
 
 print("[+] inserting data into price_policies v2")
 try:
-    query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
-            `price_policy_type`, `rooms_majoration`, `capacity_limit`, \
+    query = "INSERT INTO `price_policies` (`room_id`, `name`, \
+            `price_policy_type`, `room_majoration`, `capacity_limit`, \
             `is_default`) VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, price_policy_data_v2)
 except SQLAlchemyError as e:

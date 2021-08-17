@@ -39,12 +39,12 @@ class Rooms:
             capacity,
         )
 
-        self.db.get_price_policies(
-            available_rooms,
-            start_date,
-            end_date,
-            capacity,
-        )
+        # self.db.get_price_policies(
+        #     available_rooms,
+        #     start_date,
+        #     end_date,
+        #     capacity,
+        # )
 
         return available_rooms
 

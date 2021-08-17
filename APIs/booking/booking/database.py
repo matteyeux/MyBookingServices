@@ -280,28 +280,30 @@ class Database:
         """Get available rooms for an hotel at a specific date."""
         rooms_table = self.setup_rooms_table()
         booking_table = self.setup_booking_table()
-
         j = join(
             rooms_table,
             booking_table,
             rooms_table.c.id == booking_table.c.room_id,
             isouter=True,
         )
-
         # allow booking the same room if end_date
         # from previous booking == start_date
         date = datetime.strptime(str(start_date), "%Y-%m-%d")
         updated_date = date + timedelta(days=1)
         updated_start_date = datetime.strftime(updated_date, "%Y/%m/%d")
 
+        # get all rooms for hotel_id and put data in list
+        query = select(rooms_table.c.id).where(
+            rooms_table.c.hotel_id == hotel_id,
+        )
+        rooms_result = self.engine.connect().execute(query)
+        rooms = [room for (room,) in rooms_result]
+
+        # TODO: fix duplicates
         query = (
-            select(
-                rooms_table.c.id,
-                rooms_table.c.room,
-                rooms_table.c.price,
-                rooms_table.c.capacity,
-            )
+            select(booking_table.c.room_id)
             .where(
+                booking_table.c.room_id.in_(rooms),
                 or_(
                     booking_table.c.room_id == None,
                     and_(
@@ -319,15 +321,51 @@ class Database:
                                 booking_table.c.booking_end_date,
                             ),
                         ),
-                        rooms_table.c.hotel_id == hotel_id,
                     ),
                 ),
             )
             .where(rooms_table.c.capacity >= capacity)
             .select_from(j)
         )
-        booking_result = self.engine.connect().execute(query).all()
-        return booking_result
+        ok = self.engine.connect().execute(query).all()
+        print("================")
+        print(ok)
+        print("================")
+
+        # query = (
+        #     select(
+        #         rooms_table.c.id,
+        #         rooms_table.c.room,
+        #         rooms_table.c.price,
+        #         rooms_table.c.capacity,
+        #     )
+        #     .where(
+        #         or_(
+        #             booking_table.c.room_id == None,
+        #             and_(
+        #                 not_(
+        #                     between(
+        #                         updated_start_date,
+        #                         booking_table.c.booking_start_date,
+        #                         booking_table.c.booking_end_date,
+        #                     ),
+        #                 ),
+        #                 not_(
+        #                     between(
+        #                         end_date,
+        #                         booking_table.c.booking_start_date,
+        #                         booking_table.c.booking_end_date,
+        #                     ),
+        #                 ),
+        #                 rooms_table.c.hotel_id == hotel_id,
+        #             ),
+        #         ),
+        #     )
+        #     .where(rooms_table.c.capacity >= capacity)
+        #     .select_from(j)
+        # )
+        # booking_result = self.engine.connect().execute(query).all()
+        return []  # booking_result
 
     def get_all_rooms(
         self,
