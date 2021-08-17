@@ -1,0 +1,98 @@
+image: python:3.8-alpine
+
+cache:
+  paths:
+    - APIs/booking/.pytest_cache
+    - APIs/booking/env
+
+before_script:
+  - echo "172.16.233.100  worker1.mybooking.services" >> /etc/hosts
+  - echo "172.16.233.53   worker2.mybooking.services" >> /etc/hosts
+  - apk update
+  - apk add --no-cache --virtual .build-deps gcc musl-dev libffi-dev openssl-dev python3-dev rust cargo
+  - apk add rsync openssh
+  - python3 -m pip install poetry
+  - python3 -m pip install virtualenv
+  - python3 -m pip install flake8
+  # Keys for deployment
+  - mkdir -p ~/.ssh/
+  - touch ~/.ssh/known_hosts
+  - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+  - chmod 600 ~/.ssh/id_rsa
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
+stages:
+  - build
+  - linter
+  - unit-tests
+  - deploy-preprod
+  - func-tests-preprod
+  - deploy-prod
+  - func-tests-prod
+  # - green-to-blue
+
+build-job:
+  stage: build
+  script: |
+    cd APIs/booking
+    virtualenv -p python3 env
+    . env/bin/activate
+    poetry install
+    
+linter-job:
+  stage: linter
+  script: |
+    cd APIs/booking
+    flake8
+
+unit-tests-job:
+  stage: unit-tests
+  extends:
+    - build-job
+  script: |
+    cd APIs/booking
+    . env/bin/activate
+    python3 -m pip install requests
+    pytest -sv  --cov-report term-missing --cov=booking
+
+deploy-preprod-job:
+  stage: deploy-preprod
+  extends:
+    - unit-tests-job
+  script: |
+    cd APIs
+    ls -l
+    rsync -av booking deploy@worker1.mybooking.services:/home/deploy/preprod/
+    rsync -av booking deploy@worker2.mybooking.services:/home/deploy/preprod/
+
+func-tests-preprod-job:
+  stage: func-tests-preprod
+  extends:
+    - deploy-preprod-job
+  script: |
+    run: docker run --net=host -v $(pwd)/APIs/test-funct:/etc/newman -t postman/newman:latest run "API.postman_collection.json" --reporters="cli"
+
+deploy-prod-job:
+  stage: deploy-prod
+  extends:
+    - func-tests-preprod-job
+  script: |
+    cd APIs
+    ls -l
+    rsync -av booking deploy@worker1.mybooking.services:/home/deploy/prod/
+    rsync -av booking deploy@worker2.mybooking.services:/home/deploy/prod/
+
+func-tests-prod-job:
+  stage: func-tests-prod
+  extends:
+    - deploy-prod-job
+  script: |
+    run: docker run --net=host -v $(pwd)/APIs/test-funct:/etc/newman -t postman/newman:latest run "API.postman_collection.json" --reporters="cli"
+
+# green-to-blue-job
+# TODO : Do the job here
+#   stage: green-to-blue
+#   extends:
+#     - func-tests-prod-job
+#   script: |
+#     run: echo "hello green blue"
