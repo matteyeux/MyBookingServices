@@ -69,6 +69,7 @@ class Database:
         try:
             self.engine = create_engine(self.db_string).connect()
         except sqlalchemy.exc.OperationalError:
+            print("could not access database.")
             self.engine = None
 
     def setup_rooms_table(self) -> sqlalchemy.sql.schema.Table:
