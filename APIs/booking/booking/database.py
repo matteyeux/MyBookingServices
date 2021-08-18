@@ -299,7 +299,7 @@ class Database:
         rooms_result = self.engine.connect().execute(query)
         rooms = [room for (room,) in rooms_result]
 
-        # TODO: fix duplicates
+        # this query looks for items where that are available to book
         query = (
             select(booking_table.c.room_id)
             .where(
@@ -327,44 +327,8 @@ class Database:
             .where(rooms_table.c.capacity >= capacity)
             .select_from(j)
         )
-        ok = self.engine.connect().execute(query).all()
-        print("================")
-        print(ok)
-        print("================")
-
-        # query = (
-        #     select(
-        #         rooms_table.c.id,
-        #         rooms_table.c.room,
-        #         rooms_table.c.price,
-        #         rooms_table.c.capacity,
-        #     )
-        #     .where(
-        #         or_(
-        #             booking_table.c.room_id == None,
-        #             and_(
-        #                 not_(
-        #                     between(
-        #                         updated_start_date,
-        #                         booking_table.c.booking_start_date,
-        #                         booking_table.c.booking_end_date,
-        #                     ),
-        #                 ),
-        #                 not_(
-        #                     between(
-        #                         end_date,
-        #                         booking_table.c.booking_start_date,
-        #                         booking_table.c.booking_end_date,
-        #                     ),
-        #                 ),
-        #                 rooms_table.c.hotel_id == hotel_id,
-        #             ),
-        #         ),
-        #     )
-        #     .where(rooms_table.c.capacity >= capacity)
-        #     .select_from(j)
-        # )
-        # booking_result = self.engine.connect().execute(query).all()
+        available_rooms = self.engine.connect().execute(query).all()
+        print(available_rooms)
         return []  # booking_result
 
     def get_all_rooms(
