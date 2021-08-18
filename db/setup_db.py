@@ -1,8 +1,7 @@
-import enum
 import datetime
+import enum
 
 import pandas as pd
-
 from faker import Faker
 from sqlalchemy import BigInteger
 from sqlalchemy import Boolean
@@ -23,8 +22,8 @@ from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
-username = "root"
-password = "root"
+username = "etna"
+password = "etna"
 host = "localhost"
 # port = 3306
 DB_NAME = "mybookingservices"
@@ -68,6 +67,7 @@ class PPTypeEnum(enum.Enum):
 class Hotels(Base):
     __tablename__ = "hotels"
     id = Column(Integer, primary_key=True)
+    name = Column(String(50))
     telephone = Column(String(20))
     website = Column(String(100))
     description = Column(String(100))
@@ -147,7 +147,7 @@ class Customers(Base):
 class Booking(Base):
     __tablename__ = "booking"
     id = Column(BigInteger, primary_key=True)
-    rooms_id = Column(Integer, ForeignKey("rooms.id"))
+    room_id = Column(Integer, ForeignKey("rooms.id"))
     customer_id = Column(BigInteger, ForeignKey("customers.id"))
     capacity_book = Column(Integer)
     order_price = Column(Float)
@@ -168,10 +168,10 @@ class Booking(Base):
 class PricePolicies(Base):
     __tablename__ = "price_policies"
     id = Column(Integer, primary_key=True)
-    rooms_id = Column(Integer, ForeignKey("rooms.id"))
+    room_id = Column(Integer, ForeignKey("rooms.id"))
     name = Column(String(100))
     price_policy_type = Column(Enum(PPTypeEnum))
-    rooms_majoration = Column(Float)
+    room_majoration = Column(Float)
     day_number = Column(Enum(DayEnum))
     capacity_limit = Column(Integer)
     majoration_start_date = Column(DateTime)
@@ -255,20 +255,22 @@ Base.metadata.create_all(db_engine)
 fake = Faker(["fr_FR"])
 fake_us = Faker(["en_US"])
 
+hotel_names = ['Carlton', 'Lutetia']
 # Generate fake data for Hotel
 hotel_data = []
-for _ in range(2):
+for i in range(2):
+    name = hotel_names[i]
     phone = fake.phone_number()
     website = fake.uri()
     description = fake.catch_phrase()
     owner = fake.name()
-    row = (phone, website, description, owner)
+    row = (name, phone, website, description, owner)
     hotel_data.append(row)
 
 try:
     print("[+] inserting data into hotels table")
-    query = "INSERT INTO `hotels` (`telephone`, `website`, `description`, \
-            `owner`) VALUES( % s, % s, % s, % s)"
+    query = "INSERT INTO `hotels` (`name`, `telephone`, `website`, `description`, \
+            `owner`) VALUES( % s, % s, % s, % s, % s)"
     id = db_engine.execute(query, hotel_data)
 except SQLAlchemyError as e:
     error = str(e.__dict__["orig"])
@@ -276,7 +278,7 @@ except SQLAlchemyError as e:
 
 # Generate fake data for Address
 address_data = []
-for i in range(1, 2):
+for i in range(1, 3):
     hotel_id = i
     number = fake.building_number()
     street = fake.street_name()
@@ -353,7 +355,7 @@ booking_data = [
 
 try:
     print("[+] inserting data into customers table")
-    query = "INSERT INTO `booking` (`rooms_id`, `customer_id`, `capacity_book`, \
+    query = "INSERT INTO `booking` (`room_id`, `customer_id`, `capacity_book`, \
             `order_price`, `booking_start_date`, `booking_end_date`) \
             VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, booking_data)
@@ -400,8 +402,8 @@ price_policy_data = [
 
 print("[+] inserting data into price_policies")
 try:
-    query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
-            `price_policy_type`, `rooms_majoration`, `day_number`, \
+    query = "INSERT INTO `price_policies` (`room_id`, `name`, \
+            `price_policy_type`, `room_majoration`, `day_number`, \
             `is_default`) VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, price_policy_data)
 except SQLAlchemyError as e:
@@ -422,8 +424,8 @@ price_policy_data_v2 = [
 
 print("[+] inserting data into price_policies v2")
 try:
-    query = "INSERT INTO `price_policies` (`rooms_id`, `name`, \
-            `price_policy_type`, `rooms_majoration`, `capacity_limit`, \
+    query = "INSERT INTO `price_policies` (`room_id`, `name`, \
+            `price_policy_type`, `room_majoration`, `capacity_limit`, \
             `is_default`) VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, price_policy_data_v2)
 except SQLAlchemyError as e:
@@ -435,7 +437,7 @@ options_data = [
     ("Parking", 25),
     ("Baby cot", 0),
     ("Romance pack", 50),
-    ("Breakfast", 30)
+    ("Breakfast", 30),
 ]
 
 try:
@@ -452,7 +454,7 @@ except SQLAlchemyError as e:
 date_data = []
 sdate = datetime.date(2021, 1, 1)
 edate = datetime.date(2022, 12, 31)
-date_range = pd.date_range(sdate, edate-datetime.timedelta(days=1), freq='d')
+date_range = pd.date_range(sdate, edate - datetime.timedelta(days=1), freq='d')
 for e in date_range:
     date = e.strftime("%Y-%m-%d")
     day = e.strftime("%d")
