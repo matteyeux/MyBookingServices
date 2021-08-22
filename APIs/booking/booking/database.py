@@ -276,13 +276,11 @@ class Database:
             rooms_table.c.room,
             rooms_table.c.price,
             rooms_table.c.capacity,
+        ).where(
+            rooms_table.c.hotel_id == hotel_id,
+            rooms_table.c.capacity >= capacity,
         )
 
-        if hotel_id > 0:
-            query = query.where(rooms_table.c.hotel_id == hotel_id)
-
-        if capacity > 0:
-            query = query.where(rooms_table.c.capacity == capacity)
         rooms_result = self.engine.connect().execute(query).all()
         rooms = [dict(row) for row in rooms_result]
         return rooms

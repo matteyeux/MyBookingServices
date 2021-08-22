@@ -62,7 +62,7 @@ class Rooms:
             print("dates are None")
             return None
 
-        rooms = self.db.get_all_rooms(hotel_id)
+        rooms = self.db.get_all_rooms(hotel_id, capacity)
         reservations = self.db.get_booked_rooms_by_hotel()
         available = self.compute_available_rooms(
             rooms,
