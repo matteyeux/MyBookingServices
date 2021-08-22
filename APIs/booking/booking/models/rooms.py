@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from booking.config import config_api_setup
 from booking.database import Database
 
@@ -16,6 +18,34 @@ class Rooms:
             database=config['database']['database'],
         )
 
+    def compute_available_rooms(
+        self,
+        rooms: dict,
+        reservations: dict,
+        start_date: str,
+        end_date: str,
+    ) -> dict:
+        """returns available rooms with correct price etc..."""
+
+        # convert dates
+        sdate = datetime.strptime(start_date, "%Y-%m-%d").date()
+        edate = datetime.strptime(end_date, "%Y-%m-%d").date()
+        available_rooms = []
+
+        for room in rooms:
+            if room['id'] not in [resa['room_id'] for resa in reservations]:
+                available_rooms.append(room)
+
+            for resa in reservations:
+                if (
+                    resa['room_id'] == room['id']
+                    and not sdate < resa['booking_start_date'] < edate
+                    and not sdate < resa['booking_end_date'] < edate
+                ):
+                    available_rooms.append(room)
+
+        return available_rooms
+
     def get_available_rooms(
         self,
         hotel_id: int = 1,
@@ -32,21 +62,15 @@ class Rooms:
             print("dates are None")
             return None
 
-        available_rooms = self.db.get_available_rooms(
-            hotel_id,
+        rooms = self.db.get_all_rooms(hotel_id)
+        reservations = self.db.get_booked_rooms_by_hotel()
+        available = self.compute_available_rooms(
+            rooms,
+            reservations,
             start_date,
             end_date,
-            capacity,
         )
-
-        # self.db.get_price_policies(
-        #     available_rooms,
-        #     start_date,
-        #     end_date,
-        #     capacity,
-        # )
-
-        return available_rooms
+        return available
 
     def get_all_rooms(self, hotel_id: int = 0, capacity: int = 0):
         """Return all rooms."""
