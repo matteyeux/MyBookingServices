@@ -3,11 +3,9 @@ from datetime import datetime
 
 import sqlalchemy
 from sqlalchemy import BigInteger
-from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import create_engine
 from sqlalchemy import Date
-from sqlalchemy import DateTime
 from sqlalchemy import Enum
 from sqlalchemy import Float
 from sqlalchemy import ForeignKey
@@ -179,37 +177,37 @@ class Database:
         )
         return addresses_table
 
-    def setup_price_policies_table(self) -> sqlalchemy.sql.schema.Table:
-        """Setup price_policies table for database."""
-        meta = MetaData(self.engine)
-        price_policies = Table(
-            "price_policies",
-            meta,
-            Column("id", Integer, primary_key=True),
-            Column("room_id", Integer, ForeignKey("rooms.id")),
-            Column("name", String(100)),
-            Column("rooms_majoration", Float),
-            Column("day_number", Enum(DayEnum)),
-            Column("capacity_limit", Integer),
-            Column("majoration_start_date", DateTime),
-            Column("majoration_end_date", DateTime),
-            Column("is_default", Boolean, nullable=False),
-            Column(
-                "created_time",
-                TIMESTAMP,
-                nullable=False,
-                server_default=text("CURRENT_TIMESTAMP"),
-            ),
-            Column(
-                "updated_time",
-                TIMESTAMP,
-                nullable=False,
-                server_default=text(
-                    "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
-                ),
-            ),
-        )
-        return price_policies
+    # def setup_price_policies_table(self) -> sqlalchemy.sql.schema.Table:
+    #     """Setup price_policies table for database."""
+    #     meta = MetaData(self.engine)
+    #     price_policies = Table(
+    #         "price_policies",
+    #         meta,
+    #         Column("id", Integer, primary_key=True),
+    #         Column("room_id", Integer, ForeignKey("rooms.id")),
+    #         Column("name", String(100)),
+    #         Column("rooms_majoration", Float),
+    #         Column("day_number", Enum(DayEnum)),
+    #         Column("capacity_limit", Integer),
+    #         Column("majoration_start_date", DateTime),
+    #         Column("majoration_end_date", DateTime),
+    #         Column("is_default", Boolean, nullable=False),
+    #         Column(
+    #             "created_time",
+    #             TIMESTAMP,
+    #             nullable=False,
+    #             server_default=text("CURRENT_TIMESTAMP"),
+    #         ),
+    #         Column(
+    #             "updated_time",
+    #             TIMESTAMP,
+    #             nullable=False,
+    #             server_default=text(
+    #                 "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+    #             ),
+    #         ),
+    #     )
+    #     return price_policies
 
     def get_room_by_id(
         self,
@@ -266,7 +264,7 @@ class Database:
     def get_all_rooms(
         self,
         hotel_id: int = 0,
-        capacity: int = 0,
+        capacity: int = 1,
     ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
         """List all rooms in database."""
         rooms_table = self.setup_rooms_table()
@@ -276,10 +274,10 @@ class Database:
             rooms_table.c.room,
             rooms_table.c.price,
             rooms_table.c.capacity,
-        ).where(
-            rooms_table.c.hotel_id == hotel_id,
-            rooms_table.c.capacity >= capacity,
-        )
+        ).where(rooms_table.c.capacity >= capacity)
+
+        if hotel_id > 0:
+            query = query.where(rooms_table.c.hotel_id == hotel_id)
 
         rooms_result = self.engine.connect().execute(query).all()
         rooms = [dict(row) for row in rooms_result]
