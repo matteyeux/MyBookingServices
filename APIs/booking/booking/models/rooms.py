@@ -24,7 +24,7 @@ class Rooms:
         reservations: dict,
         start_date: str,
         end_date: str,
-    ) -> dict:
+    ) -> list:
         """returns available rooms with correct price etc..."""
 
         # convert dates
@@ -49,28 +49,30 @@ class Rooms:
     def get_available_rooms(
         self,
         hotel_id: int = 1,
+        capacity: int = 0,
         start_date: str = None,
         end_date: str = None,
-        capacity: int = 0,
-    ):
+    ) -> list:
         """Get available rooms from an hotel for a specific period."""
         if self.db.engine is None:
             print("[e] could not setup database engine")
 
-        # check if dates are not None
+        # Check if dates are not None. We already check in routers
+        # but better check again
         if None in [start_date, end_date]:
             print("dates are None")
             return None
 
         rooms = self.db.get_all_rooms(hotel_id, capacity)
         reservations = self.db.get_booked_rooms_by_hotel()
-        available = self.compute_available_rooms(
+        available_rooms = self.compute_available_rooms(
             rooms,
             reservations,
             start_date,
             end_date,
         )
-        return available
+
+        return available_rooms
 
     def get_all_rooms(self, hotel_id: int = 0, capacity: int = 0):
         """Return all rooms."""

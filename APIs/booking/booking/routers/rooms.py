@@ -3,8 +3,6 @@ from booking.utils import check_dates
 from fastapi import APIRouter
 from fastapi import HTTPException
 
-# from fastapi import Request
-
 router = APIRouter()
 
 
@@ -20,12 +18,11 @@ async def get_all_rooms(hotel_id: int = 0, capacity: int = 0):
 @router.get("/rooms/all/available/", tags=["rooms"])
 async def get_available_rooms(
     hotel_id: int = 1,
+    capacity: int = 0,
     start_date: str = None,
     end_date: str = None,
-    capacity: int = 0,
 ):
     """Route to get available rooms."""
-    print("here")
     if check_dates(start_date, end_date) is False:
         raise HTTPException(
             status_code=400,
@@ -36,9 +33,9 @@ async def get_available_rooms(
 
     available_rooms = rooms.get_available_rooms(
         hotel_id,
+        capacity,
         start_date,
         end_date,
-        capacity,
     )
     return {"rooms": available_rooms}
 
