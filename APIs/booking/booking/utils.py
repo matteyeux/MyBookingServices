@@ -1,5 +1,4 @@
 from datetime import datetime
-from datetime import timedelta
 
 
 def check_dates(start: str = None, end: str = None) -> bool:
@@ -24,13 +23,6 @@ def check_dates(start: str = None, end: str = None) -> bool:
         or (start_date == end_date)
     ):
         return False
-
-    # end date check
-    if (
-        (current_date + timedelta(days=1)) > end_date
-    ) or start_date > end_date:
-        return False
-
     return True
 
 
