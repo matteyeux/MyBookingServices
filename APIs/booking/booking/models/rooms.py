@@ -27,11 +27,6 @@ class Rooms:
         """Get available rooms from an hotel for a specific period."""
         if self.db.engine is None:
             print("[e] could not setup database engine")
-
-        # Check if dates are not None. We already check in routers
-        # but better check again
-        if None in [start_date, end_date]:
-            print("dates are None")
             return None
 
         rooms = self.db.get_all_rooms(hotel_id, capacity)
@@ -45,7 +40,7 @@ class Rooms:
 
         return available_rooms
 
-    def get_all_rooms(self, hotel_id: int = 0, capacity: int = 0):
+    def get_all_rooms(self, hotel_id: int = 0, capacity: int = 1):
         """Return all rooms."""
         engine = self.db.engine
         return (
