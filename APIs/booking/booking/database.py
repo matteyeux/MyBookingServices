@@ -285,7 +285,9 @@ class Database:
         rooms = [dict(row) for row in rooms_result]
         return rooms
 
-    def get_booked_rooms_by_hotel(self, hotel_id: int = 1):
+    def get_booked_rooms_by_hotel(self, hotel_id: int = 1) -> list:
+        """Get booked rooms for an hotel."""
+
         # get all rooms for hotel_id and put data in list
         rooms_table = self.setup_rooms_table()
         query = select(rooms_table.c.id).where(
@@ -294,6 +296,7 @@ class Database:
         rooms_result = self.engine.connect().execute(query)
         rooms = [room for (room,) in rooms_result]
 
+        # grab the list of booked rooms starting today
         booking = self.setup_booking_table()
         query = select(
             booking.c.room_id,
@@ -305,5 +308,6 @@ class Database:
         )
         booking_result = self.engine.connect().execute(query).all()
 
+        # we return booked_rooms as a dict
         booked_rooms = [dict(row) for row in booking_result]
         return booked_rooms
