@@ -11,21 +11,22 @@ def test_get_hotels_01():
             {
                 "id": 1,
                 "name": "Carlton",
-                "number": "25",
-                "street": "boulevard Alves",
-                "postal_code": 47961,
-                "town": "Marchal",
+                "number": "85",
+                "street": "avenue de Chevalier",
+                "postal_code": 50022,
+                "town": "Blinboeuf",
             },
             {
                 "id": 2,
                 "name": "Lutetia",
-                "number": "5",
-                "street": "rue de Lebon",
-                "postal_code": 94161,
-                "town": "Loiseau",
+                "number": "8",
+                "street": "rue de Gimenez",
+                "postal_code": 30464,
+                "town": "Didier",
             },
         ],
     }
+
     response = client.get("/hotels/all/")
     assert response.status_code == 200
     assert response.json() == expected
@@ -39,13 +40,14 @@ def test_get_hotel_by_id_01():
             {
                 "id": 2,
                 "name": "Lutetia",
-                "number": "5",
-                "street": "rue de Lebon",
-                "postal_code": 94161,
-                "town": "Loiseau",
+                "number": "8",
+                "street": "rue de Gimenez",
+                "postal_code": 30464,
+                "town": "Didier",
             },
         ],
     }
+
     response = client.get("/hotels/2")
     assert response.status_code == 200
     assert response.json() == expected
