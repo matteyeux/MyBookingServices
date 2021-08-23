@@ -37,6 +37,13 @@ async def get_available_rooms(
         start_date,
         end_date,
     )
+
+    if available_rooms is None:
+        raise HTTPException(
+            status_code=500,
+            detail="Service Unavailable",
+        )
+
     return {"rooms": available_rooms}
 
 
