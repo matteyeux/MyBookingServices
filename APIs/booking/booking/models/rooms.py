@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from booking import utils
 from booking.config import config_api_setup
 from booking.database import Database
 
@@ -17,34 +16,6 @@ class Rooms:
             host=config['database']['host'],
             database=config['database']['database'],
         )
-
-    def compute_available_rooms(
-        self,
-        rooms: dict,
-        reservations: dict,
-        start_date: str,
-        end_date: str,
-    ) -> list:
-        """returns available rooms with correct price etc..."""
-
-        # convert dates
-        sdate = datetime.strptime(start_date, "%Y-%m-%d").date()
-        edate = datetime.strptime(end_date, "%Y-%m-%d").date()
-        available_rooms = []
-
-        for room in rooms:
-            if room['id'] not in [resa['room_id'] for resa in reservations]:
-                available_rooms.append(room)
-
-            for resa in reservations:
-                if (
-                    resa['room_id'] == room['id']
-                    and not sdate < resa['booking_start_date'] < edate
-                    and not sdate < resa['booking_end_date'] < edate
-                ):
-                    available_rooms.append(room)
-
-        return available_rooms
 
     def get_available_rooms(
         self,
@@ -65,7 +36,7 @@ class Rooms:
 
         rooms = self.db.get_all_rooms(hotel_id, capacity)
         reservations = self.db.get_booked_rooms_by_hotel()
-        available_rooms = self.compute_available_rooms(
+        available_rooms = utils.compute_available_rooms(
             rooms,
             reservations,
             start_date,
