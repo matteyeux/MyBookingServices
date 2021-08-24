@@ -4,12 +4,12 @@ from fastapi.testclient import TestClient
 client = TestClient(app.app)
 
 
-def test_book_room_01():
-    """Check 400 on room ID."""
-    response = client.post("/book/-1")
-    assert response.status_code == 400
-    assert response.json()['detail'] == "Can't use id <= 0"
-    assert response.json() is not None
+# def test_book_room_01():
+#     """Check 400 on room ID."""
+#     response = client.post("/book/-1")
+#     assert response.status_code == 400
+#     assert response.json()['detail'] == "Can't use id <= 0"
+#     assert response.json() is not None
 
 
 def test_book_room_02():
