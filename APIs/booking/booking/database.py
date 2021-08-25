@@ -3,9 +3,11 @@ from datetime import datetime
 
 import sqlalchemy
 from sqlalchemy import BigInteger
+from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import create_engine
 from sqlalchemy import Date
+from sqlalchemy import DateTime
 from sqlalchemy import Enum
 from sqlalchemy import Float
 from sqlalchemy import ForeignKey
@@ -27,13 +29,18 @@ class RoomEnum(enum.Enum):
 
 
 class DayEnum(enum.Enum):
-    lundi = 0
-    mardi = 1
-    mercredi = 2
-    jeudi = 3
-    vendredi = 4
-    samedi = 5
-    dimanche = 6
+    Sunday = 0
+    Monday = 1
+    Tuesday = 2
+    Wednesday = 3
+    Thursday = 4
+    Friday = 5
+    Saturday = 6
+
+
+class PPTypeEnum(enum.Enum):
+    price_policy_days = 1
+    price_policy_capacity = 2
 
 
 class Database:
@@ -177,37 +184,38 @@ class Database:
         )
         return addresses_table
 
-    # def setup_price_policies_table(self) -> sqlalchemy.sql.schema.Table:
-    #     """Setup price_policies table for database."""
-    #     meta = MetaData(self.engine)
-    #     price_policies = Table(
-    #         "price_policies",
-    #         meta,
-    #         Column("id", Integer, primary_key=True),
-    #         Column("room_id", Integer, ForeignKey("rooms.id")),
-    #         Column("name", String(100)),
-    #         Column("rooms_majoration", Float),
-    #         Column("day_number", Enum(DayEnum)),
-    #         Column("capacity_limit", Integer),
-    #         Column("majoration_start_date", DateTime),
-    #         Column("majoration_end_date", DateTime),
-    #         Column("is_default", Boolean, nullable=False),
-    #         Column(
-    #             "created_time",
-    #             TIMESTAMP,
-    #             nullable=False,
-    #             server_default=text("CURRENT_TIMESTAMP"),
-    #         ),
-    #         Column(
-    #             "updated_time",
-    #             TIMESTAMP,
-    #             nullable=False,
-    #             server_default=text(
-    #                 "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
-    #             ),
-    #         ),
-    #     )
-    #     return price_policies
+    def setup_price_policies_table(self) -> sqlalchemy.sql.schema.Table:
+        """Setup price_policies table for database."""
+        meta = MetaData(self.engine)
+        price_policies = Table(
+            "price_policies",
+            meta,
+            Column("id", Integer, primary_key=True),
+            Column("room_id", Integer, ForeignKey("rooms.id")),
+            Column("name", String(100)),
+            Column("price_policy_type", Enum(PPTypeEnum)),
+            Column("room_majoration", Float),
+            Column("day_number", Enum(DayEnum)),
+            Column("capacity_limit", Integer),
+            Column("majoration_start_date", DateTime),
+            Column("majoration_end_date", DateTime),
+            Column("is_default", Boolean, nullable=False),
+            Column(
+                "created_time",
+                TIMESTAMP,
+                nullable=False,
+                server_default=text("CURRENT_TIMESTAMP"),
+            ),
+            Column(
+                "updated_time",
+                TIMESTAMP,
+                nullable=False,
+                server_default=text(
+                    "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+                ),
+            ),
+        )
+        return price_policies
 
     def get_room_by_id(
         self,
@@ -309,3 +317,20 @@ class Database:
         # we return booked_rooms as a dict
         booked_rooms = [dict(row) for row in booking_result]
         return booked_rooms
+
+    def get_price_policies_for_room(self, room_id: int = 1) -> dict:
+        pp_table = self.setup_price_policies_table()
+
+        query = select(
+            pp_table.c.name,
+            pp_table.c.price_policy_type,
+            pp_table.c.room_majoration,
+            pp_table.c.day_number,
+            pp_table.c.capacity_limit,
+            pp_table.c.majoration_start_date,
+            pp_table.c.majoration_end_date,
+            pp_table.c.is_default,
+        ).where(pp_table.c.room_id == room_id)
+
+        prices_result = self.engine.connect().execute(query).all()
+        return [dict(row) for row in prices_result]
