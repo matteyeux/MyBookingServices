@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from booking.models.rooms import Rooms
+
 
 def check_dates(start: str = None, end: str = None) -> bool:
     """Validates if :
@@ -54,8 +56,56 @@ def compute_available_rooms(
     return available_rooms
 
 
-# def handle_pricing() -> str:
-#     """Handle pricing according to some options."""
-#     price: str = None
+def handle_pricing() -> float:
+    """Handle pricing according to some options."""
+    price: int = 0
+    return float(price)
 
-#     return price
+
+def book_sanity_check(json_data: dict) -> bool:
+    """Check if all data sent is ok before handling it."""
+
+    keys = ['room_id', 'start_date', 'end_date', 'capacity']
+    json_keys = json_data.keys()
+
+    # check if all needed keys are there. No need to look for options yet.
+    for key in keys:
+        if not key in json_keys:
+            print(f"[e] {key} not found")
+            return False
+
+    # check dates
+    if check_dates(json_data['start_date'], json_data['end_date']) is False:
+        print("[e] dates are wrong")
+        return False
+
+    # check room is not neg
+    if json_data['room_id'] <= 0:
+        print("[e] Cannot use id <= 0")
+        return False
+
+    # check if room exists
+    rooms = Rooms()
+    room = rooms.get_room_by_id(json_data['room_id'])
+    if not room:
+        print("[e] room does not exist")
+        return False
+
+    # check room capacity
+    if json_data['capacity'] > room[0][3]:
+        print("[e] capacity is not ok")
+        return False
+
+    # check for options
+    if "options" in json_keys:
+        keys = ['parking', 'baby_cot', 'romance_pack', 'breakfast']
+        options_key = json_data['options'].keys()
+        for key in options_key:
+            if key not in options_key:
+                print(f"[e] option {key} not recognized")
+                return False
+
+            if isinstance(json_data['options'][key], int) is False:
+                return False
+
+    return True
