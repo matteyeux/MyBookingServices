@@ -1,8 +1,9 @@
-# from booking.models.book import Book
 from booking import utils
 from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi import Request
+
+# from booking.models.book import Book
 
 
 router = APIRouter()
@@ -36,6 +37,8 @@ async def book_room(request: Request):
     #         status_code=403, detail="Room is already booked for this period"
     #     )
 
+    # book = Book()
+    # booking = book.do_book_room(data)
     # book_room
 
     return {"room": data}

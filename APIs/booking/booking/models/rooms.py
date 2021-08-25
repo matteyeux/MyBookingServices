@@ -52,3 +52,8 @@ class Rooms:
         # if room_id == 0 get latest added room ?
         engine = self.db.engine
         return None if not engine else self.db.get_room_by_id(room_id)
+
+    def get_price_policies(self, room_id: int = 1):
+        """Get all prices."""
+        if self.db.engine is not None:
+            return self.db.get_price_policies_for_room(room_id)

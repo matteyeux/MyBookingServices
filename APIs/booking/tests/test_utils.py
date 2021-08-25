@@ -8,6 +8,11 @@ def test_check_dates_01():
     assert utils.check_dates(start, end) is False
 
 
+def test_handle_pricing_01():
+    """basic pricing."""
+    assert utils.handle_pricing() == 0
+
+
 def test_book_sanity_check_01():
     """check if all keys are there."""
     valid_json = {
@@ -104,7 +109,8 @@ def test_book_sanity_check_06():
 
 
 def test_book_sanity_check_07():
-    """check for options, make sure all options are an int. Check later if they are 0 or 1."""
+    """check for options, make sure all options are an int.
+    Check later if they are 0 or 1."""
     bad_options_json = {
         "room_id": 1,
         "start_date": "2021-10-08",

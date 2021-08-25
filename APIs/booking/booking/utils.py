@@ -2,6 +2,9 @@ from datetime import datetime
 
 from booking.models.rooms import Rooms
 
+# from datetime import timedelta
+# import pandas as pd
+
 
 def check_dates(start: str = None, end: str = None) -> bool:
     """Validates if :
@@ -56,10 +59,46 @@ def compute_available_rooms(
     return available_rooms
 
 
-def handle_pricing() -> float:
-    """Handle pricing according to some options."""
-    price: int = 0
-    return float(price)
+# def handle_pricing(booking_data: dict, pp: dict, room: dict) -> float:
+#     """Handle pricing according to some options."""
+#     # generate dates list
+#     print(booking_data)
+
+#     print("==========================")
+#     print(pp)
+
+#     print("==========================")
+#     print(room)
+#     df_date = pd.DataFrame()
+#     sdate = datetime.strptime(booking_data['start_date'], "%Y-%m-%d").date()
+#     edate = datetime.strptime(booking_data['end_date'], "%Y-%m-%d").date()
+
+#     date_range = pd.date_range(sdate, edate - timedelta(days=1), freq='d')
+#     pd.set_option('display.max_columns', None)
+#     pd.set_option('display.max_rows', None)
+#     for e in date_range:
+#         new_date = {}
+#         new_date['date'] = e.strftime("%Y-%m-%d")
+#         new_date['day'] = e.strftime("%w")
+#         df_date = df_date.append(new_date, ignore_index=True)
+
+
+#     df_pp = pd.DataFrame.from_dict(pp)
+#     df_pp_day = df_pp.dropna(subset=['day_number'])
+
+#     for index, row in df_pp_day.iterrows():
+#         print("===================")
+#         df_pp_day.loc[index, 'day_number'] = row['day_number'].value
+#         print(row['day_number'])
+#         print("===================")
+
+#     print(row['day_number'])
+#     #print(df_pp_day)
+
+#     new_df = df_date.merge(df_pp_day, how='left',
+#               left_on='day', right_on='day_number')
+#     print(new_df)
+#     return None
 
 
 def book_sanity_check(json_data: dict) -> bool:
@@ -70,7 +109,7 @@ def book_sanity_check(json_data: dict) -> bool:
 
     # check if all needed keys are there. No need to look for options yet.
     for key in keys:
-        if not key in json_keys:
+        if key not in json_keys:
             print(f"[e] {key} not found")
             return False
 
@@ -100,7 +139,7 @@ def book_sanity_check(json_data: dict) -> bool:
     if "options" in json_keys:
         keys = ['parking', 'baby_cot', 'romance_pack', 'breakfast']
         options_key = json_data['options'].keys()
-        for key in options_key:
+        for key in keys:
             if key not in options_key:
                 print(f"[e] option {key} not recognized")
                 return False
