@@ -3,7 +3,7 @@ from booking.database import Database
 
 
 class Book:
-    """Rooms class model."""
+    """Book class model."""
 
     def __init__(self):
         config, config_file = config_api_setup()
