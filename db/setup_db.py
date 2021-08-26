@@ -16,6 +16,7 @@ from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import text
 from sqlalchemy import TIMESTAMP
+from sqlalchemy import JSON
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -108,7 +109,7 @@ class Rooms(Base):
     __tablename__ = "rooms"
     id = Column(Integer, primary_key=True)
     hotel_id = Column(Integer, ForeignKey("hotels.id"))
-    room = Column(Enum(RoomEnum))
+    room = Column(String(50))
     capacity = Column(Integer)
     price = Column(Float)
     created_time = Column(
@@ -150,6 +151,7 @@ class Booking(Base):
     room_id = Column(Integer, ForeignKey("rooms.id"))
     customer_id = Column(BigInteger, ForeignKey("customers.id"))
     capacity_book = Column(Integer)
+    option = Column(JSON)
     order_price = Column(Float)
     booking_start_date = Column(Date)
     booking_end_date = Column(Date)
@@ -171,8 +173,8 @@ class PricePolicies(Base):
     room_id = Column(Integer, ForeignKey("rooms.id"))
     name = Column(String(100))
     price_policy_type = Column(Enum(PPTypeEnum))
-    room_majoration = Column(Float)
-    day_number = Column(Enum(DayEnum))
+    rooms_majoration = Column(Float)
+    day_number = Column(Integer)
     capacity_limit = Column(Integer)
     majoration_start_date = Column(DateTime)
     majoration_end_date = Column(DateTime)
@@ -215,7 +217,7 @@ class Calendar(Base):
     id = Column(Integer, primary_key=True)
     date = Column(Date)
     day = Column(Integer)
-    day_name = Column(Enum(DayEnum))
+    day_name = Column(String(50))
     day_week = Column(Integer)
     month_name = Column(String(25))
     month = Column(Integer)
@@ -340,24 +342,25 @@ except SQLAlchemyError as e:
     print(error)
 
 # Generate fake data for Booking
+odb = '{"parking": 1, "baby_cot": 1, "romance_pack": 1, "breakfast": 1}'
 booking_data = [
-    (3, 54, 2, 990, '2021-05-21', '2021-05-24'),
-    (7, 138, 5, 2950, '2021-05-14', '2021-05-17'),
-    (6, 417, 1, 5795, '2021-07-05', '2021-07-11'),
-    (1, 342, 2, 828, '2021-07-16', '2021-07-17'),
-    (4, 94, 2, 150, '2021-07-19', '2021-07-20'),
-    (2, 224, 2, 450, '2021-07-21', '2021-07-22'),
-    (1, 78, 3, 2160, '2021-09-18', '2021-09-20'),
-    (4, 19, 2, 135, '2021-09-29', '2021-09-30'),
-    (6, 318, 2, 2150, '2021-10-08', '2021-10-10'),
-    (3, 241, 3, 270, '2021-10-27', '2021-10-28'),
+    (3, 54, 2, odb, 1095, '2021-05-21', '2021-05-24'),
+    (7, 138, 5, odb, 3055, '2021-05-14', '2021-05-17'),
+    (6, 417, 1, odb, 5900, '2021-07-05', '2021-07-11'),
+    (1, 342, 2, odb, 933, '2021-07-16', '2021-07-17'),
+    (4, 94, 2, odb, 255, '2021-07-19', '2021-07-20'),
+    (2, 224, 2, odb, 555, '2021-07-21', '2021-07-22'),
+    (1, 78, 3, odb, 2265, '2021-09-18', '2021-09-20'),
+    (4, 19, 2, odb, 240, '2021-09-29', '2021-09-30'),
+    (6, 318, 2, odb, 2255, '2021-10-08', '2021-10-10'),
+    (3, 241, 3, odb, 375, '2021-10-27', '2021-10-28'),
 ]
 
 try:
     print("[+] inserting data into customers table")
-    query = "INSERT INTO `booking` (`room_id`, `customer_id`, `capacity_book`, \
-            `order_price`, `booking_start_date`, `booking_end_date`) \
-            VALUES(%s,%s,%s,%s,%s,%s)"
+    query = "INSERT INTO `booking` (`rooms_id`, `customer_id`, `capacity_book`, \
+            `option`, `order_price`, `booking_start_date`, `booking_end_date`) \
+            VALUES(%s,%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, booking_data)
 except SQLAlchemyError as e:
     error = str(e.__dict__["orig"])
