@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from booking.models.hotels import Hotels
 from booking.models.rooms import Rooms
 
 # from datetime import timedelta
@@ -104,7 +105,7 @@ def compute_available_rooms(
 def book_sanity_check(json_data: dict) -> bool:
     """Check if all data sent is ok before handling it."""
 
-    keys = ['room_id', 'start_date', 'end_date', 'capacity']
+    keys = ['hotel_id', 'room_id', 'start_date', 'end_date', 'capacity']
     json_keys = json_data.keys()
 
     # check if all needed keys are there. No need to look for options yet.
@@ -112,6 +113,18 @@ def book_sanity_check(json_data: dict) -> bool:
         if key not in json_keys:
             print(f"[e] {key} not found")
             return False
+
+    # check hotel_id is not neg
+    if json_data['hotel_id'] <= 0:
+        print("[e] Cannot use id <= 0")
+        return False
+
+    # check if hotel_id exists
+    hotels = Hotels()
+    hotel = hotels.get_hotel_by_id(json_data['hotel_id'])
+    if not hotel:
+        print("[e] hotel does not exist")
+        return False
 
     # check dates
     if check_dates(json_data['start_date'], json_data['end_date']) is False:

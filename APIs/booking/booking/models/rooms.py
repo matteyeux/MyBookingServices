@@ -57,3 +57,15 @@ class Rooms:
         """Get all prices."""
         if self.db.engine is not None:
             return self.db.get_price_policies_for_room(room_id)
+
+    def is_room_available(self, data: dict) -> bool:
+        """Check if room is available, returns True if yes, else False."""
+        available_rooms = self.get_available_rooms(
+            data['hotel_id'],
+            data['capacity'],
+            data['start_date'],
+            data['end_date'],
+        )
+        if [room['id'] == data['room_id'] for room in available_rooms]:
+            return True
+        return False

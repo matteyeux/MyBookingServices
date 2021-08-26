@@ -1,9 +1,8 @@
 from booking import utils
+from booking.models.book import Book
 from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi import Request
-
-# from booking.models.book import Book
 
 
 router = APIRouter()
@@ -19,6 +18,7 @@ router = APIRouter()
 @router.post("/book/", tags=["book"])
 async def book_room(request: Request):
     """Book room. Exepected parameters :
+    - hotel_id
     - room_id
     - start_date
     - end_date
@@ -37,8 +37,8 @@ async def book_room(request: Request):
     #         status_code=403, detail="Room is already booked for this period"
     #     )
 
-    # book = Book()
+    book = Book()
+    book.is_room_available(data)
     # booking = book.do_book_room(data)
-    # book_room
 
     return {"room": data}
