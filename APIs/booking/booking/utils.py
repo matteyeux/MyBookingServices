@@ -1,10 +1,9 @@
 from datetime import datetime
+from datetime import timedelta
 
+import pandas as pd
 from booking.models.hotels import Hotels
 from booking.models.rooms import Rooms
-
-# from datetime import timedelta
-# import pandas as pd
 
 
 def check_dates(start: str = None, end: str = None) -> bool:
@@ -60,46 +59,66 @@ def compute_available_rooms(
     return available_rooms
 
 
-# def handle_pricing(booking_data: dict, pp: dict, room: dict) -> float:
-#     """Handle pricing according to some options."""
-#     # generate dates list
-#     print(booking_data)
+def handle_pricing(
+    booking_data: dict,
+    pp: dict,
+    room: dict,
+    options: dict,
+) -> float:
+    """Handle pricing according to some options."""
 
-#     print("==========================")
-#     print(pp)
+    # room_up = room unit price
+    room_up = room[0][4]
 
-#     print("==========================")
-#     print(room)
-#     df_date = pd.DataFrame()
-#     sdate = datetime.strptime(booking_data['start_date'], "%Y-%m-%d").date()
-#     edate = datetime.strptime(booking_data['end_date'], "%Y-%m-%d").date()
+    # Divide room_majoration by 100 to calcul majoration properly
+    df_pp = pd.DataFrame.from_dict(pp)
+    df_pp['room_majoration'] = df_pp['room_majoration'] / 100
 
-#     date_range = pd.date_range(sdate, edate - timedelta(days=1), freq='d')
-#     pd.set_option('display.max_columns', None)
-#     pd.set_option('display.max_rows', None)
-#     for e in date_range:
-#         new_date = {}
-#         new_date['date'] = e.strftime("%Y-%m-%d")
-#         new_date['day'] = e.strftime("%w")
-#         df_date = df_date.append(new_date, ignore_index=True)
+    # Create df_ppf_day to calcul majoration only day for each day
+    df_pp_day = df_pp.dropna(subset=['day_number'])
 
+    # Create df_pp_capacity to calcul majoration only on capacity for each day
+    df_pp_capacity = df_pp.dropna(subset=['capacity_limit'])
 
-#     df_pp = pd.DataFrame.from_dict(pp)
-#     df_pp_day = df_pp.dropna(subset=['day_number'])
+    # Create range of date between start date and end date
+    df_date = pd.DataFrame()
+    sdate = datetime.strptime(booking_data['start_date'], "%Y-%m-%d").date()
+    edate = datetime.strptime(booking_data['end_date'], "%Y-%m-%d").date()
 
-#     for index, row in df_pp_day.iterrows():
-#         print("===================")
-#         df_pp_day.loc[index, 'day_number'] = row['day_number'].value
-#         print(row['day_number'])
-#         print("===================")
+    date_range = pd.date_range(sdate, edate - timedelta(days=1), freq='d')
+    pd.set_option('display.max_columns', None)
+    pd.set_option('display.max_rows', None)
+    for e in date_range:
+        new_date = {}
+        new_date['date'] = e.strftime("%Y-%m-%d")
+        new_date['day'] = float(e.strftime("%w"))
+        df_date = df_date.append(new_date, ignore_index=True)
 
-#     print(row['day_number'])
-#     #print(df_pp_day)
+    # Merge date range and price policy to set majoration on right dayss
+    new_df = df_date.merge(
+        df_pp_day,
+        how='left',
+        left_on='day',
+        right_on='day_number',
+    )
+    new_df['room_majoration'] = new_df['room_majoration'].fillna(0)
 
-#     new_df = df_date.merge(df_pp_day, how='left',
-#               left_on='day', right_on='day_number')
-#     print(new_df)
-#     return None
+    # Calcul final price of room depand on majorations days
+    # and majoration capacity
+    price = 0
+    capacity_limit = df_pp_capacity.iloc[0]['capacity_limit']
+    capacity_maj = df_pp_capacity.iloc[0]['room_majoration']
+    for index, row in new_df.iterrows():
+        if booking_data['capacity'] > capacity_limit:
+            price += room_up + room_up * row['room_majoration']
+        else:
+            price += (
+                room_up
+                + room_up * row['room_majoration']
+                + room_up * capacity_maj
+            )
+
+    return price
 
 
 def book_sanity_check(json_data: dict) -> bool:
