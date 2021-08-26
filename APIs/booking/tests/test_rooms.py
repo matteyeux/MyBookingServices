@@ -197,8 +197,8 @@ def test_get_rooms_by_id_01():
                 "room": "Suite",
                 "capacity": 3,
                 "price": 720,
-                "created_time": "2021-08-17T20:48:10",
-                "updated_time": "2021-08-17T20:48:10",
+                "created_time": "2021-08-26T21:37:27",
+                "updated_time": "2021-08-26T21:37:27",
             },
         ],
     }
