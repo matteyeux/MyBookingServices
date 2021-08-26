@@ -1,4 +1,3 @@
-import enum
 from datetime import datetime
 
 import sqlalchemy
@@ -8,7 +7,6 @@ from sqlalchemy import Column
 from sqlalchemy import create_engine
 from sqlalchemy import Date
 from sqlalchemy import DateTime
-from sqlalchemy import Enum
 from sqlalchemy import Float
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
@@ -18,29 +16,6 @@ from sqlalchemy import Table
 from sqlalchemy import text
 from sqlalchemy import TIMESTAMP
 from sqlalchemy.sql import select
-
-
-class RoomEnum(enum.Enum):
-    SR = "Suite présidentielle"
-    S = "Suite"
-    JS = "Junior suite"
-    CD = "Chambre de luxe"
-    CS = "Chambre standard"
-
-
-class DayEnum(enum.Enum):
-    Sunday = 0
-    Monday = 1
-    Tuesday = 2
-    Wednesday = 3
-    Thursday = 4
-    Friday = 5
-    Saturday = 6
-
-
-class PPTypeEnum(enum.Enum):
-    price_policy_days = 1
-    price_policy_capacity = 2
 
 
 class Database:
@@ -78,7 +53,7 @@ class Database:
             meta,
             Column("id", Integer, primary_key=True),
             Column("hotel_id", Integer, ForeignKey("hotels.id")),
-            Column("room", Enum(RoomEnum)),
+            Column("room", String(50)),
             Column("capacity", Integer),
             Column("price", Float),
             Column(
@@ -193,9 +168,9 @@ class Database:
             Column("id", Integer, primary_key=True),
             Column("room_id", Integer, ForeignKey("rooms.id")),
             Column("name", String(100)),
-            Column("price_policy_type", Enum(PPTypeEnum)),
+            Column("price_policy_type", Integer),
             Column("room_majoration", Float),
-            Column("day_number", Enum(DayEnum)),
+            Column("day_number", Integer),
             Column("capacity_limit", Integer),
             Column("majoration_start_date", DateTime),
             Column("majoration_end_date", DateTime),
@@ -216,6 +191,32 @@ class Database:
             ),
         )
         return price_policies
+
+    def setup_options_table(self) -> sqlalchemy.sql.schema.Table:
+        """Setup options table for database."""
+        meta = MetaData(self.engine)
+        options = Table(
+            "options",
+            meta,
+            Column("id", Integer, primary_key=True),
+            Column("name", String(100)),
+            Column("price", Float),
+            Column(
+                "created_time",
+                TIMESTAMP,
+                nullable=False,
+                server_default=text("CURRENT_TIMESTAMP"),
+            ),
+            Column(
+                "updated_time",
+                TIMESTAMP,
+                nullable=False,
+                server_default=text(
+                    "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+                ),
+            ),
+        )
+        return options
 
     def get_room_by_id(
         self,
@@ -334,3 +335,13 @@ class Database:
 
         prices_result = self.engine.connect().execute(query).all()
         return [dict(row) for row in prices_result]
+
+    def get_options(self) -> list:
+        options_table = self.setup_options_table()
+        query = select(
+            options_table.c.id,
+            options_table.c.name,
+            options_table.c.price,
+        )
+        options_result = self.engine.connect().execute(query).all()
+        return [dict(row) for row in options_result]
