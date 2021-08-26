@@ -66,6 +66,8 @@ class Rooms:
             data['start_date'],
             data['end_date'],
         )
-        if [room['id'] == data['room_id'] for room in available_rooms]:
-            return True
+
+        for room in available_rooms:
+            if room['id'] == data['room_id']:
+                return True
         return False

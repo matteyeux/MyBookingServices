@@ -31,14 +31,12 @@ async def book_room(request: Request):
         # https://stackoverflow.com/a/42171674
         raise HTTPException(status_code=422, detail="Unprocessable Entity")
 
-    # check if room is available at the said date
-    # if is_room_available(...) is False:
-    #     raise HTTPException(
-    #         status_code=403, detail="Room is already booked for this period"
-    #     )
-
     book = Book()
-    book.is_room_available(data)
-    # booking = book.do_book_room(data)
+    if book.is_room_available(data) is False:
+        raise HTTPException(
+            status_code=403,
+            detail="Room is already booked for this period",
+        )
 
+    # booking = book.do_book_room(data)
     return {"room": data}
