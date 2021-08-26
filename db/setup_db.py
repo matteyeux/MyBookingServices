@@ -172,8 +172,8 @@ class PricePolicies(Base):
     id = Column(Integer, primary_key=True)
     room_id = Column(Integer, ForeignKey("rooms.id"))
     name = Column(String(100))
-    price_policy_type = Column(Enum(PPTypeEnum))
-    rooms_majoration = Column(Float)
+    price_policy_type = Column(Integer)
+    room_majoration = Column(Float)
     day_number = Column(Integer)
     capacity_limit = Column(Integer)
     majoration_start_date = Column(DateTime)
@@ -358,7 +358,7 @@ booking_data = [
 
 try:
     print("[+] inserting data into customers table")
-    query = "INSERT INTO `booking` (`rooms_id`, `customer_id`, `capacity_book`, \
+    query = "INSERT INTO `booking` (`room_id`, `customer_id`, `capacity_book`, \
             `option`, `order_price`, `booking_start_date`, `booking_end_date`) \
             VALUES(%s,%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, booking_data)
