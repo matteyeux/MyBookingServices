@@ -148,7 +148,7 @@ class Customers(Base):
 class Booking(Base):
     __tablename__ = "booking"
     id = Column(BigInteger, primary_key=True)
-    room_id = Column(Integer, ForeignKey("rooms.id"))
+    rooms_id = Column(Integer, ForeignKey("rooms.id"))
     customer_id = Column(BigInteger, ForeignKey("customers.id"))
     capacity_book = Column(Integer)
     option = Column(JSON)
@@ -172,8 +172,8 @@ class PricePolicies(Base):
     id = Column(Integer, primary_key=True)
     room_id = Column(Integer, ForeignKey("rooms.id"))
     name = Column(String(100))
-    price_policy_type = Column(Enum(PPTypeEnum))
-    rooms_majoration = Column(Float)
+    price_policy_type = Column(Integer)
+    room_majoration = Column(Float)
     day_number = Column(Integer)
     capacity_limit = Column(Integer)
     majoration_start_date = Column(DateTime)
