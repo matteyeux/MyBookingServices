@@ -3,26 +3,31 @@ from booking.models.rooms import Rooms
 from fastapi import APIRouter
 from fastapi import HTTPException
 
+# from fastapi import Request
+
 
 router = APIRouter()
 
 
 @router.post("/book/{room_id}", tags=["book"])
-async def book_room(room_id: int = 0):
+async def book_room(room_id: int = 1):
     """Book room"""
     if room_id <= 0:
         raise HTTPException(status_code=400, detail="Can't use id <= 0")
 
     # check if room exists
-    room = Rooms().get_room_by_id(room_id)
+    rooms = Rooms()
+    room = rooms.get_room_by_id(room_id)
     if not room:
         raise HTTPException(
             status_code=404,
-            detail="Room not found, can't book it.",
+            detail="Room not found",
         )
 
-    # currently we only check if the room is booked, what ever the date
-    if room[0]['booked'] is True:
+    # check if room is booked by looking at the table booking
+    # for 2 dates (start and end).
+    booked_room = None  # Book().is_room_available()
+    if booked_room is True:
         raise HTTPException(
             status_code=403,
             detail="Room is already booked for this period",

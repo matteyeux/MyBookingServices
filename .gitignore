@@ -12,6 +12,10 @@ docs/ansible/ansible.md
 
 # specific files
 ansible/alex_hosts
+<<<<<<< HEAD
 
 # misc env
 misc/env
+=======
+ansible/local_hosts
+>>>>>>> 21a378eb8a14604e624341c8f8cc503cbc5eec5c
