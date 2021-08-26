@@ -34,7 +34,7 @@ jobs:
     - name: import poor database
       run: |
         mysql --host=127.0.0.1 -p mybookingservices -P 3306 -u etna -p"etna" \
-        < db/mybookingservices.mysql
+        < db/mybookingservices.sql
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
