@@ -148,7 +148,7 @@ class Customers(Base):
 class Booking(Base):
     __tablename__ = "booking"
     id = Column(BigInteger, primary_key=True)
-    rooms_id = Column(Integer, ForeignKey("rooms.id"))
+    room_id = Column(Integer, ForeignKey("rooms.id"))
     customer_id = Column(BigInteger, ForeignKey("customers.id"))
     capacity_book = Column(Integer)
     option = Column(JSON)
@@ -358,7 +358,7 @@ booking_data = [
 
 try:
     print("[+] inserting data into customers table")
-    query = "INSERT INTO `booking` (`rooms_id`, `customer_id`, `capacity_book`, \
+    query = "INSERT INTO `booking` (`room_id`, `customer_id`, `capacity_book`, \
             `option`, `order_price`, `booking_start_date`, `booking_end_date`) \
             VALUES(%s,%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, booking_data)
