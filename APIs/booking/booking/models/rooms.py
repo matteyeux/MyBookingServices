@@ -71,3 +71,8 @@ class Rooms:
             if room['id'] == data['room_id']:
                 return True
         return False
+
+    def get_all_options(self) -> dict:
+        """Grab all options."""
+        engine = self.db.engine
+        return None if not engine else self.db.get_options()

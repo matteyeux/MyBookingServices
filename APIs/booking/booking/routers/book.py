@@ -38,5 +38,5 @@ async def book_room(request: Request):
             detail="Room is already booked for this period",
         )
 
-    # booking = book.do_book_room(data)
-    return {"room": data}
+    booking_data = book.do_book_room(data)
+    return {"booked_room": booking_data}

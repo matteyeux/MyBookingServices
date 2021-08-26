@@ -1,4 +1,4 @@
-# from booking import utils
+from booking import utils
 from booking.models.rooms import Rooms
 
 # from booking.config import config_api_setup
@@ -9,8 +9,11 @@ class Book(Rooms):
     """Book class model."""
 
     def do_book_room(self, data: dict) -> dict:
-        """book room."""
-        # pp = self.get_price_policies()
-        # room = self.get_room_by_id(data['room_id'])
-        #  price = utils.handle_pricing(data, pp, room)
-        return {}
+        """Book room and return data."""
+        # TODO insert in db
+        pp = self.get_price_policies()
+        options = self.get_all_options()
+        room = self.get_room_by_id(data['room_id'])
+        price = utils.handle_pricing(data, pp, room, options)
+        data['price'] = price
+        return data
