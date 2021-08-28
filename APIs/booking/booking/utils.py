@@ -118,6 +118,11 @@ def handle_pricing(
                 + room_up * capacity_maj
             )
 
+    # Add options to price
+    for elem in booking_data['options']:
+        if booking_data['options'][elem]:
+            price += options[elem]
+
     return price
 
 
