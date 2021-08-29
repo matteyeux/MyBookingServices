@@ -1,8 +1,8 @@
-from user.config import config_api_setup
-from user.database import Database
+from users.config import config_api_setup
+from users.database import Database
 
-class Rooms:
-    """Rooms class model."""
+class Users:
+    """User class model."""
 
     def __init__(self):
         config, config_file = config_api_setup()
