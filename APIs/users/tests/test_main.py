@@ -1,7 +1,7 @@
 import argparse
 from unittest import mock
 
-from booking import main
+from users import main
 
 
 @mock.patch(

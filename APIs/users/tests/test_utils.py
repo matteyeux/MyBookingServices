@@ -1,4 +1,4 @@
-from booking import utils
+from users import utils
 
 
 def test_check_dates_01():

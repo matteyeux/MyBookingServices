@@ -1,4 +1,4 @@
-from booking.database import Database
+from users.database import Database
 
 
 def test_database_access():

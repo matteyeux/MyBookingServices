@@ -1,4 +1,4 @@
-from booking import app
+from users import app
 from fastapi.testclient import TestClient
 
 client = TestClient(app.app)

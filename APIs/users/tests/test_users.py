@@ -1,7 +1,7 @@
 from shutil import copyfile
 
-from booking import app
-from booking import config
+from users import app
+from users import config
 from fastapi.testclient import TestClient
 
 client = TestClient(app.app)
