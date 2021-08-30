@@ -8,7 +8,7 @@ router = APIRouter()
 @router.get("/users/all/", tags=["users"])
 async def get_users():
     """Get all users"""
-    users = Users().get_all_Users()
+    users = Users().get_all_users()
     return {"users": users}
 
 
