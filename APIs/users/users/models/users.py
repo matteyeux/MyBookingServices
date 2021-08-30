@@ -22,3 +22,10 @@ class Users:
         return (
             None if not engine else self.db.get_all_users()
         )
+
+    
+    def get_user_by_id(self, user_id: int):
+        engine = self.db.engine
+        return (
+            None if not engine else self.db.get_user_by_id(user_id)
+        )
