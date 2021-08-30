@@ -1,48 +1,21 @@
-import enum
 from datetime import datetime
-from datetime import timedelta
 
 import sqlalchemy
-from fastapi.encoders import jsonable_encoder
-from sqlalchemy import and_
-from sqlalchemy import between
 from sqlalchemy import BigInteger
 from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import create_engine
 from sqlalchemy import Date
 from sqlalchemy import DateTime
-from sqlalchemy import Enum
 from sqlalchemy import Float
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import MetaData
-from sqlalchemy import not_
-from sqlalchemy import or_
 from sqlalchemy import String
 from sqlalchemy import Table
 from sqlalchemy import text
 from sqlalchemy import TIMESTAMP
 from sqlalchemy.sql import select
-from sqlalchemy.sql.expression import join
-
-
-class RoomEnum(enum.Enum):
-    SR = "Suite présidentielle"
-    S = "Suite"
-    JS = "Junior suite"
-    CD = "Chambre de luxe"
-    CS = "Chambre standard"
-
-
-class DayEnum(enum.Enum):
-    lundi = 0
-    mardi = 1
-    mercredi = 2
-    jeudi = 3
-    vendredi = 4
-    samedi = 5
-    dimanche = 6
 
 
 class Database:
@@ -80,7 +53,7 @@ class Database:
             meta,
             Column("id", Integer, primary_key=True),
             Column("hotel_id", Integer, ForeignKey("hotels.id")),
-            Column("room", Enum(RoomEnum)),
+            Column("room", String(50)),
             Column("capacity", Integer),
             Column("price", Float),
             Column(
@@ -195,8 +168,9 @@ class Database:
             Column("id", Integer, primary_key=True),
             Column("room_id", Integer, ForeignKey("rooms.id")),
             Column("name", String(100)),
-            Column("rooms_majoration", Float),
-            Column("day_number", Enum(DayEnum)),
+            Column("price_policy_type", Integer),
+            Column("room_majoration", Float),
+            Column("day_number", Integer),
             Column("capacity_limit", Integer),
             Column("majoration_start_date", DateTime),
             Column("majoration_end_date", DateTime),
@@ -217,6 +191,32 @@ class Database:
             ),
         )
         return price_policies
+
+    def setup_options_table(self) -> sqlalchemy.sql.schema.Table:
+        """Setup options table for database."""
+        meta = MetaData(self.engine)
+        options = Table(
+            "options",
+            meta,
+            Column("id", Integer, primary_key=True),
+            Column("name", String(100)),
+            Column("price", Float),
+            Column(
+                "created_time",
+                TIMESTAMP,
+                nullable=False,
+                server_default=text("CURRENT_TIMESTAMP"),
+            ),
+            Column(
+                "updated_time",
+                TIMESTAMP,
+                nullable=False,
+                server_default=text(
+                    "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+                ),
+            ),
+        )
+        return options
 
     def get_room_by_id(
         self,
@@ -270,107 +270,10 @@ class Database:
         )
         return self.engine.connect().execute(query).all()
 
-    def get_available_rooms(
-        self,
-        hotel_id: int = 1,
-        start_date: str = None,
-        end_date: str = None,
-        capacity: int = 0,
-    ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
-        """Get available rooms for an hotel at a specific date."""
-        rooms_table = self.setup_rooms_table()
-        booking_table = self.setup_booking_table()
-        j = join(
-            rooms_table,
-            booking_table,
-            rooms_table.c.id == booking_table.c.room_id,
-            isouter=True,
-        )
-        # allow booking the same room if end_date
-        # from previous booking == start_date
-        date = datetime.strptime(str(start_date), "%Y-%m-%d")
-        updated_date = date + timedelta(days=1)
-        updated_start_date = datetime.strftime(updated_date, "%Y/%m/%d")
-
-        # get all rooms for hotel_id and put data in list
-        query = select(rooms_table.c.id).where(
-            rooms_table.c.hotel_id == hotel_id,
-        )
-        rooms_result = self.engine.connect().execute(query)
-        rooms = [room for (room,) in rooms_result]
-
-        # TODO: fix duplicates
-        query = (
-            select(booking_table.c.room_id)
-            .where(
-                booking_table.c.room_id.in_(rooms),
-                or_(
-                    booking_table.c.room_id == None,
-                    and_(
-                        not_(
-                            between(
-                                updated_start_date,
-                                booking_table.c.booking_start_date,
-                                booking_table.c.booking_end_date,
-                            ),
-                        ),
-                        not_(
-                            between(
-                                end_date,
-                                booking_table.c.booking_start_date,
-                                booking_table.c.booking_end_date,
-                            ),
-                        ),
-                    ),
-                ),
-            )
-            .where(rooms_table.c.capacity >= capacity)
-            .select_from(j)
-        )
-        ok = self.engine.connect().execute(query).all()
-        print("================")
-        print(ok)
-        print("================")
-
-        # query = (
-        #     select(
-        #         rooms_table.c.id,
-        #         rooms_table.c.room,
-        #         rooms_table.c.price,
-        #         rooms_table.c.capacity,
-        #     )
-        #     .where(
-        #         or_(
-        #             booking_table.c.room_id == None,
-        #             and_(
-        #                 not_(
-        #                     between(
-        #                         updated_start_date,
-        #                         booking_table.c.booking_start_date,
-        #                         booking_table.c.booking_end_date,
-        #                     ),
-        #                 ),
-        #                 not_(
-        #                     between(
-        #                         end_date,
-        #                         booking_table.c.booking_start_date,
-        #                         booking_table.c.booking_end_date,
-        #                     ),
-        #                 ),
-        #                 rooms_table.c.hotel_id == hotel_id,
-        #             ),
-        #         ),
-        #     )
-        #     .where(rooms_table.c.capacity >= capacity)
-        #     .select_from(j)
-        # )
-        # booking_result = self.engine.connect().execute(query).all()
-        return []  # booking_result
-
     def get_all_rooms(
         self,
         hotel_id: int = 0,
-        capacity: int = 0,
+        capacity: int = 1,
     ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
         """List all rooms in database."""
         rooms_table = self.setup_rooms_table()
@@ -380,45 +283,65 @@ class Database:
             rooms_table.c.room,
             rooms_table.c.price,
             rooms_table.c.capacity,
-        )
+        ).where(rooms_table.c.capacity >= capacity)
 
         if hotel_id > 0:
             query = query.where(rooms_table.c.hotel_id == hotel_id)
 
-        if capacity > 0:
-            query = query.where(rooms_table.c.capacity == capacity)
         rooms_result = self.engine.connect().execute(query).all()
+        rooms = [dict(row) for row in rooms_result]
+        return rooms
 
-        return rooms_result
+    def get_booked_rooms_by_hotel(self, hotel_id: int = 1) -> list:
+        """Get booked rooms for an hotel."""
 
-    def get_price_policies(
-        self,
-        rooms_result: sqlalchemy.engine.cursor.LegacyCursorResult,
-        start_date: str = None,
-        end_date: str = None,
-        capacity: int = 0,
-    ):
-        """Get all price policies."""
-
-        # add room_ids in list
-        room_ids = []
-        for data in rooms_result:
-            room_ids.append(data[0])
-
-        pp_table = self.setup_price_policies_table()
-        query = select(
-            pp_table.c.room_id,
-            pp_table.c.rooms_majoration,
-            pp_table.c.day_number,
-            pp_table.c.is_default,
-        ).where(pp_table.c.room_id.in_(room_ids))
-        pp_result = jsonable_encoder(
-            self.engine.connect().execute(query).all(),
+        # get all rooms for hotel_id and put data in list
+        rooms_table = self.setup_rooms_table()
+        query = select(rooms_table.c.id).where(
+            rooms_table.c.hotel_id == hotel_id,
         )
+        rooms_result = self.engine.connect().execute(query)
+        rooms = [room for (room,) in rooms_result]
 
-        # json_compatible_item_data = jsonable_encoder(pp_result)
-        import pprint
+        # grab the list of booked rooms starting today
+        booking = self.setup_booking_table()
+        query = select(
+            booking.c.room_id,
+            booking.c.booking_start_date,
+            booking.c.booking_end_date,
+        ).where(
+            booking.c.room_id.in_(rooms),
+            booking.c.booking_end_date > datetime.today(),
+        )
+        booking_result = self.engine.connect().execute(query).all()
 
-        # print(pp_result)
-        pprint.pp(pp_result)
-        # print({"available_rooms": pp_result})
+        # we return booked_rooms as a dict
+        booked_rooms = [dict(row) for row in booking_result]
+        return booked_rooms
+
+    def get_price_policies_for_room(self, room_id: int = 1) -> dict:
+        pp_table = self.setup_price_policies_table()
+
+        query = select(
+            pp_table.c.name,
+            pp_table.c.price_policy_type,
+            pp_table.c.room_majoration,
+            pp_table.c.day_number,
+            pp_table.c.capacity_limit,
+            pp_table.c.majoration_start_date,
+            pp_table.c.majoration_end_date,
+            pp_table.c.is_default,
+        ).where(pp_table.c.room_id == room_id)
+
+        prices_result = self.engine.connect().execute(query).all()
+        return [dict(row) for row in prices_result]
+
+    def get_options(self) -> list:
+        options_table = self.setup_options_table()
+        query = select(
+            options_table.c.id,
+            options_table.c.name,
+            options_table.c.price,
+        )
+        options_result = self.engine.connect().execute(query).all()
+        return [dict(row) for row in options_result]
