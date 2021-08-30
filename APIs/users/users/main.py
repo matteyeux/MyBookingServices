@@ -53,7 +53,6 @@ def main() -> int:
         print("[i] creating config file")
         config.config_init()
 
-    print("Running server")
     uvicorn.run(
         "users.app:app",
         host=parser.host,
