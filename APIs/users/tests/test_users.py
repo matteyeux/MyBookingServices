@@ -5015,13 +5015,13 @@ def test_get_all_users_OK():
 }
 
     response = client.get(
-        "/rooms/all/",
+        "/users/all/",
     )
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_get_rooms_by_id_OK_user_1():
+def test_get_users_by_id_OK_user_1():
     expected = {
         "user": [
             {
@@ -5043,7 +5043,7 @@ def test_get_rooms_by_id_OK_user_1():
     assert response.json() == expected
 
 
-def test_get_rooms_by_id_OK_user_24():
+def test_get_users_by_id_OK_user_24():
     expected = {
         "user": [
             {
@@ -5065,21 +5065,21 @@ def test_get_rooms_by_id_OK_user_24():
     assert response.json() == expected
 
 
-def test_get_rooms_by_id_KO_bad_request():
+def test_get_users_by_id_KO_bad_request():
     expected = {
         "detail": "Can't use id <= 0",
     }
 
-    response = client.get("/rooms/-1")
+    response = client.get("/users/-1")
     assert response.status_code == 400
     assert response.json() == expected
 
 
-def test_get_rooms_by_id_KO_not_found():
+def test_get_users_by_id_KO_not_found():
     expected = {
-        "detail": "Room not found",
+        "detail": "User not found",
     }
 
-    response = client.get("/rooms/404")
+    response = client.get("/users/9999")
     assert response.status_code == 404
     assert response.json() == expected
