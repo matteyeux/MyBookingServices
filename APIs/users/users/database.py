@@ -1,30 +1,13 @@
-import enum
-from datetime import datetime
-from datetime import timedelta
-
 import sqlalchemy
-from fastapi.encoders import jsonable_encoder
-from sqlalchemy import and_
-from sqlalchemy import between
 from sqlalchemy import BigInteger
-from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import create_engine
-from sqlalchemy import Date
-from sqlalchemy import DateTime
-from sqlalchemy import Enum
-from sqlalchemy import Float
-from sqlalchemy import ForeignKey
-from sqlalchemy import Integer
 from sqlalchemy import MetaData
-from sqlalchemy import not_
-from sqlalchemy import or_
 from sqlalchemy import String
 from sqlalchemy import Table
 from sqlalchemy import text
 from sqlalchemy import TIMESTAMP
 from sqlalchemy.sql import select
-from sqlalchemy.sql.expression import join
 
 
 class Database:
@@ -75,7 +58,6 @@ class Database:
 
         return users_table
 
-
     def get_all_users(
         self,
     ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
@@ -95,7 +77,6 @@ class Database:
         users_result = self.engine.connect().execute(query).all()
 
         return users_result
-
 
     def get_user_by_id(
         self,

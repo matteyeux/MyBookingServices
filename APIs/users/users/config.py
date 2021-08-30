@@ -13,7 +13,7 @@ def get_config() -> Tuple[str, str]:
     This function returns the path of the dir
     containing the config file, and the config file itself.
     """
-    home_dir = os.getenv('HOME')
+    home_dir = os.getenv("HOME")
     config_path = f"{home_dir}/.mybookingservices"
     config_file = f"{config_path}/users_api.conf"
 
@@ -32,14 +32,14 @@ def config_init() -> int:
         os.makedirs(config_path)
 
     config = configparser.ConfigParser()
-    config['database'] = {}
-    config['database']['connector'] = 'mysql+pymysql'
-    config['database']['user'] = 'etna'
-    config['database']['password'] = 'etna'
-    config['database']['host'] = 'localhost'
-    config['database']['database'] = 'mybookingservices'
+    config["database"] = {}
+    config["database"]["connector"] = "mysql+pymysql"
+    config["database"]["user"] = "etna"
+    config["database"]["password"] = "etna"
+    config["database"]["host"] = "localhost"
+    config["database"]["database"] = "mybookingservices"
 
-    with open(config_file, 'w') as configfile:
+    with open(config_file, "w") as configfile:
         config.write(configfile)
 
     print(f"[i] config file created at {config_file}.")

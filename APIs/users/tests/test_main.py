@@ -5,7 +5,7 @@ from users import main
 
 
 @mock.patch(
-    'argparse.ArgumentParser.parse_args',
+    "argparse.ArgumentParser.parse_args",
     return_value=argparse.Namespace(),
 )
 def test_parse_arguments(mock_args):
