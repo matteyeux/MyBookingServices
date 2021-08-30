@@ -1,6 +1,6 @@
 [flake8]
 max-line-length = 80
-ignore =
+ignore = W503
 per-file-ignores = __init__.py:F401 app.py:F401 database.py:E711 utils.py:W503
 exclude =
     .git

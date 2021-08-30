@@ -34,7 +34,7 @@ jobs:
     - name: import poor database
       run: |
         mysql --host=127.0.0.1 -p mybookingservices -P 3306 -u etna -p"etna" \
-        < db/mybookingservices.mysql
+        < db/mybookingservices.sql
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
@@ -51,6 +51,7 @@ jobs:
       run: |
         virtualenv -p python3 env
         . env/bin/activate
+        python3 -m pip install cryptography
         poetry install
 
     - name: Run linter tests
@@ -64,7 +65,7 @@ jobs:
         . env/bin/activate
         python3 -m pip install requests
         python3 -c "from booking.config import config_init; config_init()"
-        #pytest -sv  --cov-report term-missing --cov=booking
+        pytest --cov-report term-missing --cov=booking
 
     - name: Build the booking API
       working-directory : ./APIs/booking
