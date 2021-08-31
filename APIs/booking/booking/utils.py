@@ -78,15 +78,25 @@ def handle_pricing(
 
     # Divide room_majoration by 100 to calcul majoration properly
     df_pp = pd.DataFrame.from_dict(pp)
-    df_pp['room_majoration'] = df_pp['room_majoration']/100
-    
+    df_pp['room_majoration'] = df_pp['room_majoration'] / 100
+
     # Create df_pp_day to calcul majoration only day for each day
     df_pp_day = df_pp.loc[df_pp['price_policy_type'] == 1]
     # drop columns non utils and rename some columns to prepare merging
-    df_pp_day.drop(columns=['price_policy_type',
-                            'capacity_limit'], inplace=True)
-    df_pp_day.rename(columns={"room_majoration": "room_majoration_day", 
-                              "name": "name_day"}, inplace=True)
+    df_pp_day.drop(
+        columns=[
+            'price_policy_type',
+            'capacity_limit',
+        ],
+        inplace=True,
+    )
+    df_pp_day.rename(
+        columns={
+            "room_majoration": "room_majoration_day",
+            "name": "name_day",
+        },
+        inplace=True,
+    )
 
     # Create df_pp_capacity to calcul majoration only on capacity for each day
     df_pp_capacity = df_pp.loc[df_pp['price_policy_type'] == 2]
@@ -104,13 +114,13 @@ def handle_pricing(
 
     # Merge date range and price policy to set majoration on right dayss
     new_df = df_date.merge(
-        df_pp_day, 
-        how='left', 
-        left_on='day', 
+        df_pp_day,
+        how='left',
+        left_on='day',
         right_on='day_number',
     ).merge(
         df_pp_capacity,
-        on='date'
+        on='date',
     )
     new_df['room_majoration_day'] = new_df['room_majoration_day'].fillna(0)
 
@@ -121,7 +131,11 @@ def handle_pricing(
         if booking_data['capacity'] > row['capacity_limit']:
             price += room_up + room_up * row['room_majoration_day']
         else:
-            price += room_up + room_up * row['room_majoration_day'] + room_up * row['room_majoration_capacity']
+            price += (
+                room_up
+                + room_up * row['room_majoration_day']
+                + room_up * row['room_majoration_capacity']
+            )
 
     for elem in booking_data['options']:
         if booking_data['options'][elem]:
@@ -132,51 +146,94 @@ def handle_pricing(
 
 
 def update_pp_capacity(
-    df_pp_capacity: pd.DataFrame, 
+    df_pp_capacity: pd.DataFrame,
     sdate: datetime,
     edate: datetime,
 ) -> pd.DataFrame:
-    
-    # Keep only row with value 'is_default' equals to 'False'
-    df_tmp = df_pp_capacity.loc[df_pp_capacity['is_default'] == False]
 
-    # If there is none value 'False' attribute value 
-    # sdate to column 'majoration_start_date' 
-    # edate to column 'majoration_end_date' becarefull if range is over two month
+    # Keep only row with value 'is_default' equals to 'False'
+    df_tmp = df_pp_capacity.loc[df_pp_capacity['is_default'] is False]
+
+    # If there is none value 'False' attribute value
+    # sdate to column 'majoration_start_date'
+    # edate to column 'majoration_end_date'
+    # be carefull if range is over two month
     if len(df_tmp) > 0:
         for index, row in df_tmp.iterrows():
-            majoration_sdate = datetime.strptime(row['majoration_start_date'], "%Y-%m-%d %H:%M:%S").date()
-            majoration_edate = datetime.strptime(row['majoration_end_date'], "%Y-%m-%d %H:%M:%S").date()
-            if majoration_sdate < sdate < majoration_edate or majoration_sdate < edate < majoration_edate:
+            majoration_sdate = datetime.strptime(
+                row['majoration_start_date'],
+                "%Y-%m-%d %H:%M:%S",
+            ).date()
+            majoration_edate = datetime.strptime(
+                row['majoration_end_date'],
+                "%Y-%m-%d %H:%M:%S",
+            ).date()
+            if (
+                majoration_sdate < sdate < majoration_edate
+                or majoration_sdate < edate < majoration_edate
+            ):
                 if majoration_sdate < sdate:
                     df_tmp.at[index, 'majoration_start_date'] = sdate
                 else:
-                    df_tmp.at[index, 'majoration_start_date'] = majoration_sdate
-                if  majoration_edate > edate:
+                    df_tmp.at[
+                        index,
+                        'majoration_start_date',
+                    ] = majoration_sdate
+                if majoration_edate > edate:
                     df_tmp.at[index, 'majoration_end_date'] = edate
                 else:
                     df_tmp.at[index, 'majoration_end_date'] = majoration_edate
             else:
                 df_tmp = df_tmp.drop([index])
-        # Generate all date between range date 'majoration_start_date' and 'majoration_end_date'
-        s = pd.concat(pd.Series(r.Index, pd.date_range(r.majoration_start_date, r.majoration_end_date))
-                     for r in df_tmp.itertuples())
-        df_pp_capacity = df_tmp.loc[s].assign(date=s.index).reset_index(drop=True)
+        # Generate all dates between range date 'majoration_start_date'
+        # and 'majoration_end_date'
+        s = pd.concat(
+            pd.Series(
+                r.Index,
+                pd.date_range(r.majoration_start_date, r.majoration_end_date),
+            )
+            for r in df_tmp.itertuples()
+        )
+        df_pp_capacity = (
+            df_tmp.loc[s]
+            .assign(
+                date=s.index,
+            )
+            .reset_index(drop=True)
+        )
     else:
-        # If there is none value 'True' just 
-        # Generate all date between range date 'sdate' and 'edate' 
-        s = pd.concat(pd.Series(r.Index, pd.date_range(sdate, edate))
-                     for r in df_pp_capacity.itertuples())
-        df_pp_capacity = df_pp_capacity.loc[s].assign(date=s.index).reset_index(drop=True)
-    
+        # If there is none value 'True' just
+        # Generate all date between range date 'sdate' and 'edate'
+        s = pd.concat(
+            pd.Series(r.Index, pd.date_range(sdate, edate))
+            for r in df_pp_capacity.itertuples()
+        )
+        df_pp_capacity = (
+            df_pp_capacity.loc[s]
+            .assign(
+                date=s.index,
+            )
+            .reset_index(drop=True)
+        )
+
     # drop columns non utils and rename some columns to prepare merging
-    df_pp_capacity.drop(columns=['price_policy_type',
-                                 'day_number',
-                                 'majoration_start_date',
-                                 'majoration_end_date',
-                                 'is_default'], inplace=True)
-    df_pp_capacity.rename(columns={"room_majoration": "room_majoration_capacity", 
-                                   "name": "name_capacity"}, inplace=True)
+    df_pp_capacity.drop(
+        columns=[
+            'price_policy_type',
+            'day_number',
+            'majoration_start_date',
+            'majoration_end_date',
+            'is_default',
+        ],
+        inplace=True,
+    )
+    df_pp_capacity.rename(
+        columns={
+            "room_majoration": "room_majoration_capacity",
+            "name": "name_capacity",
+        },
+        inplace=True,
+    )
     return df_pp_capacity
 
 
