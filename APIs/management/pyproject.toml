@@ -2,7 +2,7 @@
 name = "management"
 version = "0.1.0"
 description = "Management API"
-authors = ["lepage_b"]
+authors = ["lepage_b", "majda_a"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
