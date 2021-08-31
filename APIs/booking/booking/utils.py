@@ -243,7 +243,7 @@ def add_rows_range_date(
     df_pp: pd.DataFrame,
 ) -> pd.DataFrame:
 
-    df_pp = df_pp.loc[df_pp["is_default"] is True]
+    df_pp = df_pp.loc[df_pp["is_default"] is True]  
     # Generate all date between range date 'sdate' and 'edate'
     s = pd.concat(
         pd.Series(r.Index, pd.date_range(sdate, edate))
