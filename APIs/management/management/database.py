@@ -351,3 +351,37 @@ class Database:
         # print(pp_result)
         pprint.pp(pp_result)
         # print({"available_rooms": pp_result})
+
+    def get_options(self) -> sqlalchemy.engine.cursor.LegacyCursorResult:
+        """ Get all options. """
+
+        option_table = self.setup_options_table()
+
+        query = select(
+            option_table.c.name,
+            option_table.c.price,
+        )
+
+        print(query)
+
+        options_result = self.engine.connect().execute(query).all()
+        return options_result
+
+    def get_option_by_id(self, option_id: int = 1):
+        """ Get option by its id. """
+        option_table = self.setup_options_table()
+
+        query = option_table.select().where(option_table.c.id == option_id)
+        return self.engine.connect().execute(query).all()
+
+    def create_option(self, option):
+        """ Create a new option. """
+        option_table = self.setup_options_table()
+
+        # query = option_table.
+
+    def update_option(self, option, option_id):
+        """ Update an option. """
+        option_table = self.setup_options_table()
+
+        
