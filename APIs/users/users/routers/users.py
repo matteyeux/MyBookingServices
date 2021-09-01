@@ -1,9 +1,13 @@
 from fastapi import APIRouter
 from fastapi import Body
+from fastapi import Depends
 from fastapi import HTTPException
+from fastapi import Request
 from users.models.auth import UserLoginSchema
 from users.models.auth import UserSignupSchema
 from users.models.users import Users
+from users.utils.auth_bearer import JWTBearer
+from users.utils.auth_handler import decodeJWT
 from users.utils.auth_handler import signJWT
 
 
@@ -15,6 +19,23 @@ async def get_users():
     """Get all users"""
     users = Users().get_all_users()
     return {"users": users}
+
+
+@router.get("/users/me", dependencies=[Depends(JWTBearer())], tags=["users"])
+async def get_connected_user(request: Request):
+    """Get connected users"""
+    bearer = request.headers.get('authorization').replace("Bearer ", "")
+    result = decodeJWT(bearer)
+    users = Users()
+    user = users.get_user_by_mail(result["email"])
+    return {
+        "id": user["id"],
+        "role": user["role"],
+        "first_name": user["first_name"],
+        "last_name": user["last_name"],
+        "email": user["email"],
+        "telephone": user["telephone"],
+    }
 
 
 @router.get("/users/{user_id}", tags=["users"])
