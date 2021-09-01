@@ -30,23 +30,23 @@ async def get_user_by_id(user_id: int = 1):
     return {"user": user}
 
 
-usersss = []
+users = []
 
 
 @router.post("/users/signup", tags=["users"])
 async def create_user(user: UserSchema = Body(...)):
     # replace with db call, making sure to hash the password first
-    usersss.append(user)
+    users.append(user)
     return signJWT(user.email)
 
 
 @router.post("/users/login", tags=["users"])
 async def user_login(user: UserLoginSchema = Body(...)):
-    rofl = Users()
-    user_db = rofl.check_user_login(user.email, user.password)
+    users = Users()
+    user_db = users.check_user_login(user.email, user.password)
     if user_db is not None:
         return signJWT(user_db.email, user_db.role)
-
-    return {
-        "error": "Wrong login details!",
-    }
+    else:
+        return {
+            "details": "Bad email or password",
+        }
