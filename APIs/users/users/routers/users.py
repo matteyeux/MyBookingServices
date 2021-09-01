@@ -74,6 +74,11 @@ async def get_user_by_id(user_id: int = 1):
 @router.post("/users/signup", tags=["users"])
 async def create_user(user: UserSignupSchema = Body(...)):
     users = Users()
+    if users.get_user_by_mail(user.email):
+        return {
+            "details": "email already exists",
+        }
+
     users.create_user(user)
     return signJWT("USER", user.email)
 
