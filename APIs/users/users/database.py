@@ -87,7 +87,7 @@ class Database:
         """Get user by ID."""
         table = self.setup_users_table()
         query = table.select().where(table.c.id == user_id)
-        return self.engine.connect().execute(query).all()
+        return self.engine.connect().execute(query).first()
 
     def get_user_by_mail(
         self,

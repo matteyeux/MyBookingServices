@@ -16,19 +16,14 @@ def test_get_all_users_OK():
 
 def test_get_users_by_id_OK_user_1():
     expected = {
-        "user": [
-            {
-                "id": 1,
-                "first_name": "Isabelle",
-                "last_name": "Gomes",
-                "email": "allainmargot@dbmail.com",
-                "telephone": "0123254441",
-                "username": "gregorybest",
-                "password": "+*6DApSzPRbo",
-                "created_time": "2021-08-26T21:37:27",
-                "updated_time": "2021-08-26T21:37:27",
-            },
-        ],
+        "user": {
+            "id": 1,
+            "role": "USER",
+            "first_name": "Isabelle",
+            "last_name": "Gomes",
+            "email": "allainmargot@dbmail.com",
+            "telephone": "0123254441",
+        },
     }
 
     response = client.get("/users/1")
@@ -38,19 +33,14 @@ def test_get_users_by_id_OK_user_1():
 
 def test_get_users_by_id_OK_user_24():
     expected = {
-        "user": [
-            {
-                "id": 24,
-                "first_name": "Aurélie",
-                "last_name": "Boucher",
-                "email": "laportepierre@voila.fr",
-                "telephone": "+33 3 23 28 66 20",
-                "username": "dana30",
-                "password": "HvUds+Zogx5#",
-                "created_time": "2021-08-26T21:37:27",
-                "updated_time": "2021-08-26T21:37:27",
-            },
-        ],
+        "user": {
+            "id": 24,
+            "role": "USER",
+            "first_name": "Aurélie",
+            "last_name": "Boucher",
+            "email": "laportepierre@voila.fr",
+            "telephone": "+33 3 23 28 66 20",
+        },
     }
 
     response = client.get("/users/24")

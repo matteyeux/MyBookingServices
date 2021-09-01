@@ -48,7 +48,16 @@ async def get_user_by_id(user_id: int = 1):
 
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return {"user": user}
+    return {
+        "user": {
+            "id": user["id"],
+            "role": user["role"],
+            "first_name": user["first_name"],
+            "last_name": user["last_name"],
+            "email": user["email"],
+            "telephone": user["telephone"],
+        },
+    }
 
 
 @router.post("/users/signup", tags=["users"])
