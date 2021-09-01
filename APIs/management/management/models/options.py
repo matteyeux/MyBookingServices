@@ -33,10 +33,14 @@ class Options:
         """
 
         engine = self.db.engine
-        return None if not engine else self.db.add_option(option)
+        return None if not engine else self.db.create_option(option)
 
     def update_option(self, option, option_id):
         """ Update an option given by its id. """
         engine = self.db.engine
         return None if not engine else self.db.update_option(option, option_id)
 
+    def delete_option(self, option_id):
+        """ Delete an option given by its id. """
+        engine = self.db.engine
+        return None if not engine else self.db.delete_option(option_id)
