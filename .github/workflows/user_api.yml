@@ -44,7 +44,7 @@ jobs:
     - name: Install pip and tools
       run: |
         python3 -m pip install --upgrade pip
-        python3 -m pip install poetry virtualenv flake8 mypy pytest pytest-cov
+        python3 -m pip install poetry virtualenv flake8 mypy pytest pytest-cov PyJWT python-decouple email-validator pydantic[email]
 
     - name: Install users API
       working-directory : ./APIs/users
