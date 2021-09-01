@@ -18,7 +18,20 @@ router = APIRouter()
 async def get_users():
     """Get all users"""
     users = Users().get_all_users()
-    return {"users": users}
+    result = []
+    for user in users:
+        user_clean = {
+            "id": user["id"],
+            "role": user["role"],
+            "first_name": user["first_name"],
+            "last_name": user["last_name"],
+            "email": user["email"],
+            "telephone": user["telephone"],
+        }
+        result.append(
+            user_clean,
+        )
+    return {"users": result}
 
 
 @router.get("/users/me", dependencies=[Depends(JWTBearer())], tags=["users"])
@@ -49,14 +62,12 @@ async def get_user_by_id(user_id: int = 1):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return {
-        "user": {
-            "id": user["id"],
-            "role": user["role"],
-            "first_name": user["first_name"],
-            "last_name": user["last_name"],
-            "email": user["email"],
-            "telephone": user["telephone"],
-        },
+        "id": user["id"],
+        "role": user["role"],
+        "first_name": user["first_name"],
+        "last_name": user["last_name"],
+        "email": user["email"],
+        "telephone": user["telephone"],
     }
 
 

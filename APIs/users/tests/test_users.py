@@ -16,14 +16,12 @@ def test_get_all_users_OK():
 
 def test_get_users_by_id_OK_user_1():
     expected = {
-        "user": {
-            "id": 1,
-            "role": "USER",
-            "first_name": "Isabelle",
-            "last_name": "Gomes",
-            "email": "allainmargot@dbmail.com",
-            "telephone": "0123254441",
-        },
+        "id": 1,
+        "role": "USER",
+        "first_name": "Isabelle",
+        "last_name": "Gomes",
+        "email": "allainmargot@dbmail.com",
+        "telephone": "0123254441",
     }
 
     response = client.get("/users/1")
@@ -33,14 +31,12 @@ def test_get_users_by_id_OK_user_1():
 
 def test_get_users_by_id_OK_user_24():
     expected = {
-        "user": {
-            "id": 24,
-            "role": "USER",
-            "first_name": "Aurélie",
-            "last_name": "Boucher",
-            "email": "laportepierre@voila.fr",
-            "telephone": "+33 3 23 28 66 20",
-        },
+        "id": 24,
+        "role": "USER",
+        "first_name": "Aurélie",
+        "last_name": "Boucher",
+        "email": "laportepierre@voila.fr",
+        "telephone": "+33 3 23 28 66 20",
     }
 
     response = client.get("/users/24")

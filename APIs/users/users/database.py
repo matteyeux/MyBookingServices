@@ -67,11 +67,11 @@ class Database:
         users_table = self.setup_users_table()
         query = select(
             users_table.c.id,
+            users_table.c.role,
             users_table.c.first_name,
             users_table.c.last_name,
             users_table.c.email,
             users_table.c.telephone,
-            users_table.c.username,
             users_table.c.created_time,
             users_table.c.updated_time,
         )
