@@ -64,7 +64,6 @@ jobs:
       working-directory : ./APIs/users
       run: |
         . env/bin/activate
-        python3 -m pip install requests PyJWT python-decouple email-validator pydantic[email]
         python3 -c "from users.config import config_init; config_init()"
         pytest --cov-report term-missing --cov=users
 
