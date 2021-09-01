@@ -8,6 +8,7 @@ from sqlalchemy import Table
 from sqlalchemy import text
 from sqlalchemy import TIMESTAMP
 from sqlalchemy.sql import select
+from users.models.auth import UserSignupSchema
 
 
 class Database:
@@ -96,3 +97,20 @@ class Database:
         table = self.setup_users_table()
         query = table.select().where(table.c.email == user_mail)
         return self.engine.connect().execute(query).first()
+
+    def create_user(
+        self,
+        user: UserSignupSchema,
+    ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
+        """Get user by mail."""
+        table = self.setup_users_table()
+        query = table.insert().values(
+            role="USER",
+            email=user.email,
+            first_name=user.firstname,
+            last_name=user.lastname,
+            telephone=user.telephone,
+            username=user.username,
+            password=user.password,
+        )
+        return self.engine.connect().execute(query)

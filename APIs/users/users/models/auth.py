@@ -3,31 +3,20 @@ from pydantic import EmailStr
 from pydantic import Field
 
 
-class PostSchema(BaseModel):
-    id: int = Field(default=None)
-    title: str = Field(...)
-    content: str = Field(...)
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "title": "Securing FastAPI applications with JWT.",
-                "content": "In this tutorial",
-            },
-        }
-
-
-class UserSchema(BaseModel):
-    fullname: str = Field(...)
+class UserSignupSchema(BaseModel):
     email: EmailStr = Field(...)
+    firstname: str = Field(...)
+    lastname: str = Field(...)
+    telephone: str = Field(...)
+    username: str = Field(...)
     password: str = Field(...)
 
     class Config:
         schema_extra = {
             "example": {
-                "fullname": "Abdulazeez Abdulazeez Adeshina",
-                "email": "abdulazeez@x.com",
-                "password": "weakpassword",
+                "fullname": "Waynes Campbell",
+                "email": "wayne@party.time",
+                "password": "Excelent!",
             },
         }
 
@@ -39,7 +28,7 @@ class UserLoginSchema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "email": "abdulazeez@x.com",
-                "password": "weakpassword",
+                "email": "wayne@party.time",
+                "password": "Excelent!",
             },
         }

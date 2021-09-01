@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from fastapi import Body
 from fastapi import HTTPException
 from users.models.auth import UserLoginSchema
-from users.models.auth import UserSchema
+from users.models.auth import UserSignupSchema
 from users.models.users import Users
 from users.utils.auth_handler import signJWT
 
@@ -30,14 +30,11 @@ async def get_user_by_id(user_id: int = 1):
     return {"user": user}
 
 
-users = []
-
-
 @router.post("/users/signup", tags=["users"])
-async def create_user(user: UserSchema = Body(...)):
-    # replace with db call, making sure to hash the password first
-    users.append(user)
-    return signJWT(user.email)
+async def create_user(user: UserSignupSchema = Body(...)):
+    users = Users()
+    users.create_user(user)
+    return signJWT("USER", user.email)
 
 
 @router.post("/users/login", tags=["users"])
@@ -45,7 +42,7 @@ async def user_login(user: UserLoginSchema = Body(...)):
     users = Users()
     user_db = users.check_user_login(user.email, user.password)
     if user_db is not None:
-        return signJWT(user_db.email, user_db.role)
+        return signJWT(user_db.role, user_db.email)
     else:
         return {
             "details": "Bad email or password",

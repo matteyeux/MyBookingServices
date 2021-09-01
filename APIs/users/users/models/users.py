@@ -1,5 +1,6 @@
 from users.config import config_api_setup
 from users.database import Database
+from users.models.auth import UserSignupSchema
 
 
 class Users:
@@ -28,6 +29,10 @@ class Users:
     def get_user_by_mail(self, user_mail: int):
         engine = self.db.engine
         return None if not engine else self.db.get_user_by_mail(user_mail)
+
+    def create_user(self, user: UserSignupSchema):
+        engine = self.db.engine
+        return None if not engine else self.db.create_user(user)
 
     def check_user_login(self, user_mail: str, user_passwd: str):
         user_db = self.get_user_by_mail(user_mail)
