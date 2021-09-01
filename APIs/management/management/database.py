@@ -23,8 +23,12 @@ from sqlalchemy import String
 from sqlalchemy import Table
 from sqlalchemy import text
 from sqlalchemy import TIMESTAMP
+from sqlalchemy import delete
+from sqlalchemy import insert
+from sqlalchemy import update
+
 from sqlalchemy.sql import select
-from sqlalchemy.sql.expression import join
+from sqlalchemy.sql.expression import delete, join
 
 
 class RoomEnum(enum.Enum):
@@ -352,6 +356,10 @@ class Database:
         pprint.pp(pp_result)
         # print({"available_rooms": pp_result})
 
+
+    ###############
+    ### OPTIONS ###
+    ###############
     def get_options(self) -> sqlalchemy.engine.cursor.LegacyCursorResult:
         """ Get all options. """
 
@@ -378,10 +386,38 @@ class Database:
         """ Create a new option. """
         option_table = self.setup_options_table()
 
-        # query = option_table.
+        query = (
+            insert(option_table).
+            # returning(option_table.c.name, option_table.c.price)
+            values(
+                name = option.name,
+                price = option.price
+            )
+        )
+        return self.engine.connect().execute(query).all()
+
 
     def update_option(self, option, option_id):
         """ Update an option. """
         option_table = self.setup_options_table()
 
-        
+        query = (
+            update(option_table).
+            where(option_table.c.id == option_id).
+            values(
+                name = option.name,
+                price = option.price
+            )
+        )
+        return self.engine.connect().execute(query).all()
+
+    def delete_option(self, option_id):
+        """ Delete an option. """
+        option_table = self.setup_options_table()
+
+        query = (
+                delete(option_table).
+                where(option_table.c.id == option_id)
+        )
+
+        return self.engine.connect().execute(query).all()
