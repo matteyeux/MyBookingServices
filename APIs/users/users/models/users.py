@@ -24,3 +24,14 @@ class Users:
     def get_user_by_id(self, user_id: int):
         engine = self.db.engine
         return None if not engine else self.db.get_user_by_id(user_id)
+
+    def get_user_by_mail(self, user_mail: int):
+        engine = self.db.engine
+        return None if not engine else self.db.get_user_by_mail(user_mail)
+
+    def check_user_login(self, user_mail: str, user_passwd: str):
+        user_db = self.get_user_by_mail(user_mail)
+        if user_db is not None:
+            if user_db.password == user_passwd:
+                return user_db
+        return None

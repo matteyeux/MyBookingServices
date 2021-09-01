@@ -36,6 +36,7 @@ class Database:
             "customers",
             meta,
             Column("id", BigInteger, primary_key=True),
+            Column("role", String(6)),
             Column("first_name", String(50)),
             Column("last_name", String(50)),
             Column("email", String(50)),
@@ -86,3 +87,12 @@ class Database:
         table = self.setup_users_table()
         query = table.select().where(table.c.id == user_id)
         return self.engine.connect().execute(query).all()
+
+    def get_user_by_mail(
+        self,
+        user_mail: str,
+    ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
+        """Get user by mail."""
+        table = self.setup_users_table()
+        query = table.select().where(table.c.email == user_mail)
+        return self.engine.connect().execute(query).first()
