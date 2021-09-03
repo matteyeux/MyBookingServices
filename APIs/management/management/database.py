@@ -388,13 +388,16 @@ class Database:
 
         query = (
             insert(option_table).
-            # returning(option_table.c.name, option_table.c.price)
             values(
                 name = option.name,
                 price = option.price
             )
         )
-        return self.engine.connect().execute(query).all()
+        
+        self.engine.connect().execute(query)
+        last_row = self.engine.connect().execute("SELECT LAST_INSERT_ID() as id").fetchone()
+
+        return {**option.dict(), "id": last_row.id}
 
 
     def update_option(self, option, option_id):
@@ -409,7 +412,9 @@ class Database:
                 price = option.price
             )
         )
-        return self.engine.connect().execute(query).all()
+        
+        self.engine.connect().execute(query)
+        return {**option.dict(), "id": option_id}
 
     def delete_option(self, option_id):
         """ Delete an option. """
@@ -420,4 +425,4 @@ class Database:
                 where(option_table.c.id == option_id)
         )
 
-        return self.engine.connect().execute(query).all()
+        return self.engine.connect().execute(query)
