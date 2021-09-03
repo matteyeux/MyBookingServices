@@ -41,4 +41,4 @@ async def update_option(option: Option, option_id: int = 1):
 async def delete_option(option_id: int = 0):
     if option_id > 0:
         option = Options().delete_option(option_id)
-        return "ok"
+        return option
