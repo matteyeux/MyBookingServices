@@ -75,6 +75,11 @@ async def get_user_by_id(user_id: int = 1):
 
 @router.post("/users/signup", tags=["users"])
 async def create_user(user: UserSignupSchema = Body(...)):
+    # At first, Hash the password
+    hash_sha3 = hashlib.sha3_224()
+    hash_sha3.update(user.password.encode('utf-8'))
+    user.password = hash_sha3.hexdigest()
+
     users = Users()
     if users.get_user_by_mail(user.email):
         return {
