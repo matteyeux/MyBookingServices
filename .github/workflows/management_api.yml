@@ -1,0 +1,71 @@
+name: Booking API
+
+on:
+  push:
+    paths:
+      - 'APIs/management/**'
+      - '.github/workflows/user_api.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 2
+      matrix:
+        python-version: [3.8, 3.9]
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: mybookingservices
+          MYSQL_USER: etna
+          MYSQL_PASSWORD: etna
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Install MySQL client
+      run: sudo apt-get install mysql-client
+
+    - name: import poor database
+      run: |
+        mysql --host=127.0.0.1 -p mybookingservices -P 3306 -u etna -p"etna" \
+        < db/mybookingservices.sql
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install pip and tools
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install poetry virtualenv flake8 mypy pytest pytest-cov
+    - name: Install management API
+      working-directory : ./APIs/management
+      run: |
+        virtualenv -p python3 env
+        . env/bin/activate
+        python3 -m pip install cryptography
+        poetry install
+    - name: Run linter tests
+      working-directory : ./APIs/management
+      run: |
+        flake8
+    - name: Run unit tests
+      working-directory : ./APIs/management
+      run: |
+        . env/bin/activate
+        python3 -m pip install requests
+        python3 -c "from management.config import config_init; config_init()"
+        pytest --cov-report term-missing --cov=management
+    - name: Build the management API
+      working-directory : ./APIs/management
+      if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+      run: |
+        . env/bin/activate
+        poetry build
