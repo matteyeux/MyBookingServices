@@ -34,7 +34,7 @@ class Database:
         """Setup users table."""
         meta = MetaData(self.engine)
         users_table = Table(
-            "customers",
+            "users",
             meta,
             Column("id", BigInteger, primary_key=True),
             Column("role", String(6)),

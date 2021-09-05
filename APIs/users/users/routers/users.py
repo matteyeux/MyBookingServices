@@ -1,3 +1,5 @@
+import hashlib
+
 from fastapi import APIRouter
 from fastapi import Body
 from fastapi import Depends
@@ -85,6 +87,12 @@ async def create_user(user: UserSignupSchema = Body(...)):
 
 @router.post("/users/login", tags=["users"])
 async def user_login(user: UserLoginSchema = Body(...)):
+    # Atfirst, Hash the password
+    hash_sha3 = hashlib.sha3_224()
+    hash_sha3.update(user.password.encode('utf-8'))
+    user.password = hash_sha3.hexdigest()
+    # return user.password
+
     users = Users()
     user_db = users.check_user_login(user.email, user.password)
     if user_db is not None:
