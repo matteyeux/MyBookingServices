@@ -2,6 +2,7 @@ from datetime import datetime
 from datetime import timedelta
 
 import pandas as pd
+import numpy as np
 from booking.models.hotels import Hotels
 from booking.models.rooms import Rooms
 
@@ -166,9 +167,7 @@ def update_pp_capacity(
                 )
                 for r in df_tmp.itertuples()
             )
-            df_pp_capacity = df_tmp.loc[s].assign(
-                        date=s.index).reset_index(
-                        drop=True)
+            df_pp_capacity = df_tmp.loc[s].assign(date=s.index).reset_index(drop=True)
         else:
             df_pp_capacity = add_rows_range_date(sdate, edate, df_pp_capacity)
     else:
@@ -236,14 +235,11 @@ def update_pp_day(
             s = pd.concat(
                 pd.Series(
                     r.Index,
-                    pd.date_range(r.majoration_start_date,
-                                  r.majoration_end_date),
+                    pd.date_range(r.majoration_start_date,r.majoration_end_date),
                 )
                 for r in df_tmp.itertuples()
             )
-            df_pp_day = df_tmp.loc[s].assign(
-                        date=s.index).reset_index(
-                            drop=True)
+            df_pp_day = df_tmp.loc[s].assign(date=s.index).reset_index(drop=True)
         else:
             df_pp_day = add_rows_range_date(sdate, edate, df_pp_day)
     else:
@@ -287,7 +283,7 @@ def add_rows_range_date(
     df_pp: pd.DataFrame,
 ) -> pd.DataFrame:
 
-    df_pp = df_pp.loc[df_pp["is_default"] == True]
+    df_pp = df_pp.loc[df_pp["is_default"] is True]
     # Generate all date between range date 'sdate' and 'edate'
     s = pd.concat(
         pd.Series(r.Index, pd.date_range(sdate, edate)) for r in df_pp.itertuples()
