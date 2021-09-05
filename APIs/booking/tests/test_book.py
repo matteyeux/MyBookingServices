@@ -37,38 +37,39 @@ def test_book_room_02():
     assert response.json() == expected
 
 
-# def test_book_room_03():
-#   """Book room. Exected content is meant to change when pricing is done."""
-#   data = {
-#       'hotel_id': 1,
-#       'room_id': 1,
-#       'start_date': '2021-10-27',
-#       'end_date': '2021-10-30',
-#       'capacity': 2,
-#       'options': {
-#           'parking': 1,
-#           'baby_cot': 1,
-#           'romance_pack': 1,
-#           'breakfast': 1,
-#       },
-#   }
-#
-#   expected = {
-#       "room": {
-#           "hotel_id": 1,
-#           "room_id": 1,
-#           "start_date": "2021-10-27",
-#           "end_date": "2021-10-30",
-#           "capacity": 2,
-#           "options": {
-#               "parking": 1,
-#               "baby_cot": 1,
-#               "romance_pack": 1,
-#               "breakfast": 1,
-#           },
-#       },
-#   }
-#   response = client.post("/book/", json=data)
-#
-#   assert response.status_code == 200
-#   assert response.json() == expected
+def test_book_room_03():
+    """Book room. Exected content is meant to change when pricing is done."""
+    data = {
+        'hotel_id': 1,
+        'room_id': 1,
+        'start_date': '2021-10-27',
+        'end_date': '2021-10-30',
+        'capacity': 2,
+        'options': {
+            'parking': 1,
+            'baby_cot': 1,
+            'romance_pack': 1,
+            'breakfast': 1,
+        },
+    }
+
+    expected = {
+        'booked_room': {
+            'hotel_id': 1,
+            'room_id': 1,
+            'start_date': '2021-10-27',
+            'end_date': '2021-10-30',
+            'capacity': 2,
+            'options': {
+                'parking': 1,
+                'baby_cot': 1,
+                'romance_pack': 1,
+                'breakfast': 1,
+            },
+            'price': 2128.0,
+        },
+    }
+    response = client.post("/book/", json=data)
+
+    assert response.status_code == 200
+    assert response.json() == expected
