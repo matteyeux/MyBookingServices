@@ -252,10 +252,11 @@ def update_pp_day(
 
     # delete all wrong values
     for index, row in df_pp_day.iterrows():
-        if row["day_number"] > 0:
-            if row["day_number"] != float(row["date"].strftime("%w")):
-                df_pp_day.at[index, "room_majoration"] = float(0)
-                df_pp_day.at[index, "day_number"] = np.nan
+        if row["day_number"] > 0 and row["day_number"] != float(
+            row["date"].strftime("%w")
+        ):
+            df_pp_day.at[index, "room_majoration"] = float(0)
+            df_pp_day.at[index, "day_number"] = np.nan
     df_pp_day["absolute_maj"] = df_pp_day["room_majoration"].abs()
     df_pp_day.sort_values(by=["absolute_maj"], ascending=False, inplace=True)
     df_pp_day.drop_duplicates(subset=["date"], keep="first", inplace=True)
