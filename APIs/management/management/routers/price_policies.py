@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter
+from fastapi import HTTPException
 from management.models.price_policies import Price_Policies
 from pydantic import BaseModel
 
@@ -23,11 +24,20 @@ class Price_Policy(BaseModel):
 
 
 @router.get("/price_policies/all/", tags=["price_policies"])
-async def get_price_policies():
+async def get_all_price_policies():
     """Get all price_policies."""
 
     price_policies = Price_Policies().get_all_price_policies()
     return {"price_policies": price_policies}
+
+
+@router.get("/price_policies/last/", tags=["price_policies"])
+async def get_last_price_policy():
+    """ Get last inserted price_policy. """
+
+    price_policies = Price_Policies().get_all_price_policies()
+    last_price_policy = price_policies[-1]
+    return {"price_policy": last_price_policy}
 
 
 @router.post("/price_policies", tags=["price_policies"])
@@ -43,6 +53,8 @@ async def get_price_policy_by_id(price_policy_id: int = 1):
     """Get one price_policy by its id."""
 
     price_policy = Price_Policies().get_price_policy_by_id(price_policy_id)
+    if not price_policy:
+        raise HTTPException(status_code=404, detail="price_policy not found")
     return {"price_policy": price_policy}
 
 
@@ -52,6 +64,9 @@ async def update_price_policy(
     price_policy_id: int = 1,
 ):
     """Update price_policy by its id."""
+
+    if not Price_Policies().get_price_policy_by_id(price_policy_id):
+        raise HTTPException(status_code=404, detail="price_policy not found")
 
     price_policy = Price_Policies().update_price_policy(
         price_policy,
@@ -66,4 +81,11 @@ async def delete_price_policy(price_policy_id: int = 0):
 
     if price_policy_id > 0:
         price_policy = Price_Policies().delete_price_policy(price_policy_id)
+
+        if not price_policy:
+            raise HTTPException(
+                status_code=404,
+                detail="price_policy not found",
+            )
+
         return price_policy
