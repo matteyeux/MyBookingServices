@@ -1,10 +1,10 @@
-name: Users API
+name: Manage API
 
 on:
   push:
     paths:
       - 'APIs/management/**'
-      - '.github/workflows/user_api.yml'
+      - '.github/workflows/management_api.yml'
 
 jobs:
   build:
