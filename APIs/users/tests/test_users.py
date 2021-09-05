@@ -17,11 +17,11 @@ def test_get_all_users_OK():
 def test_get_users_by_id_OK_user_1():
     expected = {
         "id": 1,
-        "role": "USER",
-        "first_name": "Isabelle",
-        "last_name": "Gomes",
-        "email": "allainmargot@dbmail.com",
-        "telephone": "0123254441",
+        "role": "ADMIN",
+        "first_name": "Emmanuelle",
+        "last_name": "Delaunay",
+        "email": "admin0@mybooking.services",
+        "telephone": "0424716847",
     }
 
     response = client.get("/users/1")
@@ -33,10 +33,10 @@ def test_get_users_by_id_OK_user_24():
     expected = {
         "id": 24,
         "role": "USER",
-        "first_name": "Aurélie",
-        "last_name": "Boucher",
-        "email": "laportepierre@voila.fr",
-        "telephone": "+33 3 23 28 66 20",
+        "first_name": "Corinne",
+        "last_name": "Dumont",
+        "email": "umahe@ifrance.com",
+        "telephone": "+33 (0)3 58 17 46 50",
     }
 
     response = client.get("/users/24")
