@@ -1,6 +1,7 @@
 from management.config import config_api_setup
 from management.database import Database
 
+
 class Options:
     """Options class model."""
 
@@ -17,8 +18,8 @@ class Options:
 
     def get_all_options(self):
         """ Return the list of all options. """
+
         engine = self.db.engine
-    
         return None if not engine else self.db.get_options()
 
     def get_option_by_id(self, option_id: int = 1):
@@ -28,8 +29,8 @@ class Options:
         return None if not engine else self.db.get_option_by_id(option_id)
 
     def add_option(self, option):
-        """ Get some information in argument (body, dict, tuple,  ???)
-            And add a new option
+        """Get some information in argument (body, dict, tuple,  ???)
+        And add a new option
         """
 
         engine = self.db.engine
