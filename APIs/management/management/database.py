@@ -370,8 +370,6 @@ class Database:
             option_table.c.price,
         )
 
-        print(query)
-
         options_result = self.engine.connect().execute(query).all()
         return options_result
 
@@ -423,6 +421,101 @@ class Database:
         query = (
                 delete(option_table).
                 where(option_table.c.id == option_id)
+        )
+
+        return self.engine.connect().execute(query)
+
+    ####################
+    ### PRICE POLICY ###
+    ####################
+
+    def get_price_policies(self):
+        """ Get all price_policies. """
+
+        pp_table = self.setup_price_policies_table()
+
+        query = select(
+            pp_table.c.name,
+            pp_table.c.room_majoration,
+            pp_table.c.day_number,
+            pp_table.c.capacity_limit,
+            pp_table.c.is_default,
+        )
+
+        # Va falloir faire des jointures
+
+        pp_result = self.engine.connect().execute(query).all()
+        return pp_result
+
+
+    def get_price_policies_by_id(self, price_policy_id):
+        """ Get price_policy bi its id. """
+
+        pp_table = self.setup_price_policies_table()
+
+        query = select(
+            pp_table.c.name,
+            pp_table.c.room_majoration,
+            pp_table.c.day_number,
+            pp_table.c.capacity_limit,
+            pp_table.c.is_default,
+        ).where(pp_table.c.id == price_policy_id)
+
+        # Va falloir faire des jointures
+
+        pp_result = self.engine.connect().execute(query).all()
+        return pp_result
+
+    def create_price_policy(self, price_policy):
+        """ Create a new price_policy. """
+        pp_table = self.setup_price_policies_table()
+
+        query = (
+            insert(pp_table).
+            values(
+                room_id = price_policy.c.room_id,
+                name = price_policy.c.name,
+                price_policy_type = price_policy.c.price_policy_type,
+                room_majoration = price_policy.c.room_majoration,
+                day_number = price_policy.c.day_number,
+                capacity_limit = price_policy.c.capacity_limit,
+                is_default = price_policy.c.is_default,
+            )
+        )
+        
+        self.engine.connect().execute(query)
+        last_row = self.engine.connect().execute("SELECT LAST_INSERT_ID() as id").fetchone()
+
+        return {**price_policy.dict(), "id": last_row.id}
+
+    def update_price_policy(self, price_policy, price_policy_id):
+        """ Update an option. """
+        pp_table = self.setup_price_policies_table()
+
+        query = (
+            update(pp_table).
+            where(pp_table.c.id == price_policy_id).
+            values(
+                room_id = price_policy.c.room_id,
+                name = price_policy.c.name,
+                price_policy_type = price_policy.c.price_policy_type,
+                room_majoration = price_policy.c.room_majoration,
+                day_number = price_policy.c.day_number,
+                capacity_limit = price_policy.c.capacity_limit,
+                is_default = price_policy.c.is_default,
+            )
+        )
+        
+        self.engine.connect().execute(query)
+        return {**price_policy.dict(), "id": price_policy_id}
+
+    def delete_price_policy(self, price_policy_id):
+        """ Delete an option. """
+        pp_table = self.setup_price_policies_table()
+
+        query = (
+                delete(pp_table).
+                where(pp_table.c.id == price_policy_id)
         )
 
         return self.engine.connect().execute(query)
