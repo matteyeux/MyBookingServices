@@ -131,7 +131,7 @@ def update_pp_capacity(
 
     # If there is none value 'False' attribute value
     # sdate to column 'majoration_start_date'
-    # edate to column 'majoration_end_date' becarefull 
+    # edate to column 'majoration_end_date' becarefull
     # if range is over two month
     if len(df_tmp) > 0:
         for index, row in df_tmp.iterrows():
@@ -156,17 +156,19 @@ def update_pp_capacity(
             else:
                 df_tmp = df_tmp.drop([index])
         if len(df_tmp) > 0:
-            # Generate all date between range date 
+            # Generate all date between range date
             # 'majoration_start_date' and 'majoration_end_date'
             s = pd.concat(
                 pd.Series(
                     r.Index,
-                    pd.date_range(r.majoration_start_date, 
+                    pd.date_range(r.majoration_start_date,
                                   r.majoration_end_date),
                 )
                 for r in df_tmp.itertuples()
             )
-            df_pp_capacity = df_tmp.loc[s].assign(date=s.index).reset_index(drop=True)
+            df_pp_capacity = df_tmp.loc[s].assign(
+                        date=s.index).reset_index(
+                        drop=True)
         else:
             df_pp_capacity = add_rows_range_date(sdate, edate, df_pp_capacity)
     else:
@@ -199,11 +201,12 @@ def update_pp_day(
     edate: datetime,
 ) -> pd.DataFrame:
     # Keep only row with value 'is_default' equals to 'False'
-    df_tmp = df_pp_day.loc[df_pp_day["is_default"] == False]
+    df_tmp = df_pp_day.loc[df_pp_day["is_default"] is False]
 
     # If there is none value 'False' attribute value
     # sdate to column 'majoration_start_date'
-    # edate to column 'majoration_end_date' becarefull if range is over two month
+    # edate to column 'majoration_end_date' becarefull
+    # if range is over two month
     if len(df_tmp) > 0:
         for index, row in df_tmp.iterrows():
             majoration_sdate = datetime.strptime(
@@ -219,7 +222,8 @@ def update_pp_day(
                 if majoration_sdate < sdate:
                     df_tmp.at[index, "majoration_start_date"] = sdate
                 else:
-                    df_tmp.at[index, "majoration_start_date"] = majoration_sdate
+                    df_tmp.at[index, 
+                    "majoration_start_date"] = majoration_sdate
                 if majoration_edate > edate:
                     df_tmp.at[index, "majoration_end_date"] = edate
                 else:
@@ -227,15 +231,19 @@ def update_pp_day(
             else:
                 df_tmp = df_tmp.drop([index])
         if len(df_tmp) > 0:
-            # Generate all date between range date 'majoration_start_date' and 'majoration_end_date'
+            # Generate all date between range date 'majoration_start_date'
+            # and 'majoration_end_date'
             s = pd.concat(
                 pd.Series(
                     r.Index,
-                    pd.date_range(r.majoration_start_date, r.majoration_end_date),
+                    pd.date_range(r.majoration_start_date,
+                                  r.majoration_end_date),
                 )
                 for r in df_tmp.itertuples()
             )
-            df_pp_day = df_tmp.loc[s].assign(date=s.index).reset_index(drop=True)
+            df_pp_day = df_tmp.loc[s].assign(
+                        date=s.index).reset_index(
+                            drop=True)
         else:
             df_pp_day = add_rows_range_date(sdate, edate, df_pp_day)
     else:
