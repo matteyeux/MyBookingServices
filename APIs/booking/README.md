@@ -103,3 +103,7 @@ booking/routers/users.py      11      3    73%   9, 14, 19
 --------------------------------------------------------
 TOTAL                         40     24    40%
 ```
+
+### Build with Docker
+- Build Docker image : `docker build -t booking_api .`
+- Start a container based on the Docker image : `docker run --name booking_api -p 5555:5555 --volume="$PWD:/booking" booking_api`

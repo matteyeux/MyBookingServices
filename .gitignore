@@ -1,5 +1,6 @@
 # APIs
 APIs/booking/env
+APIs/management/env
 __pycache__
 *.pyc
 .coverage
