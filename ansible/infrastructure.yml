@@ -5,3 +5,4 @@
     - { role: docker_swarm,     tags: ['docker_swarm'] }
     - { role: docker_registry,  tags: ['docker_registry'] }
     - { role: docker_tickstack, tags: ['docker_tickstack'] }
+    - { role: docker_traefik,   tags: ['docker_traefik'], when: "'manager' in inventory_hostname" }
