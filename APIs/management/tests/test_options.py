@@ -7,12 +7,8 @@ client = TestClient(app.app)
 def test_get_options_01():
     """ Test getting all options. """
 
-    # TODO :
-    # Count all result == 4
-
     response = client.get("/options/all/")
     assert response.status_code == 200
-    # assert response.json() == expected
     assert response.json() is not None
 
 
