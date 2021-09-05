@@ -3,8 +3,13 @@ from datetime import timedelta
 
 import numpy as np
 import pandas as pd
+import requests
 from booking.models.hotels import Hotels
 from booking.models.rooms import Rooms
+from fastapi import HTTPException
+
+
+users_api = "http://localhost:5555"
 
 
 def check_dates(start: str = None, end: str = None) -> bool:
@@ -384,3 +389,24 @@ def book_sanity_check(json_data: dict) -> bool:
                 return False
 
     return True
+
+
+def user_logged(bearer: str):
+    user_logged = requests.get(
+        users_api + "/users/me",
+        headers={
+            "Authorization": bearer,
+        },
+    )
+
+    if user_logged.status_code == 200:
+        return user_logged.json()
+
+    raise HTTPException(status_code=401, detail="User must log in")
+
+
+def user_is_admin(user: dict):
+    if user["role"] == "ADMIN":
+        return True
+
+    raise HTTPException(status_code=403, detail="User unauthorised")
