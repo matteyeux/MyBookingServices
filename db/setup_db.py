@@ -129,7 +129,7 @@ class Users(Base):
     id = Column(BigInteger, primary_key=True)
     first_name = Column(String(50))
     last_name = Column(String(50))
-    is_admin = Column(Boolean, default=False)
+    role = Column(String(10))
     email = Column(String(50))
     telephone = Column(String(20))
     username = Column(String(50))
@@ -324,30 +324,32 @@ s = hashlib.sha3_224()
 # Generate fake data for user
 user_data = []
 for i in range(2):
-    sha3_hashed_pass = s.update(fake_us.password(length=12).encode())
+    fake_pass = fake_us.password(length=12)
+    print(f"admin{i} password : {fake_pass}")
+    sha3_hashed_pass = s.update(fake_pass.encode())
     first_name = fake.first_name()
     last_name = fake.last_name()
-    is_admin = True
+    role = 'ADMIN'
     email = f"admin{i}@mybooking.services"
     telephone = fake.phone_number()
     password = s.hexdigest()
-    row = (first_name, last_name, is_admin, email, telephone, password)
+    row = (first_name, last_name, role, email, telephone, password)
     user_data.append(row)
 
 for _ in range(498):
     sha3_hashed_pass = s.update(fake_us.password(length=12).encode())
     first_name = fake.first_name()
     last_name = fake.last_name()
-    is_admin = False
+    role = 'USER'
     email = fake.ascii_free_email()
     telephone = fake.phone_number()
     password = s.hexdigest()
-    row = (first_name, last_name, is_admin, email, telephone, password)
+    row = (first_name, last_name, role, email, telephone, password)
     user_data.append(row)
 
 try:
     print("[+] inserting data into users table")
-    query = "INSERT INTO `users` (`first_name`, `last_name`, `is_admin`, `email`, \
+    query = "INSERT INTO `users` (`first_name`, `last_name`, `role`, `email`, \
             `telephone`, `password`) VALUES(%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, user_data)
 except SQLAlchemyError as e:
