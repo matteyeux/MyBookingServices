@@ -82,14 +82,14 @@ def test_login_OK():
 
 
 def test_get_user_me_OK():
-    # expected = {
-    #     "id": 1,
-    #     "role": "ADMIN",
-    #     "first_name": "Emmanuelle",
-    #     "last_name": "Delaunay",
-    #     "email": "admin0@mybooking.services",
-    #     "telephone": "0424716847",
-    # }
+    expected = {
+        "id": 1,
+        "role": "ADMIN",
+        "first_name": "Emmanuelle",
+        "last_name": "Delaunay",
+        "email": "admin0@mybooking.services",
+        "telephone": "0424716847",
+    }
 
     headers = {
         "Authorization": "Bearer " + jwtoken,
@@ -97,5 +97,9 @@ def test_get_user_me_OK():
 
     response = client.get("/users/me", headers=headers)
     assert response.status_code == 200
+    assert response.json() == expected
 
-    return
+
+def test_get_me_KO_not_logged():
+    response = client.get("/users/me")
+    assert response.status_code == 403
