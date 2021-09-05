@@ -363,9 +363,11 @@ class Database:
         pp_table = self.setup_price_policies_table()
 
         query = select(
+            pp_table.c.id,
             pp_table.c.name,
             pp_table.c.room_id,
             pp_table.c.room_majoration,
+            pp_table.c.price_policy_type,
             pp_table.c.day_number,
             pp_table.c.capacity_limit,
             pp_table.c.is_default,
@@ -382,9 +384,11 @@ class Database:
         pp_table = self.setup_price_policies_table()
 
         query = select(
+            pp_table.c.id,
             pp_table.c.name,
             pp_table.c.room_id,
             pp_table.c.room_majoration,
+            pp_table.c.price_policy_type,
             pp_table.c.day_number,
             pp_table.c.capacity_limit,
             pp_table.c.is_default,
@@ -406,8 +410,8 @@ class Database:
         query = insert(pp_table).values(
             name=price_policy.name,
             room_id=price_policy.room_id,
-            price_policy_type=price_policy.price_policy_type,
             room_majoration=price_policy.room_majoration,
+            price_policy_type=price_policy.price_policy_type,
             day_number=price_policy.day_number,
             capacity_limit=price_policy.capacity_limit,
             is_default=price_policy.is_default,
