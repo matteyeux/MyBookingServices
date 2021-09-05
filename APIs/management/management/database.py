@@ -31,29 +31,6 @@ from sqlalchemy.sql import select
 from sqlalchemy.sql.expression import delete, join
 
 
-class RoomEnum(enum.Enum):
-    SR = "Suite présidentielle"
-    S = "Suite"
-    JS = "Junior suite"
-    CD = "Chambre de luxe"
-    CS = "Chambre standard"
-
-
-class DayEnum(enum.Enum):
-    dimanche = 0
-    lundi = 1
-    mardi = 2
-    mercredi = 3
-    jeudi = 4
-    vendredi = 5
-    samedi = 6
-
-
-class PPTypeEnum(enum.Enum):
-    price_policy_days = 1
-    price_policy_capacity = 2
-
-
 class Database:
     """Database class is used to handle requests to our database.
     You can call it and specify some parameters ::
@@ -88,7 +65,7 @@ class Database:
             meta,
             Column("id", Integer, primary_key=True),
             Column("hotel_id", Integer, ForeignKey("hotels.id")),
-            Column("room", Enum(RoomEnum)),
+            Column("room", String(50)),
             Column("capacity", Integer),
             Column("price", Float),
             Column(
@@ -203,9 +180,9 @@ class Database:
             Column("id", Integer, primary_key=True),
             Column("room_id", Integer, ForeignKey("rooms.id")),
             Column("name", String(100)),
-            Column("rooms_majoration", Float),
-            Column("price_policy_type", Enum(PPTypeEnum)),
-            Column("day_number", Enum(DayEnum)),
+            Column("price_policy_type", Integer),
+            Column("room_majoration", Float),
+            Column("day_number", Integer),
             Column("capacity_limit", Integer),
             Column("majoration_start_date", DateTime),
             Column("majoration_end_date", DateTime),
@@ -370,13 +347,12 @@ class Database:
             option_table.c.price,
         )
 
-        print(query)
-
         options_result = self.engine.connect().execute(query).all()
         return options_result
 
     def get_option_by_id(self, option_id: int = 1):
         """ Get option by its id. """
+
         option_table = self.setup_options_table()
 
         query = option_table.select().where(option_table.c.id == option_id)
@@ -384,6 +360,7 @@ class Database:
 
     def create_option(self, option):
         """ Create a new option. """
+
         option_table = self.setup_options_table()
 
         query = (
@@ -397,11 +374,12 @@ class Database:
         self.engine.connect().execute(query)
         last_row = self.engine.connect().execute("SELECT LAST_INSERT_ID() as id").fetchone()
 
-        return {**option.dict(), "id": last_row.id}
+        return {"id": last_row.id, **option.dict()}
 
 
     def update_option(self, option, option_id):
         """ Update an option. """
+
         option_table = self.setup_options_table()
 
         query = (
@@ -414,7 +392,7 @@ class Database:
         )
         
         self.engine.connect().execute(query)
-        return {**option.dict(), "id": option_id}
+        return {"id": option_id, **option.dict()}
 
     def delete_option(self, option_id):
         """ Delete an option. """
@@ -423,6 +401,116 @@ class Database:
         query = (
                 delete(option_table).
                 where(option_table.c.id == option_id)
+        )
+
+        return self.engine.connect().execute(query)
+
+    ####################
+    ### PRICE POLICY ###
+    ####################
+
+    def get_price_policies(self):
+        """ Get all price_policies. """
+
+        pp_table = self.setup_price_policies_table()
+
+        query = select(
+            pp_table.c.name,
+            pp_table.c.room_id,
+            pp_table.c.room_majoration,
+            pp_table.c.day_number,
+            pp_table.c.capacity_limit,
+            pp_table.c.is_default,
+            pp_table.c.majoration_start_date,
+            pp_table.c.majoration_end_date,
+        )
+
+        pp_result = self.engine.connect().execute(query).all()
+        return pp_result
+
+
+    def get_price_policy_by_id(self, price_policy_id):
+        """ Get price_policy bi its id. """
+
+        pp_table = self.setup_price_policies_table()
+
+        query = select(
+            pp_table.c.name,
+            pp_table.c.room_id,
+            pp_table.c.room_majoration,
+            pp_table.c.day_number,
+            pp_table.c.capacity_limit,
+            pp_table.c.is_default,
+            pp_table.c.majoration_start_date,
+            pp_table.c.majoration_end_date,
+        ).where(pp_table.c.id == price_policy_id)
+
+        pp_result = self.engine.connect().execute(query).all()
+        return pp_result
+
+    def create_price_policy(self, price_policy):
+        """ Create a new price_policy. """
+
+        pp_table = self.setup_price_policies_table()
+
+        # TODO : Add check 
+        # manage_rules_price_policies
+
+        query = (
+            insert(pp_table).
+            values(
+                name = price_policy.name,
+                room_id = price_policy.room_id,
+                price_policy_type = price_policy.price_policy_type,
+                room_majoration = price_policy.room_majoration,
+                day_number = price_policy.day_number,
+                capacity_limit = price_policy.capacity_limit,
+                is_default = price_policy.is_default,
+                majoration_start_date = price_policy.majoration_start_date,
+                majoration_end_date = price_policy.majoration_end_date,
+            )
+        )
+        
+        self.engine.connect().execute(query)
+        last_row = self.engine.connect().execute("SELECT LAST_INSERT_ID() as id").fetchone()
+
+        return {"id": last_row.id, **price_policy.dict()}
+
+    def update_price_policy(self, price_policy, price_policy_id):
+        """ Update an option. """
+
+        pp_table = self.setup_price_policies_table()
+
+        # TODO : Add check 
+        # manage_rules_price_policies
+
+        query = (
+            update(pp_table).
+            where(pp_table.c.id == price_policy_id).
+            values(
+                name = price_policy.name,
+                room_id = price_policy.room_id,
+                price_policy_type = price_policy.price_policy_type,
+                room_majoration = price_policy.room_majoration,
+                day_number = price_policy.day_number,
+                capacity_limit = price_policy.capacity_limit,
+                is_default = price_policy.is_default,
+                majoration_start_date = price_policy.majoration_start_date,
+                majoration_end_date = price_policy.majoration_end_date,
+            )
+        )
+        
+        self.engine.connect().execute(query)
+        return {"id": price_policy_id, **price_policy.dict()}
+
+    def delete_price_policy(self, price_policy_id):
+        """ Delete an option. """
+
+        pp_table = self.setup_price_policies_table()
+
+        query = (
+                delete(pp_table).
+                where(pp_table.c.id == price_policy_id)
         )
 
         return self.engine.connect().execute(query)

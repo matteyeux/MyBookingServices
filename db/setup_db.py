@@ -1,5 +1,6 @@
 import datetime
 import enum
+import hashlib
 
 import pandas as pd
 from faker import Faker
@@ -9,14 +10,13 @@ from sqlalchemy import Column
 from sqlalchemy import create_engine
 from sqlalchemy import Date
 from sqlalchemy import DateTime
-from sqlalchemy import Enum
 from sqlalchemy import Float
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
+from sqlalchemy import JSON
 from sqlalchemy import String
 from sqlalchemy import text
 from sqlalchemy import TIMESTAMP
-from sqlalchemy import JSON
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -124,15 +124,16 @@ class Rooms(Base):
     )
 
 
-class Customers(Base):
-    __tablename__ = "customers"
+class Users(Base):
+    __tablename__ = "users"
     id = Column(BigInteger, primary_key=True)
     first_name = Column(String(50))
     last_name = Column(String(50))
+    is_admin = Column(Boolean, default=False)
     email = Column(String(50))
     telephone = Column(String(20))
     username = Column(String(50))
-    password = Column(String(50))
+    password = Column(String(70))
     created_time = Column(
         TIMESTAMP,
         nullable=False,
@@ -149,7 +150,7 @@ class Booking(Base):
     __tablename__ = "booking"
     id = Column(BigInteger, primary_key=True)
     room_id = Column(Integer, ForeignKey("rooms.id"))
-    customer_id = Column(BigInteger, ForeignKey("customers.id"))
+    user_id = Column(BigInteger, ForeignKey("users.id"))
     capacity_book = Column(Integer)
     option = Column(JSON)
     order_price = Column(Float)
@@ -240,10 +241,10 @@ Rooms.booking = relationship(
     order_by=Booking.id,
     back_populates="rooms",
 )
-Customers.booking = relationship(
+Users.booking = relationship(
     "Booking",
     order_by=Booking.id,
-    back_populates="customers",
+    back_populates="users",
 )
 PricePolicies.rooms = relationship(
     "Rooms",
@@ -319,24 +320,36 @@ except SQLAlchemyError as e:
     error = str(e.__dict__["orig"])
     print(error)
 
-
-# Generate fake data for Customer
-customer_data = []
-for _ in range(500):
+s = hashlib.sha3_224()
+# Generate fake data for user
+user_data = []
+for i in range(2):
+    sha3_hashed_pass = s.update(fake_us.password(length=12).encode())
     first_name = fake.first_name()
     last_name = fake.last_name()
+    is_admin = True
+    email = f"admin{i}@mybooking.services"
+    telephone = fake.phone_number()
+    password = s.hexdigest()
+    row = (first_name, last_name, is_admin, email, telephone, password)
+    user_data.append(row)
+
+for _ in range(498):
+    sha3_hashed_pass = s.update(fake_us.password(length=12).encode())
+    first_name = fake.first_name()
+    last_name = fake.last_name()
+    is_admin = False
     email = fake.ascii_free_email()
     telephone = fake.phone_number()
-    username = fake_us.simple_profile()["username"]
-    password = fake_us.password(length=12)
-    row = (first_name, last_name, email, telephone, username, password)
-    customer_data.append(row)
+    password = s.hexdigest()
+    row = (first_name, last_name, is_admin, email, telephone, password)
+    user_data.append(row)
 
 try:
-    print("[+] inserting data into customers table")
-    query = "INSERT INTO `customers` (`first_name`, `last_name`, `email`, \
-            `telephone`, `username`, `password`) VALUES(%s,%s,%s,%s,%s,%s)"
-    id = db_engine.execute(query, customer_data)
+    print("[+] inserting data into users table")
+    query = "INSERT INTO `users` (`first_name`, `last_name`, `is_admin`, `email`, \
+            `telephone`, `password`) VALUES(%s,%s,%s,%s,%s,%s)"
+    id = db_engine.execute(query, user_data)
 except SQLAlchemyError as e:
     error = str(e.__dict__["orig"])
     print(error)
@@ -357,8 +370,8 @@ booking_data = [
 ]
 
 try:
-    print("[+] inserting data into customers table")
-    query = "INSERT INTO `booking` (`room_id`, `customer_id`, `capacity_book`, \
+    print("[+] inserting data into users table")
+    query = "INSERT INTO `booking` (`room_id`, `user_id`, `capacity_book`, \
             `option`, `order_price`, `booking_start_date`, `booking_end_date`) \
             VALUES(%s,%s,%s,%s,%s,%s,%s)"
     id = db_engine.execute(query, booking_data)
