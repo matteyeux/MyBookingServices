@@ -1,0 +1,65 @@
+services:
+
+  reverse-proxy:
+    image: traefik:v2.4
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+      - 80:80
+      - 8080:8080
+    deploy:
+      labels:
+        - traefik.enable=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.toml:/etc/traefik/traefik.toml
+
+  manage:
+    image: nginx
+    ports:
+      - 5557:80
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.manage.rule=Host(`manage.mybooking.services`)"
+        - "traefik.http.routers.manage.entrypoints=mybooking"
+        - "traefik.http.services.manage.loadbalancer.server.port=5557"
+
+  book:
+    image: nginx
+    ports:
+      - 5555:80
+    deploy:
+      mode: replicated
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.book.rule=Host(`book.mybooking.services`)"
+        - "traefik.http.routers.book.entrypoints=mybooking"
+        - "traefik.http.services.book.loadbalancer.server.port=5555"
+
+  users:
+    image: nginx
+    ports:
+      - 5556:80
+    deploy:
+      mode: replicated
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.users.rule=Host(`users.mybooking.services`)"
+        - "traefik.http.routers.users.entrypoints=mybooking"
+        - "traefik.http.services.book.loadbalancer.server.port=5556"

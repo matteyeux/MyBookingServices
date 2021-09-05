@@ -1,0 +1,4 @@
+---
+- include_tasks: docker_images.yml
+
+- include_tasks: deploy_traefik.yml
