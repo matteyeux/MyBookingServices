@@ -1,10 +1,10 @@
 from booking.models.rooms import Rooms
 from booking.utils import check_dates
+from booking.utils import user_is_admin
+from booking.utils import user_logged
 from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi import Request
-from utils import user_is_admin
-from utils import user_logged
 
 router = APIRouter()
 
