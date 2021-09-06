@@ -17,16 +17,24 @@ class Addresses:
         )
 
     def get_all_addresses(self):
-        """return the list of all addresses."""
+        """ return the list of all addresses. """
 
         engine = self.db.engine
         return None if not engine else self.db.get_all_addresses()
 
     def get_address_by_id(self, address_id: int = 1):
-        """return the list of all addresses."""
+        """ Get address by its id. """
 
         engine = self.db.engine
         return None if not engine else self.db.get_address_by_id(address_id)
+
+    def get_address_by_hotel_id(self, hotel_id: int = 1):
+        """Get address by its hotel id."""
+
+        engine = self.db.engine
+        return (
+            None if not engine else self.db.get_address_by_hotel_id(hotel_id)
+        )
 
     def create_address(self, address, hotel_id):
         """Create an address in db and return it."""
