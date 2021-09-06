@@ -440,8 +440,65 @@ class Database:
     ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
         """Get room by ID."""
         table = self.setup_rooms_table()
-        query = table.select().where(table.c.id == room_id)
-        return self.engine.connect().execute(query).all()
+        query = select(
+            table.c.id,
+            table.c.hotel_id,
+            table.c.room,
+            table.c.price,
+            table.c.capacity,
+        ).where(table.c.id == room_id)
+        return self.engine.connect().execute(query).fetchone()
+
+    def create_room(self, room):
+        """ Create a room. """
+
+        room_table = self.setup_rooms_table()
+
+        query = insert(room_table).values(
+            hotel_id=room.hotel_id,
+            room=room.room,
+            capacity=room.capacity,
+            price=room.price,
+        )
+
+        self.engine.connect().execute(query)
+        last_row = (
+            self.engine.connect()
+            .execute(
+                "SELECT LAST_INSERT_ID() as id",
+            )
+            .fetchone()
+        )
+
+        return {"id": last_row.id, **room.dict()}
+
+    def update_room(self, room, room_id):
+        """ Update a room by its id. """
+
+        room_table = self.setup_rooms_table()
+
+        query = (
+            update(room_table)
+            .where(room_table.c.id == room_id)
+            .values(
+                hotel_id=room.hotel_id,
+                room=room.room,
+                capacity=room.capacity,
+                price=room.price,
+            )
+        )
+
+        self.engine.connect().execute(query)
+        return {"id": room_id, **room.dict()}
+
+    def delete_room(self, room_id):
+        """ Delete a room by its id. """
+
+        room_table = self.setup_rooms_table()
+
+        query = delete(room_table).where(room_table.c.id == room_id)
+
+        return self.engine.connect().execute(query)
 
     def get_options(self) -> sqlalchemy.engine.cursor.LegacyCursorResult:
         """ Get all options. """
