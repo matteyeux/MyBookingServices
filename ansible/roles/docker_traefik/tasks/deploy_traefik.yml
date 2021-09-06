@@ -1,0 +1,35 @@
+---
+# - name: Install python-pyOpenSSL
+#   pip:
+#     name:
+#       - docker
+#     state: present
+#   when: "'managers' in group_names"
+- name: Create folder for traefik.toml conf
+  file:
+    path: "/etc/traefik"
+    state: directory
+
+- name: Copying treafik.toml conf file
+  copy:
+    src: data/traefik/traefik.toml
+    dest: /etc/traefik/traefik.toml
+
+- name: Create traefik
+  docker_swarm_service:
+    name: traefik
+    image: "registry.mybooking.services:5000/traefik:v1"
+    state: present
+    mounts:
+      - source: /etc/traefik
+        target: /etc/traefik
+        type: bind
+    publish:
+      - published_port: 80
+        target_port: 80
+      - published_port: 8080
+        target_port: 8080
+    placement:
+      constraints:
+        - node.role == manager
+    #labels: "traefik.enable = true"
