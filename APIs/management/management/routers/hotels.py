@@ -5,7 +5,6 @@ from fastapi import HTTPException
 from management.models.addresses import Addresses
 from management.models.hotels import Hotels
 from pydantic import BaseModel
-from sqlalchemy.exc import IntegrityError
 
 # from fastapi import Request
 
@@ -85,13 +84,18 @@ async def delete_hotel(hotel_id: int = 0):
     """ Delete hotel by its id. """
 
     if hotel_id > 0:
-        try:
-            hotel = Hotels().delete_hotel(hotel_id)
-        except IntegrityError:
+        addresses = Addresses().get_address_by_hotel_id(hotel_id)
+
+        if len(addresses) == 0:
             raise HTTPException(
-                status_code=400,
-                detail="Cascade deletion impossible",
+                status_code=404,
+                detail="No address for this hotel",
             )
+
+        address_id = addresses[0].id
+        Addresses().delete_address(address_id)
+
+        hotel = Hotels().delete_hotel(hotel_id)
 
         if not hotel:
             raise HTTPException(status_code=404, detail="Hotel not found")
