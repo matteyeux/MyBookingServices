@@ -20,7 +20,7 @@ class Addresses:
         """return the list of all addresses."""
 
         engine = self.db.engine
-        return None if not engine else self.db.get_addresses()
+        return None if not engine else self.db.get_all_addresses()
 
     def get_address_by_id(self, address_id: int = 1):
         """return the list of all addresses."""
