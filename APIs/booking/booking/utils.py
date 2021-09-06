@@ -105,7 +105,6 @@ def handle_pricing(
         df_pp_capacity,
         on="date",
     )
-    print(new_df)
     # Calcul final price of room depand on majorations days
     # and majoration capacity
     price = 0
@@ -122,9 +121,6 @@ def handle_pricing(
     for elem in booking_data["options"]:
         if booking_data["options"][elem]:
             price += booking_data["options"][elem]
-
-    print(price)
-
     return price
 
 
@@ -308,8 +304,6 @@ def update_pp_day(
         },
         inplace=True,
     )
-    print(df_pp_day)
-
     return df_pp_day
 
 
