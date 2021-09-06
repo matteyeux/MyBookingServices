@@ -157,15 +157,15 @@ def test_delete_hotel_01():
     hotel_id = client.get("/hotels/last/").json()["hotel"]["id"]
 
     response = client.delete(f"/hotels/{hotel_id}")
-    # deleted_hotel = client.get(f"/hotels/{hotel_id}")
+    deleted_hotel = client.get(f"/hotels/{hotel_id}")
 
-    # expect = {
-    #     'detail': "hotel not found",
-    # }
+    expect = {
+        'detail': "Hotel not found",
+    }
 
-    assert response.status_code == 400
-    assert response.json() == {"detail": "Cascade deletion impossible"}
+    assert response.status_code == 200
+    assert response.json() == {}
     assert response.json() is not None
-    # assert deleted_hotel.status_code == 404
-    # assert deleted_hotel.json() == expect
-    # assert deleted_hotel.json() is not None
+    assert deleted_hotel.status_code == 404
+    assert deleted_hotel.json() == expect
+    assert deleted_hotel.json() is not None
