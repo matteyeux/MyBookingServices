@@ -316,6 +316,22 @@ class Database:
 
         return self.engine.connect().execute(query).all()
 
+    def get_all_addresses(self):
+        """ Get all addresses. """
+
+        address_tables = self.setup_addresses_table()
+
+        query = select(
+            address_tables.c.id,
+            address_tables.c.hotel_id,
+            address_tables.c.number,
+            address_tables.c.street,
+            address_tables.c.postal_code,
+            address_tables.c.town,
+        )
+
+        return self.engine.connect().execute(query).all()
+
     def get_address_by_hotel_id(self, hotel_id):
         """ Return hotel's address, find by hotel's id ."""
         address_table = self.setup_addresses_table()
@@ -330,6 +346,22 @@ class Database:
         ).where(address_table.c.hotel_id == hotel_id)
 
         result = self.engine.connect().execute(query).all()
+        return result
+
+    def get_address_by_id(self, address_id):
+        """ Return address by its id ."""
+        address_table = self.setup_addresses_table()
+
+        query = select(
+            address_table.c.id,
+            address_table.c.hotel_id,
+            address_table.c.number,
+            address_table.c.street,
+            address_table.c.town,
+            address_table.c.postal_code,
+        ).where(address_table.c.id == address_id)
+
+        result = self.engine.connect().execute(query).fetchone()
         return result
 
     def create_address(self, address, hotel_id):
@@ -354,6 +386,31 @@ class Database:
         )
 
         return {"id": last_address_id.id, **address.dict()}
+
+    def update_address(self, address, address_id):
+        """ Update an address by its id. """
+
+        address_table = self.setup_addresses_table()
+        query = insert(address_table).values(
+            hotel_id=address.hotel_id,
+            number=address.number,
+            street=address.street,
+            town=address.town,
+            postal_code=address.postal_code,
+        )
+
+        self.engine.connect().execute(query)
+        updated_address = self.get_address_by_id(address_id)
+
+        return updated_address
+
+    def delete_address(self, address_id):
+        """ Delete an address by its id. """
+
+        address_table = self.setup_addresses_table()
+        query = delete(address_table).where(address_table.c.id == address_id)
+
+        return self.engine.connect().execute(query)
 
     def get_all_rooms(
         self,
