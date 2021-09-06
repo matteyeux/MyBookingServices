@@ -31,14 +31,14 @@ def test_get_one_hotels_01():
         "hotel": {
             "id": 1,
             "name": "Carlton",
-            "telephone": "0535719531",
-            "website": "http://www.guillou.com/posts/main/index.asp",
-            "description": "L'art d'avancer plus rapidement",
-            "owner": "Nath Blondel",
-            "number": "77",
-            "street": "boulevard Marie",
-            "postal_code": 94847,
-            "town": "Saint JeanneBourg",
+            "telephone": "02 55 03 05 09",
+            "website": "https://www.de.com/privacy.asp",
+            "description": "Le pouvoir d'évoluer naturellement",
+            "owner": "Geneviève Rolland-Carre",
+            "number": "16",
+            "street": "chemin Antoinette Duval",
+            "postal_code": 23084,
+            "town": "Gros",
         },
     }
 
