@@ -38,6 +38,17 @@ async def get_address_by_id(address_id: int = 1):
     return {"address": address}
 
 
+@router.get("/addresses/{hotel_id}", tags=["addresses"])
+async def get_address_by_hotel_id(hotel_id: int = 1):
+    """ Get address by its hotel. """
+
+    address = Addresses().get_address_by_hotel_id(hotel_id)
+    if not address:
+        raise HTTPException(status_code=404, detail="Address not found")
+
+    return {"address": address}
+
+
 @router.get("/addresses/last/", tags=["addresses"])
 async def get_last_address():
     """Get detail about an address"""
