@@ -14,7 +14,7 @@ class Address(BaseModel):
     number: str
     street: str
     town: str
-    postal_code: str
+    postal_code: int
 
 
 @router.get("/addresses/all/", tags=["addresses"])
@@ -48,10 +48,10 @@ async def get_last_address():
 
 
 @router.post("/addresses/", tags=["addresses"])
-async def create_address(address: Address, hotel_id: int = 1):
+async def create_address(address: Address):
     """Post detail about an address"""
 
-    address = Addresses().create_address(address, hotel_id)
+    address = Addresses().create_address(address, address.hotel_id)
     return {"address": address}
 
 
