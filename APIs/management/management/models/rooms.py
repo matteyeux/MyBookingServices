@@ -60,3 +60,19 @@ class Rooms:
         # if room_id == 0 get latest added room ?
         engine = self.db.engine
         return None if not engine else self.db.get_room_by_id(room_id)
+
+    def create_room(self, room):
+        """ Create a new room. """
+
+        engine = self.db.engine
+        return None if not engine else self.db.create_room(room)
+
+    def update_room(self, room, room_id):
+        """ Update an room given by its id. """
+        engine = self.db.engine
+        return None if not engine else self.db.update_room(room, room_id)
+
+    def delete_room(self, room_id):
+        """ Delete an room given by its id. """
+        engine = self.db.engine
+        return None if not engine else self.db.delete_room(room_id)
