@@ -314,7 +314,7 @@ class Database:
         # TODO : Check if the cascade deletion is up or not ?
         query = delete(hotel_table).where(hotel_table.c.id == hotel_id)
 
-        return self.engine.connect().execute(query).all()
+        return self.engine.connect().execute(query)
 
     def get_all_addresses(self):
         """ Get all addresses. """
