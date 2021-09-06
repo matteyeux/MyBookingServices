@@ -400,9 +400,7 @@ class Database:
         )
 
         self.engine.connect().execute(query)
-        updated_address = self.get_address_by_id(address_id)
-
-        return updated_address
+        return {"id": address_id, **address.dict()}
 
     def delete_address(self, address_id):
         """ Delete an address by its id. """
