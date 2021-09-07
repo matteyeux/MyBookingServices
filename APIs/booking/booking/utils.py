@@ -6,10 +6,6 @@ import pandas as pd
 import requests
 from booking.models.hotels import Hotels
 from booking.models.rooms import Rooms
-from fastapi import HTTPException
-
-
-users_api = "http://localhost:5555"
 
 
 def check_dates(start: str = None, end: str = None) -> bool:
@@ -129,6 +125,7 @@ def update_pp_capacity(
     sdate: datetime,
     edate: datetime,
 ) -> pd.DataFrame:
+    """Update price policy capacity."""
     # Keep only row with value 'is_default' equals to 'False'
     df_tmp = df_pp_capacity.loc[~df_pp_capacity["is_default"]]
 
@@ -214,6 +211,7 @@ def update_pp_day(
     sdate: datetime,
     edate: datetime,
 ) -> pd.DataFrame:
+    """Update price policy day."""
     # Keep only row with value 'is_default' equals to 'False'
     df_tmp = df_pp_day.loc[~df_pp_day["is_default"]]
 
@@ -312,7 +310,7 @@ def add_rows_range_date(
     edate: datetime.date,
     df_pp: pd.DataFrame,
 ) -> pd.DataFrame:
-
+    """Add rows range date to dataframe."""
     df_pp = df_pp.loc[df_pp["is_default"]]
     # Generate all date between range date 'sdate' and 'edate'
     s = pd.concat(
@@ -385,7 +383,8 @@ def book_sanity_check(json_data: dict) -> bool:
     return True
 
 
-def user_logged(bearer: str):
+def user_logged(bearer: str) -> list:
+    users_api = "127.0.0.1:5556"
     user_logged = requests.get(
         users_api + "/users/me",
         headers={
@@ -395,12 +394,8 @@ def user_logged(bearer: str):
 
     if user_logged.status_code == 200:
         return user_logged.json()
+    return None
 
-    raise HTTPException(status_code=401, detail="User must log in")
 
-
-def user_is_admin(user: dict):
-    if user["role"] == "ADMIN":
-        return True
-
-    raise HTTPException(status_code=403, detail="User unauthorised")
+def user_is_admin(user: dict) -> bool:
+    return user["role"] == "ADMIN"

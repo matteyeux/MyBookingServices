@@ -1,24 +1,9 @@
 from booking.models.rooms import Rooms
 from booking.utils import check_dates
-from booking.utils import user_is_admin
-from booking.utils import user_logged
 from fastapi import APIRouter
 from fastapi import HTTPException
-from fastapi import Request
 
 router = APIRouter()
-
-
-@router.get("/rooms/test-user", tags=["users"])
-async def get_connected_user(request: Request):
-    user = user_logged(request.headers.get('authorization'))
-    return user
-
-
-@router.get("/rooms/test-admin", tags=["users"])
-async def get_check_user_is_admin(request: Request):
-    user = user_logged(request.headers.get('authorization'))
-    return user_is_admin(user)
 
 
 @router.get("/rooms/all/", tags=["rooms"])
