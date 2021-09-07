@@ -26,6 +26,7 @@ async def book_room(request: Request):
     - options
     """
     data = await request.json()
+    user = utils.user_logged(request.headers.get('authorization'))
 
     if utils.book_sanity_check(data) is False:
         # https://stackoverflow.com/a/42171674
@@ -38,5 +39,5 @@ async def book_room(request: Request):
             detail="Room is already booked for this period",
         )
 
-    booking_data = book.do_book_room(data)
+    booking_data = book.do_book_room(user['id'], data)
     return {"booked_room": booking_data}
