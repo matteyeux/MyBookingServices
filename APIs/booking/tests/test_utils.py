@@ -172,3 +172,12 @@ def test_book_sanity_check_09():
     bad_options_json['options']['parking'] = 'hello'
 
     assert utils.book_sanity_check(bad_options_json) is False
+
+
+def test_user_is_admin_01():
+    """Test user is admin but fail."""
+    user = {'role': "ADMIN"}
+    assert utils.user_is_admin(user) is True
+
+    user = {'role': "SOMETHING_ELSE"}
+    assert utils.user_is_admin(user) is False

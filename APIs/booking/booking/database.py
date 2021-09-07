@@ -9,6 +9,7 @@ from sqlalchemy import Date
 from sqlalchemy import DateTime
 from sqlalchemy import Float
 from sqlalchemy import ForeignKey
+from sqlalchemy import insert
 from sqlalchemy import Integer
 from sqlalchemy import MetaData
 from sqlalchemy import String
@@ -345,3 +346,17 @@ class Database:
         )
         options_result = self.engine.connect().execute(query).all()
         return [dict(row) for row in options_result]
+
+    def insert_reservation_into_db(self, user_id, data: list):
+        """Insert booking data into db"""
+        booking_table = self.setup_booking_table()
+        query = insert(booking_table).values(
+            room_id=data['room_id'],
+            user_id=user_id,
+            capacity_book=data['capacity'],
+            option=data['options'],
+            booking_start_date=data['start_date'],
+            booking_end_date=data['end_date'],
+        )
+
+        self.engine.connect().execute(query)

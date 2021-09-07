@@ -11,22 +11,21 @@ def test_get_hotels_01():
             {
                 "id": 1,
                 "name": "Carlton",
-                "number": "77",
-                "street": "boulevard Marie",
-                "postal_code": 94847,
-                "town": "Saint JeanneBourg",
+                "number": "16",
+                "street": "chemin Antoinette Duval",
+                "postal_code": 23084,
+                "town": "Gros",
             },
             {
                 "id": 2,
                 "name": "Lutetia",
-                "number": "326",
-                "street": "avenue Marie Alexandre",
-                "postal_code": 53136,
-                "town": "Girard",
+                "number": "39",
+                "street": "boulevard Leclerc",
+                "postal_code": 91285,
+                "town": "Sainte Matthieuboeuf",
             },
         ],
     }
-
     response = client.get("/hotels/all/")
     assert response.status_code == 200
     assert response.json() == expected
@@ -40,10 +39,10 @@ def test_get_hotel_by_id_01():
             {
                 "id": 2,
                 "name": "Lutetia",
-                "number": "326",
-                "street": "avenue Marie Alexandre",
-                "postal_code": 53136,
-                "town": "Girard",
+                "number": "39",
+                "street": "boulevard Leclerc",
+                "postal_code": 91285,
+                "town": "Sainte Matthieuboeuf",
             },
         ],
     }

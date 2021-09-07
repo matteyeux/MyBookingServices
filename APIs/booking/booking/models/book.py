@@ -10,10 +10,12 @@ class Book(Rooms):
 
     def do_book_room(self, data: dict) -> dict:
         """Book room and return data."""
-        # TODO insert in db
         pp = self.get_price_policies()
         options = self.get_all_options()
         room = self.get_room_by_id(data['room_id'])
         price = utils.handle_pricing(data, pp, room, options)
         data['price'] = price
+
+        # if self.db.engine is not None:
+        #     self.db.insert_reservation_into_db(data)
         return data
