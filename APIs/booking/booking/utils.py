@@ -384,7 +384,7 @@ def book_sanity_check(json_data: dict) -> bool:
 
 
 def user_logged(bearer: str) -> list:
-    users_api = "127.0.0.1:5556"
+    users_api = "http://127.0.0.1:5557"
     user_logged = requests.get(
         users_api + "/users/me",
         headers={
@@ -392,7 +392,9 @@ def user_logged(bearer: str) -> list:
         },
     )
 
+    print(user_logged.status_code)
     if user_logged.status_code == 200:
+        print(user_logged.json())
         return user_logged.json()
     return None
 
