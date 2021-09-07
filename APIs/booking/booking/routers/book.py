@@ -25,8 +25,9 @@ async def book_room(request: Request):
     - capacity
     - options
     """
-    data = await request.json()
+    print(request.headers.get('authorization'))
     user = utils.user_logged(request.headers.get('authorization'))
+    data = await request.json()
 
     if utils.book_sanity_check(data) is False:
         # https://stackoverflow.com/a/42171674

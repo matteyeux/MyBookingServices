@@ -8,7 +8,7 @@ from booking.models.rooms import Rooms
 class Book(Rooms):
     """Book class model."""
 
-    def do_book_room(self, data: dict) -> dict:
+    def do_book_room(self, user_id: int, data: dict) -> dict:
         """Book room and return data."""
         pp = self.get_price_policies()
         options = self.get_all_options()
@@ -16,6 +16,6 @@ class Book(Rooms):
         price = utils.handle_pricing(data, pp, room, options)
         data['price'] = price
 
-        # if self.db.engine is not None:
-        #     self.db.insert_reservation_into_db(data)
+        if self.db.engine is not None:
+            self.db.insert_reservation_into_db(user_id, data)
         return data
