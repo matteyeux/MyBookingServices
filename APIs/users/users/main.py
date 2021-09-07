@@ -24,7 +24,7 @@ def parse_arguments() -> argparse.Namespace:
         "--port",
         type=int,
         dest="port",
-        default=5555,
+        default=5557,
         help="specify port",
     )
     parser.add_argument(
