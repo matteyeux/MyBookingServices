@@ -42,3 +42,12 @@ async def book_room(request: Request):
 
     booking_data = book.do_book_room(user['id'], data)
     return {"booked_room": booking_data}
+
+
+@router.delete("/book/{booking_id}", tags=["book"])
+async def delete_booking(booking_id: int = 0):
+    """Delete booking by its id"""
+
+    if booking_id > 0:
+        booking = Book().delete_booking_room(booking_id)
+        return booking

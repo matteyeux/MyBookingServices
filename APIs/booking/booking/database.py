@@ -10,6 +10,7 @@ from sqlalchemy import DateTime
 from sqlalchemy import Float
 from sqlalchemy import ForeignKey
 from sqlalchemy import insert
+from sqlalchemy import delete
 from sqlalchemy import Integer
 from sqlalchemy import MetaData
 from sqlalchemy import String
@@ -357,6 +358,15 @@ class Database:
             option=data['options'],
             booking_start_date=data['start_date'],
             booking_end_date=data['end_date'],
+        )
+
+        self.engine.connect().execute(query)
+
+    def delete_reservation_into_db(self, booking_id: int):
+        """Delete booking row data into db"""
+        booking_table = self.setup_booking_table()
+        query = delete(booking_table).where(
+            booking_table.c.id == booking_id,
         )
 
         self.engine.connect().execute(query)
