@@ -60,9 +60,10 @@ async def get_room_info_by_id(room_id: int = 0):
     return {"room_id": room}
 
 
-# @router.get("/rooms/test/")
-# async def do_test(param1: str, param2: str):
-# #async def do_test(request: Request):
-#     print(param2)
-#     return {"test"}
-#     #return await request.json()
+@router.get("/rooms/options/", tags=["rooms"])
+async def get_options():
+    """Route to list all rooms."""
+    rooms = Rooms()
+    all_options = rooms.get_all_options()
+
+    return {"options": all_options}

@@ -226,3 +226,25 @@ def test_get_rooms_by_id_03():
     response = client.get("/rooms/404")
     assert response.status_code == 404
     assert response.json() == expected
+
+
+def test_get_all_options():
+    """List all options for rooms."""
+    expected = {
+        "options": [
+            {"id": 1, "name": "Parking", "price": 25.0},
+            {"id": 2, "name": "Baby cot", "price": 0.0},
+            {
+                "id": 3,
+                "name": "Romance pack",
+                "price": 50.0,
+            },
+            {"id": 4, "name": "Breakfast", "price": 30.0},
+        ],
+    }
+
+    response = client.get(
+        "/rooms/options/",
+    )
+    assert response.status_code == 200
+    assert response.json() == expected
