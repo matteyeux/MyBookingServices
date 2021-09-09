@@ -50,7 +50,7 @@ async def delete_booking(booking_id: int = 0):
 
     if booking_id > 0:
         booking = Book().delete_booking_room(booking_id)
-
+        print(booking)
         if not booking:
             raise HTTPException(
                 status_code=404,
