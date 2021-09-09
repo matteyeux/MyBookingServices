@@ -139,7 +139,7 @@ CREATE TABLE `hotels` (
 
 LOCK TABLES `hotels` WRITE;
 /*!40000 ALTER TABLE `hotels` DISABLE KEYS */;
-INSERT INTO `hotels` VALUES (1,'Carlton','02 55 03 05 09','https://www.de.com/explore/wp-content/search/privacy.asp','Le pouvoir d\'évoluer naturellement','Geneviève Rolland-Carre','2021-09-05 11:24:31','2021-09-05 11:24:31'),(2,'Lutetia','08 02 62 56 98','http://vincent.fr/','La liberté d\'avancer avant-tout','Cécile Lecomte Le Bigot','2021-09-05 11:24:31','2021-09-05 11:24:31');
+INSERT INTO `hotels` VALUES (1,'Carlton','02 55 03 05 09','https://www.de.com/privacy.asp','Le pouvoir d\'évoluer naturellement','Geneviève Rolland-Carre','2021-09-05 11:24:31','2021-09-05 11:24:31'),(2,'Lutetia','08 02 62 56 98','http://vincent.fr/','La liberté d\'avancer avant-tout','Cécile Lecomte Le Bigot','2021-09-05 11:24:31','2021-09-05 11:24:31');
 /*!40000 ALTER TABLE `hotels` ENABLE KEYS */;
 UNLOCK TABLES;
 

@@ -1,7 +1,14 @@
-from management.models.hotels import Hotels
-from fastapi import APIRouter
-from pydantic import BaseModel
+import os
 from typing import Optional
+
+from fastapi import APIRouter
+from fastapi import HTTPException
+from fastapi import Request
+from management.models.addresses import Addresses
+from management.models.hotels import Hotels
+from management.utils import user_is_admin
+from management.utils import user_logged
+from pydantic import BaseModel
 
 # from fastapi import Request
 
@@ -24,8 +31,9 @@ class Address(BaseModel):
 
 
 @router.get("/hotels/all/", tags=["hotels"])
-async def get_hotels():
+async def get_all_hotels():
     """Get all hotels"""
+
     hotels = Hotels().get_all_hotels()
     return {"hotels": hotels}
 
@@ -33,17 +41,82 @@ async def get_hotels():
 @router.get("/hotels/{hotel_id}", tags=["hotels"])
 async def get_hotel_by_id(hotel_id: int = 1):
     """Get detail about an hotel"""
+
     hotels = Hotels()
     hotel = hotels.get_hotel_by_id(hotel_id)
+
+    if not hotel:
+        raise HTTPException(status_code=404, detail="Hotel not found")
+
+    return {"hotel": hotel}
+
+
+@router.get("/hotels/last/", tags=["hotels"])
+async def get_last_hotel():
+    """Get detail about an hotel"""
+
+    hotels = Hotels().get_all_hotels()
+    hotel = hotels[-1]
     return {"hotel": hotel}
 
 
 @router.post("/hotels/", tags=["hotels"])
-async def create_hotel(hotel: Hotel, address: Address):
+async def create_hotel(request: Request, hotel: Hotel, address: Address):
     """Post detail about an hotel"""
+
+    if "PYTEST_CURRENT_TEST" not in os.environ:
+        user = user_logged(request.headers.get("authorization"))
+        user_is_admin(user)
+
     hotels = Hotels()
-    hotel = hotels.create_hotel(hotel, address)
+    hotel = hotels.create_hotel(hotel)
+
+    address = Addresses().create_address(address, hotel["id"])
+    hotel = hotels.get_hotel_by_id(hotel["id"])
     return {"hotel": hotel}
+
+
+@router.put("/hotels/{hotel_id}", tags=["hotels"])
+async def update_hotel(request: Request, hotel: Hotel, hotel_id: int = 1):
+    """Update hotel by its id."""
+
+    if "PYTEST_CURRENT_TEST" not in os.environ:
+        user = user_logged(request.headers.get("authorization"))
+        user_is_admin(user)
+
+    if not Hotels().get_hotel_by_id(hotel_id):
+        raise HTTPException(status_code=404, detail="Hotel not found")
+
+    hotel = Hotels().update_hotel(hotel, hotel_id)
+    return {"hotel": hotel}
+
+
+@router.delete("/hotels/{hotel_id}", tags=["hotels"])
+async def delete_hotel(request: Request, hotel_id: int = 0):
+    """Delete hotel by its id."""
+
+    if "PYTEST_CURRENT_TEST" not in os.environ:
+        user = user_logged(request.headers.get("authorization"))
+        user_is_admin(user)
+
+    if hotel_id > 0:
+        addresses = Addresses().get_address_by_hotel_id(hotel_id)
+
+        if len(addresses) == 0:
+            raise HTTPException(
+                status_code=404,
+                detail="No address for this hotel",
+            )
+
+        address_id = addresses[0].id
+        Addresses().delete_address(address_id)
+
+        hotel = Hotels().delete_hotel(hotel_id)
+
+        if not hotel:
+            raise HTTPException(status_code=404, detail="Hotel not found")
+
+        return {}
 
 
 # curl -X POST -d '{"key1":"value1", "key2":"value2"}' \

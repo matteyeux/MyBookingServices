@@ -1,6 +1,12 @@
 from datetime import datetime
 from datetime import timedelta
 
+import requests
+from fastapi import HTTPException
+
+
+users_api = "http://localhost:5555"
+
 
 def check_dates(start: str = None, end: str = None) -> bool:
     """Validates if :
@@ -39,3 +45,24 @@ def check_dates(start: str = None, end: str = None) -> bool:
 #     price: str = None
 
 #     return price
+
+
+def user_logged(bearer: str):
+    user_logged = requests.get(
+        users_api + "/users/me",
+        headers={
+            "Authorization": bearer,
+        },
+    )
+
+    if user_logged.status_code == 200:
+        return user_logged.json()
+
+    raise HTTPException(status_code=401, detail="User must log in")
+
+
+def user_is_admin(user: dict):
+    if user["role"] == "ADMIN":
+        return True
+
+    raise HTTPException(status_code=403, detail="User unauthorised")
