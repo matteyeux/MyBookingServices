@@ -11,6 +11,7 @@ from sqlalchemy import Float
 from sqlalchemy import ForeignKey
 from sqlalchemy import insert
 from sqlalchemy import Integer
+from sqlalchemy import JSON
 from sqlalchemy import MetaData
 from sqlalchemy import String
 from sqlalchemy import Table
@@ -80,8 +81,9 @@ class Database:
             meta,
             Column("id", BigInteger, primary_key=True),
             Column("room_id", Integer, ForeignKey("rooms.id")),
-            Column("customer_id", BigInteger, ForeignKey("customers.id")),
+            Column("user_id", BigInteger, ForeignKey("customers.id")),
             Column("capacity_book", Integer),
+            Column("option", JSON),
             Column("order_price", Float),
             Column("booking_start_date", Date),
             Column("booking_end_date", Date),
@@ -347,7 +349,7 @@ class Database:
         options_result = self.engine.connect().execute(query).all()
         return [dict(row) for row in options_result]
 
-    def insert_reservation_into_db(self, user_id, data: list):
+    def insert_reservation_into_db(self, user_id: int, data: list):
         """Insert booking data into db"""
         booking_table = self.setup_booking_table()
         query = insert(booking_table).values(
@@ -355,6 +357,7 @@ class Database:
             customer_id=user_id,
             capacity_book=data['capacity'],
             option=data['options'],
+            order_price=data['price'],
             booking_start_date=data['start_date'],
             booking_end_date=data['end_date'],
         )
