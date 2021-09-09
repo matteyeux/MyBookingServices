@@ -354,7 +354,7 @@ class Database:
         booking_table = self.setup_booking_table()
         query = insert(booking_table).values(
             room_id=data['room_id'],
-            user_id=user_id,
+            customer_id=user_id,
             capacity_book=data['capacity'],
             option=data['options'],
             order_price=data['price'],
