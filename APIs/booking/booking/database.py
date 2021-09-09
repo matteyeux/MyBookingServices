@@ -321,6 +321,18 @@ class Database:
         booked_rooms = [dict(row) for row in booking_result]
         return booked_rooms
 
+    def get_booked_rooms_by_id(self, booking_id: int = 1):
+        # grab the booked rooms by id
+        booking = self.setup_booking_table()
+        query = select(
+            booking.c.id,
+            booking.c.customer_id
+        ).where(booking.c.id == booking_id)
+
+        booking_result = self.engine.connect().execute(query).all()
+
+        return booking_result
+
     def get_price_policies_for_room(self, room_id: int = 1) -> dict:
         pp_table = self.setup_price_policies_table()
 
@@ -362,11 +374,11 @@ class Database:
 
         self.engine.connect().execute(query)
 
-    def delete_reservation_into_db(self, booking_id: int):
+    def delete_booked_rooms_by_id(self, booking_id: int):
         """Delete booking row data into db"""
         booking_table = self.setup_booking_table()
         query = delete(booking_table).where(
             booking_table.c.id == booking_id,
         )
 
-        self.engine.connect().execute(query)
+        return self.engine.connect().execute(query)

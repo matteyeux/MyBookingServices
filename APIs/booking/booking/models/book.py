@@ -20,9 +20,16 @@ class Book(Rooms):
             self.db.insert_reservation_into_db(user_id, data)
         return data
 
-    def delete_booking_room(self, booking_id):
-        """Delete booking room by its id"""
+    def get_booked_rooms_by_id(self, booking_id: int):
+        """Get booking room by id"""
         if self.db.engine is not None:
-            return self.db.delete_reservation_into_db(booking_id)
+            return self.db.get_booked_rooms_by_id(booking_id)
+        else:
+            return None
+
+    def delete_booked_rooms_by_id(self, booking_id: int):
+        """Delete booking room by """
+        if self.db.engine is not None:
+            return self.db.delete_booked_rooms_by_id(booking_id)
         else:
             return None
