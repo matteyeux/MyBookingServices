@@ -205,7 +205,8 @@ class Database:
         return options
 
     def get_hotels(self) -> sqlalchemy.engine.cursor.LegacyCursorResult:
-        """Get all hotels."""
+        """ Get all hotels with their address. """
+
         addresses_table = self.setup_addresses_table()
         hotels_table = self.setup_hotels_table()
         join = hotels_table.join(
@@ -215,6 +216,10 @@ class Database:
         query = select(
             hotels_table.c.id,
             hotels_table.c.name,
+            hotels_table.c.telephone,
+            hotels_table.c.website,
+            hotels_table.c.description,
+            hotels_table.c.owner,
             addresses_table.c.number,
             addresses_table.c.street,
             addresses_table.c.postal_code,
@@ -237,6 +242,10 @@ class Database:
             select(
                 hotels_table.c.id,
                 hotels_table.c.name,
+                hotels_table.c.telephone,
+                hotels_table.c.website,
+                hotels_table.c.description,
+                hotels_table.c.owner,
                 addresses_table.c.number,
                 addresses_table.c.street,
                 addresses_table.c.postal_code,
@@ -245,16 +254,161 @@ class Database:
             .where(hotels_table.c.id == hotel_id)
             .select_from(join)
         )
-        return self.engine.connect().execute(query).all()
+
+        # Return the dict, not the list
+        return self.engine.connect().execute(query).fetchone()
 
     def create_hotel(
         self,
         hotel,
-        address,
     ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
-        """Create an hotel"""
+        """ Create an hotel and its address. """
 
-        return None
+        hotel_table = self.setup_hotels_table()
+
+        query_hotel = insert(hotel_table).values(
+            name=hotel.name,
+            telephone=hotel.telephone,
+            website=hotel.website,
+            description=hotel.description,
+            owner=hotel.owner,
+        )
+
+        self.engine.connect().execute(query_hotel)
+        last_hotel_id = (
+            self.engine.connect()
+            .execute(
+                "SELECT LAST_INSERT_ID() as id",
+            )
+            .fetchone()
+        )
+
+        return {"id": last_hotel_id.id, **hotel.dict()}
+
+    def update_hotel(self, hotel, hotel_id):
+        """ Update hotel by its id. """
+
+        hotel_table = self.setup_hotels_table()
+
+        query = (
+            update(hotel_table)
+            .values(
+                name=hotel.name,
+                telephone=hotel.telephone,
+                website=hotel.website,
+                description=hotel.description,
+                owner=hotel.owner,
+            )
+            .where(hotel_table.c.id == hotel_id)
+        )
+
+        self.engine.connect().execute(query)
+
+        return {"id": hotel_id, **hotel.dict()}
+
+    def delete_hotel(self, hotel_id):
+        """ Delete hotel by its id. """
+
+        hotel_table = self.setup_hotels_table()
+
+        # TODO : Check if the cascade deletion is up or not ?
+        query = delete(hotel_table).where(hotel_table.c.id == hotel_id)
+
+        return self.engine.connect().execute(query)
+
+    def get_all_addresses(self):
+        """ Get all addresses. """
+
+        address_tables = self.setup_addresses_table()
+
+        query = select(
+            address_tables.c.id,
+            address_tables.c.hotel_id,
+            address_tables.c.number,
+            address_tables.c.street,
+            address_tables.c.postal_code,
+            address_tables.c.town,
+        )
+
+        return self.engine.connect().execute(query).all()
+
+    def get_address_by_hotel_id(self, hotel_id):
+        """ Return hotel's address, find by hotel's id ."""
+        address_table = self.setup_addresses_table()
+
+        query = select(
+            address_table.c.id,
+            address_table.c.hotel_id,
+            address_table.c.number,
+            address_table.c.street,
+            address_table.c.town,
+            address_table.c.postal_code,
+        ).where(address_table.c.hotel_id == hotel_id)
+
+        result = self.engine.connect().execute(query).all()
+        return result
+
+    def get_address_by_id(self, address_id):
+        """ Return address by its id ."""
+        address_table = self.setup_addresses_table()
+
+        query = select(
+            address_table.c.id,
+            address_table.c.hotel_id,
+            address_table.c.number,
+            address_table.c.street,
+            address_table.c.town,
+            address_table.c.postal_code,
+        ).where(address_table.c.id == address_id)
+
+        result = self.engine.connect().execute(query).fetchone()
+        return result
+
+    def create_address(self, address, hotel_id):
+        """ Create address. """
+
+        address_table = self.setup_addresses_table()
+        query = insert(address_table).values(
+            hotel_id=hotel_id,
+            number=address.number,
+            street=address.street,
+            town=address.town,
+            postal_code=address.postal_code,
+        )
+
+        self.engine.connect().execute(query)
+        last_address_id = (
+            self.engine.connect()
+            .execute(
+                "SELECT LAST_INSERT_ID() as id",
+            )
+            .fetchone()
+        )
+
+        return {"id": last_address_id.id, **address.dict()}
+
+    def update_address(self, address, address_id):
+        """ Update an address by its id. """
+
+        address_table = self.setup_addresses_table()
+        query = insert(address_table).values(
+            hotel_id=address.hotel_id,
+            number=address.number,
+            street=address.street,
+            town=address.town,
+            postal_code=address.postal_code,
+        )
+
+        self.engine.connect().execute(query)
+        return {"id": address_id, **address.dict()}
+
+    def delete_address(self, address_id):
+        """ Delete an address by its id. """
+
+        address_table = self.setup_addresses_table()
+        query = delete(address_table).where(address_table.c.id == address_id)
+
+        return self.engine.connect().execute(query)
 
     def get_all_rooms(
         self,
@@ -286,8 +440,65 @@ class Database:
     ) -> sqlalchemy.engine.cursor.LegacyCursorResult:
         """Get room by ID."""
         table = self.setup_rooms_table()
-        query = table.select().where(table.c.id == room_id)
-        return self.engine.connect().execute(query).all()
+        query = select(
+            table.c.id,
+            table.c.hotel_id,
+            table.c.room,
+            table.c.price,
+            table.c.capacity,
+        ).where(table.c.id == room_id)
+        return self.engine.connect().execute(query).fetchone()
+
+    def create_room(self, room):
+        """ Create a room. """
+
+        room_table = self.setup_rooms_table()
+
+        query = insert(room_table).values(
+            hotel_id=room.hotel_id,
+            room=room.room,
+            capacity=room.capacity,
+            price=room.price,
+        )
+
+        self.engine.connect().execute(query)
+        last_row = (
+            self.engine.connect()
+            .execute(
+                "SELECT LAST_INSERT_ID() as id",
+            )
+            .fetchone()
+        )
+
+        return {"id": last_row.id, **room.dict()}
+
+    def update_room(self, room, room_id):
+        """ Update a room by its id. """
+
+        room_table = self.setup_rooms_table()
+
+        query = (
+            update(room_table)
+            .where(room_table.c.id == room_id)
+            .values(
+                hotel_id=room.hotel_id,
+                room=room.room,
+                capacity=room.capacity,
+                price=room.price,
+            )
+        )
+
+        self.engine.connect().execute(query)
+        return {"id": room_id, **room.dict()}
+
+    def delete_room(self, room_id):
+        """ Delete a room by its id. """
+
+        room_table = self.setup_rooms_table()
+
+        query = delete(room_table).where(room_table.c.id == room_id)
+
+        return self.engine.connect().execute(query)
 
     def get_options(self) -> sqlalchemy.engine.cursor.LegacyCursorResult:
         """ Get all options. """
@@ -363,9 +574,11 @@ class Database:
         pp_table = self.setup_price_policies_table()
 
         query = select(
+            pp_table.c.id,
             pp_table.c.name,
             pp_table.c.room_id,
             pp_table.c.room_majoration,
+            pp_table.c.price_policy_type,
             pp_table.c.day_number,
             pp_table.c.capacity_limit,
             pp_table.c.is_default,
@@ -382,9 +595,11 @@ class Database:
         pp_table = self.setup_price_policies_table()
 
         query = select(
+            pp_table.c.id,
             pp_table.c.name,
             pp_table.c.room_id,
             pp_table.c.room_majoration,
+            pp_table.c.price_policy_type,
             pp_table.c.day_number,
             pp_table.c.capacity_limit,
             pp_table.c.is_default,
@@ -406,8 +621,8 @@ class Database:
         query = insert(pp_table).values(
             name=price_policy.name,
             room_id=price_policy.room_id,
-            price_policy_type=price_policy.price_policy_type,
             room_majoration=price_policy.room_majoration,
+            price_policy_type=price_policy.price_policy_type,
             day_number=price_policy.day_number,
             capacity_limit=price_policy.capacity_limit,
             is_default=price_policy.is_default,

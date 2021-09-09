@@ -17,16 +17,31 @@ class Hotels:
         )
 
     def get_all_hotels(self):
-        engine = self.db.engine
         """return the list of all hotels."""
+
+        engine = self.db.engine
         return None if not engine else self.db.get_hotels()
 
     def get_hotel_by_id(self, hotel_id: int = 1):
-        engine = self.db.engine
         """return the list of all hotels."""
+
+        engine = self.db.engine
         return None if not engine else self.db.get_hotel_by_id(hotel_id)
 
-    def create_hotel(self, hotel, address):
-        engine = self.db.engine
+    def create_hotel(self, hotel):
         """Create an hotel in db and return it."""
-        return None if not engine else self.db.create_hotel(hotel, address)
+
+        engine = self.db.engine
+        return None if not engine else self.db.create_hotel(hotel)
+
+    def update_hotel(self, hotel, hotel_id):
+        """ Update hotel by its id. """
+
+        engine = self.db.engine
+        return None if not engine else self.db.update_hotel(hotel, hotel_id)
+
+    def delete_hotel(self, hotel_id):
+        """ Delete hotel by its id. """
+
+        engine = self.db.engine
+        return None if not engine else self.db.delete_hotel(hotel_id)
