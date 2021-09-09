@@ -78,6 +78,6 @@ async def delete_booked_rooms_by_id(request: Request, booking_id: int = 0):
             raise HTTPException(
                 status_code=403,
                 detail="You're not available to delete this booking",
-            )            
+            )
 
         return booking
