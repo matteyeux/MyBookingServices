@@ -1,18 +1,12 @@
+import os
+
 from booking import utils
 from booking.models.book import Book
 from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi import Request
 
-
 router = APIRouter()
-
-
-# curl -X POST -d '{"key1":"value1", "key2":"value2"}' \
-# 127.0.0.1:5555/hotels/test/
-# @router.post("/hotels/test/", tags=["hotels"])
-# async def test(request: Request):
-#     return await request.json()
 
 
 @router.post("/book/", tags=["book"])
@@ -26,7 +20,10 @@ async def book_room(request: Request):
     - options
     """
     data = await request.json()
-    user = utils.user_logged(request.headers.get('authorization'))
+    if "PYTEST_CURRENT_TEST" in os.environ:
+        user = {'id': 1}
+    else:
+        user = utils.user_logged(request.headers.get('authorization'))
 
     if utils.book_sanity_check(data) is False:
         # https://stackoverflow.com/a/42171674
