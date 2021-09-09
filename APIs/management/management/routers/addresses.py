@@ -2,7 +2,10 @@ from typing import Optional
 
 from fastapi import APIRouter
 from fastapi import HTTPException
+from fastapi import Request
 from management.models.addresses import Addresses
+from management.utils import user_is_admin
+from management.utils import user_logged
 from pydantic import BaseModel
 
 
@@ -40,7 +43,7 @@ async def get_address_by_id(address_id: int = 1):
 
 @router.get("/addresses/{hotel_id}", tags=["addresses"])
 async def get_address_by_hotel_id(hotel_id: int = 1):
-    """ Get address by its hotel. """
+    """Get address by its hotel."""
 
     address = Addresses().get_address_by_hotel_id(hotel_id)
     if not address:
@@ -59,16 +62,26 @@ async def get_last_address():
 
 
 @router.post("/addresses/", tags=["addresses"])
-async def create_address(address: Address):
+async def create_address(request: Request, address: Address):
     """Post detail about an address"""
+
+    user = user_logged(request.headers.get("authorization"))
+    user_is_admin(user)
 
     address = Addresses().create_address(address, address.hotel_id)
     return {"address": address}
 
 
 @router.put("/addresses/{address_id}", tags=["addresses"])
-async def update_address(address: Address, address_id: int = 1):
-    """ Update address by its id. """
+async def update_address(
+    request: Request,
+    address: Address,
+    address_id: int = 1,
+):
+    """Update address by its id."""
+
+    user = user_logged(request.headers.get("authorization"))
+    user_is_admin(user)
 
     if not Addresses().get_address_by_id(address_id):
         raise HTTPException(status_code=404, detail="Address not found")
@@ -78,8 +91,11 @@ async def update_address(address: Address, address_id: int = 1):
 
 
 @router.delete("/addresses/{address_id}", tags=["addresses"])
-async def delete_address(address_id: int = 0):
-    """ Delete address by its id. """
+async def delete_address(request: Request, address_id: int = 0):
+    """Delete address by its id."""
+
+    user = user_logged(request.headers.get("authorization"))
+    user_is_admin(user)
 
     if address_id > 0:
         address = Addresses().delete_address(address_id)

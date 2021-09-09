@@ -2,8 +2,11 @@ from typing import Optional
 
 from fastapi import APIRouter
 from fastapi import HTTPException
+from fastapi import Request
 from management.models.addresses import Addresses
 from management.models.hotels import Hotels
+from management.utils import user_is_admin
+from management.utils import user_logged
 from pydantic import BaseModel
 
 # from fastapi import Request
@@ -57,8 +60,11 @@ async def get_last_hotel():
 
 
 @router.post("/hotels/", tags=["hotels"])
-async def create_hotel(hotel: Hotel, address: Address):
+async def create_hotel(request: Request, hotel: Hotel, address: Address):
     """Post detail about an hotel"""
+
+    user = user_logged(request.headers.get("authorization"))
+    user_is_admin(user)
 
     hotels = Hotels()
     hotel = hotels.create_hotel(hotel)
@@ -69,8 +75,11 @@ async def create_hotel(hotel: Hotel, address: Address):
 
 
 @router.put("/hotels/{hotel_id}", tags=["hotels"])
-async def update_hotel(hotel: Hotel, hotel_id: int = 1):
-    """ Update hotel by its id. """
+async def update_hotel(request: Request, hotel: Hotel, hotel_id: int = 1):
+    """Update hotel by its id."""
+
+    user = user_logged(request.headers.get("authorization"))
+    user_is_admin(user)
 
     if not Hotels().get_hotel_by_id(hotel_id):
         raise HTTPException(status_code=404, detail="Hotel not found")
@@ -80,8 +89,11 @@ async def update_hotel(hotel: Hotel, hotel_id: int = 1):
 
 
 @router.delete("/hotels/{hotel_id}", tags=["hotels"])
-async def delete_hotel(hotel_id: int = 0):
-    """ Delete hotel by its id. """
+async def delete_hotel(request: Request, hotel_id: int = 0):
+    """Delete hotel by its id."""
+
+    user = user_logged(request.headers.get("authorization"))
+    user_is_admin(user)
 
     if hotel_id > 0:
         addresses = Addresses().get_address_by_hotel_id(hotel_id)
