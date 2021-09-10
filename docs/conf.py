@@ -22,8 +22,8 @@ current_path = os.getcwd()
 # TODO: add modules "users" and "management" later
 modules = [
     "booking",
-    # "users",
-    # "management",
+    "users",
+    "management",
 ]
 
 for module in modules:
