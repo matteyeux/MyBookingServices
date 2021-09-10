@@ -70,7 +70,7 @@ async def delete_booked_rooms_by_id(request: Request, booking_id: int = 0):
                 detail="booking room not found",
             )
 
-        if len(r) > 0 and user['id'] == r[0]["customer_id"]:
+        if len(r) > 0 and user['id'] != r[0]["customer_id"]:
             raise HTTPException(
                 status_code=403,
                 detail="You're not available to delete this booking",
