@@ -46,7 +46,7 @@ def parse_arguments() -> argparse.Namespace:
 
 def main() -> int:
     """Main function which will run the uvicorn
-    web server and call the main API code."""
+    web server and run the API from app.py."""
     parser = parse_arguments()
     check = config.check_config()
     if check is None:
