@@ -384,6 +384,7 @@ def book_sanity_check(json_data: dict) -> bool:
 
 
 def user_logged(bearer: str) -> list:
+    """User_logged."""
     users_api = "http://127.0.0.1:5557"
     user_logged = requests.get(
         users_api + "/users/me",
